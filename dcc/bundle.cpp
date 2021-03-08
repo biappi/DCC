@@ -30,7 +30,7 @@ static void incTableSize(strTable *strTab)
            deltaProcLines * sizeof(char *));
 }
 
-void appendStrTab(strTable *strTab, char *format, ...)
+void appendStrTab(strTable *strTab, const char *format, ...)
 /* Appends the new line (in printf style) to the string table strTab.   */
 {
     va_list args;

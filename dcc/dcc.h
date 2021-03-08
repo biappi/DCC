@@ -345,4 +345,4 @@ boolT checkLongRegEq(LONGID_TYPE, PICODE, Int, Int, PPROC, COND_EXPR **,
                      COND_EXPR **, Int);
 byte otherLongRegi(byte, Int, LOCAL_ID *);
 void insertIdx(IDX_ARRAY *, Int);
-void propLongId(LOCAL_ID *, byte, byte, char *);
+void propLongId(LOCAL_ID *, byte, byte, const char *);

@@ -21,7 +21,7 @@ typedef struct {
 #define lineSize 360 /* 3 lines in the mean time */
 
 void newBundle(bundle *procCode);
-void appendStrTab(strTable *strTab, char *format, ...);
+void appendStrTab(strTable *strTab, const char *format, ...);
 Int nextBundleIdx(strTable *strTab);
 void addLabelBundle(strTable *strTab, Int idx, Int label);
 void writeBundle(FILE *fp, bundle procCode);

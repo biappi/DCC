@@ -394,7 +394,7 @@ byte otherLongRegi(byte regi, Int idx, LOCAL_ID *locTbl)
     return 0; // Cristina: please check this!
 }
 
-void propLongId(LOCAL_ID *locid, byte regL, byte regH, char *name)
+void propLongId(LOCAL_ID *locid, byte regL, byte regH, const char *name)
 /* Checks if the registers regL and regH have been used independently in
  * the local identifier table.  If so, macros for these registers are
  * placed in the local identifier table, as these registers belong to a
