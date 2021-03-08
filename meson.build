@@ -1,0 +1,48 @@
+project('dcc', 'cpp')
+
+add_project_arguments('-D__UNIX__', language: 'cpp')
+
+src = [
+    'dcc/ast.cpp',
+    'dcc/ast.h',
+    'dcc/backend.cpp',
+    'dcc/bundle.cpp',
+    'dcc/bundle.h',
+    'dcc/chklib.cpp',
+    'dcc/comwrite.cpp',
+    'dcc/control.cpp',
+    'dcc/dataflow.cpp',
+    'dcc/dcc.cpp',
+    'dcc/dcc.h',
+    'dcc/disassem.cpp',
+    'dcc/disassem.h',
+    'dcc/dosdcc.h',
+    'dcc/error.cpp',
+    'dcc/error.h',
+    'dcc/fixwild.cpp',
+    'dcc/frontend.cpp',
+    'dcc/graph.cpp',
+    'dcc/graph.h',
+    'dcc/hlicode.cpp',
+    'dcc/hlicode.h',
+    'dcc/icode.cpp',
+    'dcc/icode.h',
+    'dcc/idioms.cpp',
+    'dcc/locident.cpp',
+    'dcc/locident.h',
+    'dcc/parser.cpp',
+    'dcc/perfhlib.cpp',
+    'dcc/perfhlib.h',
+    'dcc/procs.cpp',
+    'dcc/proplong.cpp',
+    'dcc/reducible.cpp',
+    'dcc/scanner.cpp',
+    'dcc/scanner.h',
+    'dcc/state.h',
+    'dcc/symtab.cpp',
+    'dcc/symtab.h',
+    'dcc/types.h',
+    'dcc/udm.cpp',
+]
+
+dcc = executable('dcc', src)
