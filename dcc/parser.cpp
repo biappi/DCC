@@ -272,6 +272,12 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
             /* Straight line code */
             FollowCtrl(pProc, pcallGraph, &StCopy);
 
+            /* Invocations to FollowCtrl may cause pProc->Icode to
+             * be reallocated, causing an use-after-free on prev, so let's
+             * refresh the `prev` again.
+             */
+            prev = pProc->Icode.GetIcode(ip - 1);
+
             if (fBranch) /* Do branching code */
             {
                 pstate->JCond.regi = prev->ic.ll.dst.regi;
