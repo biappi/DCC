@@ -146,7 +146,7 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
             ts->sym = (STKSYM *)reallocVar(ts->sym, ts->alloc * sizeof(STKSYM));
             memset(&ts->sym[ts->csym], 0, 5 * sizeof(STKSYM));
         }
-        sprintf(ts->sym[ts->csym].name, "arg%ld", ts->csym);
+        sprintf(ts->sym[ts->csym].name, "arg%d", ts->csym);
         if (type == REGISTER) {
             if (regL < rAL) {
                 ts->sym[ts->csym].type = TYPE_WORD_SIGN;
@@ -155,11 +155,11 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
                 ts->sym[ts->csym].type = TYPE_BYTE_SIGN;
                 ts->sym[ts->csym].regs = idCondExpRegIdx(tidx, BYTE_REG);
             }
-            sprintf(tproc->localId.id[tidx].name, "arg%ld", ts->csym);
+            sprintf(tproc->localId.id[tidx].name, "arg%d", ts->csym);
         } else if (type == LONG_VAR) {
             ts->sym[ts->csym].regs = idCondExpLongIdx(tidx);
             ts->sym[ts->csym].type = TYPE_LONG_SIGN;
-            sprintf(tproc->localId.id[tidx].name, "arg%ld", ts->csym);
+            sprintf(tproc->localId.id[tidx].name, "arg%d", ts->csym);
             propLongId(&tproc->localId, regL, regH,
                        tproc->localId.id[tidx].name);
         }
@@ -174,7 +174,7 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
         ps->sym = (STKSYM *)reallocVar(ps->sym, ps->alloc * sizeof(STKSYM));
         memset(&ps->sym[ps->csym], 0, 5 * sizeof(STKSYM));
     }
-    sprintf(ps->sym[ps->csym].name, "arg%ld", ps->csym);
+    sprintf(ps->sym[ps->csym].name, "arg%d", ps->csym);
     ps->sym[ps->csym].actual = picode->ic.hl.oper.asgn.rhs;
     ps->sym[ps->csym].regs = lhs;
 
@@ -259,7 +259,7 @@ void placeStkArg(PICODE picode, COND_EXPR *exp, Int pos)
 
     ps = picode->ic.hl.oper.call.args;
     ps->sym[pos].actual = exp;
-    sprintf(ps->sym[pos].name, "arg%ld", pos);
+    sprintf(ps->sym[pos].name, "arg%d", pos);
 }
 
 void adjustActArgType(COND_EXPR *exp, hlType forType, PPROC pproc)

@@ -539,7 +539,7 @@ static void codeGen(PPROC pProc, FILE *fp)
                     /* Register variables are assigned to a local variable */
                     if (((pProc->flg & SI_REGVAR) && (locid->id.regi == rSI)) ||
                         ((pProc->flg & DI_REGVAR) && (locid->id.regi == rDI))) {
-                        sprintf(locid->name, "loc%ld", ++numLoc);
+                        sprintf(locid->name, "loc%d", ++numLoc);
                         appendStrTab(&cCode.decl, "int %s;\n", locid->name);
                     }
                     /* Other registers are named when they are first used in
@@ -548,7 +548,7 @@ static void codeGen(PPROC pProc, FILE *fp)
 
                 else if (locid->loc == STK_FRAME) {
                     /* Name local variables and output appropriate type */
-                    sprintf(locid->name, "loc%ld", ++numLoc);
+                    sprintf(locid->name, "loc%d", ++numLoc);
                     appendStrTab(&cCode.decl, "%s %s;\n", hlTypes[locid->type],
                                  locid->name);
                 }

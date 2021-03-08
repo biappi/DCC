@@ -135,8 +135,8 @@ static void displayTotalStats()
 /* Displays final statistics for the complete program */
 {
     printf("\nFinal Program Statistics\n");
-    printf("  Total number of low-level Icodes : %ld\n", stats.totalLL);
-    printf("  Total number of high-level Icodes: %ld\n", stats.totalHL);
+    printf("  Total number of low-level Icodes : %d\n", stats.totalLL);
+    printf("  Total number of high-level Icodes: %d\n", stats.totalHL);
     printf("  Total reduction of instructions  : %2.2f%%\n",
            100.0 - (stats.totalHL * 100.0) / stats.totalLL);
 }

@@ -347,7 +347,7 @@ void deleteSym(char *symName) {
 
     /* Delete from value hashed table */
     if (!findVal(symOff, symProc, &i)) {
-        printf("Could not delete non existant symbol off %04X proc %d\n",
+        printf("Could not delete non existant symbol off %04X proc %p\n",
                symOff, symProc);
         exit(1);
     }

@@ -129,7 +129,7 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
         return;
     }
     if (option.VeryVerbose) {
-        printf("Parsing proc %s at %lX\n", pProc->name, pstate->IP);
+        printf("Parsing proc %s at %X\n", pProc->name, pstate->IP);
     }
 
     while (!done && !(err = scan(pstate->IP, &Icode))) {
@@ -574,7 +574,7 @@ static boolT process_CALL(PICODE pIcode, PPROC pProc, PCALL_GRAPH pcallGraph,
 
             if (p->name[0] == '\0') /* Don't overwrite existing name */
             {
-                sprintf(p->name, "proc_%ld", ++prog.cProcs);
+                sprintf(p->name, "proc_%d", ++prog.cProcs);
             }
             p->depth = pProc->depth + 1;
             p->flg |= TERMINATES;
@@ -686,7 +686,7 @@ static PSYM updateGlobSym(dword operand, Int size, word duFlag)
                 (PSYM)reallocVar(symtab.sym, symtab.alloc * sizeof(SYM));
             memset(&symtab.sym[i], 0, 5 * sizeof(SYM));
         }
-        sprintf(symtab.sym[i].name, "var%05lX", operand);
+        sprintf(symtab.sym[i].name, "var%05X", operand);
         symtab.sym[i].label = operand;
         symtab.sym[i].size = size;
         symtab.sym[i].type = cbType[size];
@@ -721,7 +721,7 @@ static void updateFrameOff(PSTKFRAME ps, int16 off, Int size, word duFlag)
             ps->sym = (STKSYM *)reallocVar(ps->sym, ps->alloc * sizeof(STKSYM));
             memset(&ps->sym[i], 0, 5 * sizeof(STKSYM));
         }
-        sprintf(ps->sym[i].name, "arg%ld", i);
+        sprintf(ps->sym[i].name, "arg%d", i);
         ps->sym[i].off = off;
         ps->sym[i].size = size;
         ps->sym[i].type = cbType[size];

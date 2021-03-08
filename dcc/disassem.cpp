@@ -380,9 +380,9 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
             pl[i] = ++lab;
         }
         if (pass == 3)
-            sprintf(buf, "L%ld", pl[i]);
+            sprintf(buf, "L%d", pl[i]);
         else
-            sprintf(&buf[15], "L%ld", pl[i]);
+            sprintf(&buf[15], "L%d", pl[i]);
         buf[strlen(buf)] = ':'; /* Also removes the null */
     }
 
@@ -508,9 +508,9 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
                 pl[j] = ++lab;
             }
             if (pIcode->ic.ll.opcode == iJMPF) {
-                sprintf(p, " far ptr L%ld", pl[j]);
+                sprintf(p, " far ptr L%d", pl[j]);
             } else {
-                sprintf(p + WID_PTR, "L%ld", pl[j]);
+                sprintf(p + WID_PTR, "L%d", pl[j]);
             }
         } else if (pIcode->ic.ll.opcode == iJMPF) {
             strcat(strcpy(p - 1, "dword ptr"), strSrc(pIcode) + 1);
@@ -631,7 +631,7 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
         buf[strlen(buf)] = ' ';
         buf[POS_CMT] = '\0';
         if (pIcode->ic.ll.flg & CASE) {
-            sprintf(buf + POS_CMT, ";Case l%ld",
+            sprintf(buf + POS_CMT, ";Case l%d",
                     pIcode->ic.ll.caseTbl.numEntries);
         }
         if (pIcode->ic.ll.flg & SWITCH) {
@@ -673,7 +673,7 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
         } else if (pass == 3) /* output to .b code buffer */
             appendStrTab(&cCode.code, "%s\n", buf);
         else /* output to .a1 or .a2 file */
-            fprintf(fp, "%03ld %06lX %s\n", i, pIcode->ic.ll.label, buf);
+            fprintf(fp, "%03d %06X %s\n", i, pIcode->ic.ll.label, buf);
     } else /* SYNTHETIC instruction */
     {
         strcat(buf, ";Synthetic inst");
@@ -686,7 +686,7 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
             appendStrTab(&cCode.code, "%s\n", buf);
         } else /* output to .a1 or .a2 file */
         {
-            fprintf(fp, "%03ld        %s\n", i, buf);
+            fprintf(fp, "%03d        %s\n", i, buf);
         }
     }
 }
@@ -766,7 +766,7 @@ static char *strHex(dword d) {
     static char buf[10];
 
     d &= 0xFFFF;
-    sprintf(buf, "0%lX%s", d, (d > 9) ? "h" : "");
+    sprintf(buf, "0%X%s", d, (d > 9) ? "h" : "");
     return (buf + (buf[1] <= '9'));
 }
 
@@ -792,7 +792,7 @@ void dispTitle(void) {
 
     move(0, 0); /* Must move before setting attributes */
     attrSet(A_BOLD);
-    sprintf(buf, "Proc %s at %06lX (%04X:%04X): %d bytes of parameters ",
+    sprintf(buf, "Proc %s at %06X (%04X:%04X): %d bytes of parameters ",
             pProc->name, pProc->Icode.GetFirstIcode()->ic.ll.label,
             pProc->state.r[rCS],
             (word)(pProc->Icode.GetFirstIcode()->ic.ll.label -
@@ -1308,7 +1308,7 @@ static void dispData(word dataSeg) {
     pcStart = pc = pcCur; /* pc at start of line */
     for (y = 1; y < LINES - 1; y++) {
         move(y, 1);
-        sprintf(szOffset, "%04lX ", pc);
+        sprintf(szOffset, "%04X ", pc);
         printfd(szOffset);
         for (i = 0; i < 16; i++) {
             sprintf(szByte, "%02X ", prog.Image[pc++ + off]);

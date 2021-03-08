@@ -182,12 +182,12 @@ static void displayIntervals(interval *pI)
 
     while (pI) {
         nodePtr = pI->nodes;
-        printf("  Interval #: %ld\t#OutEdges: %ld\n", pI->numInt,
+        printf("  Interval #: %hhu\t#OutEdges: %hhu\n", pI->numInt,
                pI->numOutEdges);
 
         while (nodePtr) {
             if (nodePtr->node->correspInt == NULL) /* real BBs */
-                printf("    Node: %ld\n", nodePtr->node->start);
+                printf("    Node: %d\n", nodePtr->node->start);
             else /* BBs represent intervals */
                 printf("   Node (corresp int): %d\n",
                        nodePtr->node->correspInt->numInt);
@@ -356,7 +356,7 @@ void displayDerivedSeq(derSeq *derGi)
     Int n = 1; /* Derived sequence number */
     printf("\nDerived Sequence Intervals\n");
     while (derGi) {
-        printf("\nIntervals for G%lX\n", n++);
+        printf("\nIntervals for G%X\n", n++);
         displayIntervals(derGi->Ii);
         derGi = derGi->next;
     }

@@ -95,11 +95,11 @@ static void displayCFG(PPROC pProc) {
 
     for (pBB = pProc->cfg; pBB; pBB = pBB->next) {
         printf("\nnode type = %s, ", nodeType[pBB->nodeType]);
-        printf("start = %ld, length = %ld, #out edges = %ld\n", pBB->start,
+        printf("start = %d, length = %d, #out edges = %d\n", pBB->start,
                pBB->length, pBB->numOutEdges);
 
         for (i = 0; i < pBB->numOutEdges; i++)
-            printf(" outEdge[%2d] = %ld\n", i, pBB->edges[i].BBptr->start);
+            printf(" outEdge[%2d] = %d\n", i, pBB->edges[i].BBptr->start);
     }
 }
 
@@ -114,32 +114,32 @@ static void displayDfs(PBB pBB) {
     pBB->traversed = DFS_DISP;
 
     printf("node type = %s, ", nodeType[pBB->nodeType]);
-    printf("start = %ld, length = %ld, #in-edges = %ld, #out-edges = %ld\n",
+    printf("start = %d length = %d, #in-edges = %d, #out-edges = %d\n",
            pBB->start, pBB->length, pBB->numInEdges, pBB->numOutEdges);
-    printf("dfsFirst = %ld, dfsLast = %ld, immed dom = %ld\n", pBB->dfsFirstNum,
+    printf("dfsFirst = %d, dfsLast = %d, immed dom = %d\n", pBB->dfsFirstNum,
            pBB->dfsLastNum, pBB->immedDom == MAX ? -1 : pBB->immedDom);
-    printf("loopType = %s, loopHead = %ld, latchNode = %ld, follow = %ld\n",
+    printf("loopType = %s, loopHead = %d, latchNode = %d, follow = %d\n",
            loopType[pBB->loopType], pBB->loopHead == MAX ? -1 : pBB->loopHead,
            pBB->latchNode == MAX ? -1 : pBB->latchNode,
            pBB->loopFollow == MAX ? -1 : pBB->loopFollow);
-    printf("ifFollow = %ld, caseHead = %ld, caseTail = %ld\n",
+    printf("ifFollow = %d caseHead = %d, caseTail = %d\n",
            pBB->ifFollow == MAX ? -1 : pBB->ifFollow,
            pBB->caseHead == MAX ? -1 : pBB->caseHead,
            pBB->caseTail == MAX ? -1 : pBB->caseTail);
 
     if (pBB->nodeType == INTERVAL_NODE)
-        printf("corresponding interval = %ld\n", pBB->correspInt->numInt);
+        printf("corresponding interval = %hhu\n", pBB->correspInt->numInt);
     else
         for (i = 0; i < pBB->numInEdges; i++)
-            printf("  inEdge[%ld] = %ld\n", i, pBB->inEdges[i]->start);
+            printf("  inEdge[%d] = %d\n", i, pBB->inEdges[i]->start);
 
     /* Display out edges information */
     for (i = 0; i < pBB->numOutEdges; i++)
         if (pBB->nodeType == INTERVAL_NODE)
-            printf(" outEdge[%ld] = %ld\n", i,
+            printf(" outEdge[%d] = %hhu\n", i,
                    pBB->edges[i].BBptr->correspInt->numInt);
         else
-            printf(" outEdge[%ld] = %ld\n", i, pBB->edges[i].BBptr->start);
+            printf(" outEdge[%d] = %d\n", i, pBB->edges[i].BBptr->start);
     printf("----\n");
 
     /* Recursive call on successors of current node */

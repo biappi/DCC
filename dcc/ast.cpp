@@ -33,7 +33,7 @@ static char *hexStr(Int i)
     static char buf[10];
 
     i &= 0xFFFF;
-    sprintf(buf, "%s%lX", (i > 9) ? "0x" : "", i);
+    sprintf(buf, "%s%X", (i > 9) ? "0x" : "", i);
     return (buf);
 }
 
@@ -181,7 +181,7 @@ COND_EXPR *idCondExpLoc(Int off, LOCAL_ID *localId)
     if (i == localId->csym)
         printf("Error, cannot find local var\n");
     newExp->expr.ident.idNode.localIdx = i;
-    sprintf(localId->id[i].name, "loc%ld", i);
+    sprintf(localId->id[i].name, "loc%d", i);
     return (newExp);
 }
 
@@ -715,7 +715,7 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
             id = &pProc->localId.id[exp->expr.ident.idNode.regiIdx];
             if (id->name[0] == '\0') /* no name */
             {
-                sprintf(id->name, "loc%ld", ++(*numLoc));
+                sprintf(id->name, "loc%d", ++(*numLoc));
                 if (id->id.regi < rAL)
                     appendStrTab(&cCode.decl, "%s %s; /* %s */\n",
                                  hlTypes[id->type], id->name,
@@ -768,7 +768,7 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
             if (id->name[0] != '\0') /* STK_FRAME & REG w/name*/
                 sprintf(o, "%s", id->name);
             else if (id->loc == REG_FRAME) {
-                sprintf(id->name, "loc%ld", ++(*numLoc));
+                sprintf(id->name, "loc%d", ++(*numLoc));
                 appendStrTab(&cCode.decl, "%s %s; /* %s:%s */\n",
                              hlTypes[id->type], id->name,
                              wordReg[id->id.longId.h - rAX],
@@ -779,10 +779,10 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
             } else /* GLB_FRAME */
             {
                 if (id->id.longGlb.regi == 0) /* not indexed */
-                    sprintf(o, "[%ld]",
+                    sprintf(o, "[%d]",
                             (id->id.longGlb.seg << 4) + id->id.longGlb.offH);
                 else if (id->id.longGlb.regi == rBX)
-                    sprintf(o, "[%ld][bx]",
+                    sprintf(o, "[%d][bx]",
                             (id->id.longGlb.seg << 4) + id->id.longGlb.offH);
             }
             break;
