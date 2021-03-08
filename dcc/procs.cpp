@@ -194,6 +194,8 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
         picode->du.def &= maskDuReg[id->id.longId.l];
         ps->sym[ps->csym].type = TYPE_LONG_SIGN;
         break;
+    default:
+        break;
     }
 
     ps->csym++;
@@ -311,9 +313,13 @@ void adjustActArgType(COND_EXPR *exp, hlType forType, PPROC pproc)
                 break;
 
             case TYPE_WORD_SIGN:
+                break;
 
+            default:
                 break;
             } /* eos */
+
+        default:
             break;
         }
     }
@@ -381,6 +387,9 @@ void adjustForArgType(PSTKFRAME pstkFrame, Int numArg, hlType actType)
         case TYPE_PTR:
         case TYPE_CONST:
         case TYPE_STR:
+            break;
+
+        default:
             break;
         } /* eos */
     }

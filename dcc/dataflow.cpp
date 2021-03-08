@@ -299,6 +299,8 @@ static void liveRegAnalysis(PPROC pproc, dword liveOut)
                         case TYPE_BYTE_UNSIGN:
                             ticode->du1.numRegsDef = 1;
                             break;
+                        default:
+                            break;
                         } /*eos*/
 
                         /* Propagate def/use results to calling icode */
@@ -590,6 +592,9 @@ missing all other identifiers ****
     case ADDRESSOF:
     case DEREFERENCE:
         return (xClear(rhs->expr.unaryExp, f, t, lastBBinst, pproc));
+
+    default:
+        break;
     } /* eos */
     return FALSE;
 }
@@ -716,6 +721,9 @@ static void findExps(PPROC pProc)
                                     invalidateIcode(picode);
                                     numHlIcodes--;
                                     break;
+
+                                default:
+                                    break;
                                 } /* eos */
                             }
                             break;
@@ -756,6 +764,9 @@ static void findExps(PPROC pProc)
                                   newRegArg (pProc, picode, ticode);
                                                                   invalidateIcode
                                   (picode); numHlIcodes--; break;	*/
+
+                            default:
+                                break;
                             } /* eos */
                             break;
 
@@ -812,7 +823,13 @@ static void findExps(PPROC pProc)
                                     newAsgnHlIcode(picode, lhs, exp);
                                 }
                                 break;
+
+                            default:
+                                break;
                             } /* eos */
+                            break;
+
+                        default:
                             break;
                         } /* eos */
                     }
@@ -866,6 +883,9 @@ static void findExps(PPROC pProc)
                                     invalidateIcode(picode);
                                     numHlIcodes--;
                                     break;
+
+                                default:
+                                    break;
                                 } /* eos */
                             }
                             break;
@@ -900,6 +920,9 @@ static void findExps(PPROC pProc)
                                     }
                                     break;
                                 case HLI_CALL: /*** missing ***/
+                                    break;
+
+                                default:
                                     break;
                                 } /* eos */
                             }
@@ -952,8 +975,14 @@ static void findExps(PPROC pProc)
                                     newAsgnHlIcode(picode, lhs, exp);
                                 }
                                 break;
+
+                            default:
+                                break;
                             } /* eos */
-                        }     /* eos */
+
+                        default:
+                            break;
+                        } /* eos */
                     }
                 }
 

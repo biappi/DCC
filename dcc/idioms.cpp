@@ -37,6 +37,9 @@ boolT JmpInst(llIcode opcode) {
     case iJP:
     case iJNP:
         return TRUE;
+
+    default:
+        break;
     }
     return FALSE;
 }
@@ -647,6 +650,8 @@ static boolT idiom11(PICODE pIcode, PICODE pEnd) {
                 case LOCAL_VAR:
                     if ((pIcode + 2)->ic.ll.dst.off == pIcode->ic.ll.dst.off)
                         return (TRUE);
+                    break;
+                default:
                     break;
                 }
         }

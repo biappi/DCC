@@ -224,6 +224,8 @@ void writeProcComments(PPROC p, strTable *strTab) {
             case TYPE_LONG_UNSIGN:
                 appendStrTab(strTab, " * Return value in registers dx:ax.\n");
                 break;
+            default:
+                break;
             } /* eos */
     }
 

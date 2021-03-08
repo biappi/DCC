@@ -101,6 +101,8 @@ boolT removeDefRegi(byte regi, PICODE picode, Int thisDefIdx, LOCAL_ID *locId)
             picode->du1.numRegsDef--;
             picode->du.def &= maskDuReg[regi];
             break;
+        default:
+            break;
         }
         return (FALSE);
     }
@@ -261,6 +263,9 @@ void highLevelGen(PPROC pProc)
                 rhs = boolCondExp(lhs, rhs, XOR);
                 newAsgnHlIcode(pIcode, lhs, rhs);
                 break;
+
+            default:
+                break;
             }
         }
     }
@@ -308,6 +313,9 @@ void inverseCondOp(COND_EXPR **exp)
             (*exp)->expr.boolExpr.op = invCondOp[(*exp)->expr.boolExpr.op];
             inverseCondOp(&(*exp)->expr.boolExpr.lhs);
             inverseCondOp(&(*exp)->expr.boolExpr.rhs);
+            break;
+
+        default:
             break;
         } /* eos */
 
@@ -412,6 +420,8 @@ char *write1HlIcode(HLTYPE h, PPROC pProc, Int *numLoc)
         strcat(buf, e);
         strcat(buf, "\n");
         break;
+    default:
+        break;
     }
     return (buf);
 }
@@ -489,6 +499,8 @@ void freeHlIcode(PICODE icode, Int numIcodes)
         case HLI_PUSH:
         case HLI_JCOND:
             freeCondExpr(h.oper.exp);
+            break;
+        default:
             break;
         }
     }

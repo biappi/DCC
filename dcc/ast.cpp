@@ -841,6 +841,9 @@ COND_EXPR *copyCondExp(COND_EXPR *exp)
     case IDENTIFIER:
         newExp = allocStruc(COND_EXPR);
         memcpy(newExp, exp, sizeof(COND_EXPR));
+
+    default:
+        break;
     }
     return (newExp);
 }
@@ -893,6 +896,9 @@ boolT insertSubTreeReg(COND_EXPR *exp, COND_EXPR **tree, byte regi,
         if (insertSubTreeReg(exp, &(*tree)->expr.unaryExp, regi, locsym))
             return TRUE;
         return FALSE;
+
+    default:
+        break;
     }
     return FALSE;
 }
@@ -922,6 +928,9 @@ boolT insertSubTreeLongReg(COND_EXPR *exp, COND_EXPR **tree, Int longIdx)
         if (insertSubTreeLongReg(exp, &(*tree)->expr.unaryExp, longIdx))
             return TRUE;
         return FALSE;
+
+    default:
+        break;
     }
     return FALSE;
 }
@@ -938,6 +947,8 @@ void freeCondExpr(COND_EXPR *exp)
     case ADDRESSOF:
     case DEREFERENCE:
         freeCondExpr(exp->expr.unaryExp);
+        break;
+    default:
         break;
     }
     free(exp);

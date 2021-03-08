@@ -277,6 +277,8 @@ static void propLongStk(Int i, ID *pLocId, PPROC pProc)
                     case iXOR:
                         rhs = boolCondExp(lhs, rhs, XOR);
                         break;
+                    default:
+                        break;
                     }
                     newAsgnHlIcode(pIcode, lhs, rhs);
                     invalidateIcode(pIcode + 1);
@@ -291,6 +293,9 @@ static void propLongStk(Int i, ID *pLocId, PPROC pProc)
                     invalidateIcode(pIcode + 1);
                     idx++;
                 }
+                break;
+
+            default:
                 break;
             } /*eos*/
         }
@@ -390,11 +395,16 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
                         case iXOR:
                             rhs = boolCondExp(lhs, rhs, XOR);
                             break;
+                        default:
+                            break;
                         } /* eos */
                         newAsgnHlIcode(pIcode, lhs, rhs);
                         invalidateIcode(pIcode + 1);
                         idx = 0;
                     }
+                    break;
+
+                default:
                     break;
                 } /* eos */
         }
@@ -463,11 +473,16 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
                             case iXOR:
                                 rhs = boolCondExp(lhs, rhs, XOR);
                                 break;
+                            default:
+                                break;
                             }
                             newAsgnHlIcode(pIcode, lhs, rhs);
                             invalidateIcode(pIcode + 1);
                             idx = 0;
                         }
+                        break;
+
+                    default:
                         break;
                     } /* eos */
 

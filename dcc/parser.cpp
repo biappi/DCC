@@ -366,6 +366,9 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
                 psym->type = TYPE_PTR;
             }
             break;
+
+        default:
+            break;
         }
     }
 
@@ -1182,6 +1185,9 @@ static void process_operands(PICODE pIcode, PPROC pProc, PSTATE pstate, Int ix)
         if (!Imm) {
             pIcode->du.use |= duReg[rDX];
         }
+        break;
+
+    default:
         break;
     }
 

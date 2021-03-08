@@ -455,7 +455,9 @@ boolT LibCheck(PPROC pProc) {
                     case TYPE_BYTE_UNSIGN:
                         pProc->liveOut = duReg[rAL];
                         break;
-                        /*** other types are not considered yet ***/
+                    /*** other types are not considered yet ***/
+                    default:
+                        break;
                     }
                 }
                 if (pFunc[i].bVararg)
