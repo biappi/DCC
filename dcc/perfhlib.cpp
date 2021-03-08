@@ -33,7 +33,6 @@ static bool *visited; /* Array of bools: whether visited */
 static void initGraph(void);
 static void addToGraph(int e, int v1, int v2);
 static bool isCycle(void);
-static void duplicateKeys(int v1, int v2);
 
 void hashParams(int _NumEntry, int _EntryLen, int _SetSize, char _SetMin,
                 int _NumVert) {

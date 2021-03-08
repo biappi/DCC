@@ -146,8 +146,8 @@ static void findNodesInLoop(PBB latchNode, PBB head, PPROC pProc,
 /* Flags nodes that belong to the loop determined by (latchNode, head) and
  * determines the type of loop.                     */
 {
-    Int i, headDfsNum, intNodeType, j;
-    nodeList *loopNodes = NULL, p;
+    Int i, headDfsNum, intNodeType;
+    nodeList *loopNodes = NULL;
     Int immedDom,         /* dfsLast index to immediate dominator */
         thenDfs, elseDfs; /* dsfLast index for THEN and ELSE nodes */
     PBB pbb;
@@ -419,8 +419,7 @@ static void structIfs(PPROC pProc)
         followInEdges,        /* Largest # in-edges so far 			*/
         follow;               /* Possible follow node 				*/
     nodeList *domDesc = NULL, /* List of nodes dominated by curr  	*/
-        *unresolved = NULL,   /* List of unresolved if nodes  		*/
-        *l;                   /* Temporary list       				*/
+        *unresolved = NULL;   /* List of unresolved if nodes  		*/
     PBB currNode,             /* Pointer to current node  			*/
         pbb;
 
@@ -467,11 +466,10 @@ void compoundCond(PPROC pproc)
  * level instruction.  Whenever these blocks are found, they are merged
  * into one block with the appropriate condition */
 {
-    Int i, j, k, numOutEdges;
-    PBB pbb, t, e, obb, pred;
+    Int i, j;
+    PBB pbb, t, e, obb;
     PICODE picode, ticode;
     COND_EXPR *exp;
-    TYPEADR_TYPE *edges;
     boolT change;
 
     change = TRUE;

@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#if 0
 static Int getLocVar(PSTKFRAME pStkFrame, Int off)
 /* Returns the index of the local variable or parameter at offset off, if it
  * is in the stack frame provided.  */
@@ -20,6 +21,7 @@ static Int getLocVar(PSTKFRAME pStkFrame, Int off)
             break;
     return (i);
 }
+#endif
 
 static COND_EXPR *srcIdent(PICODE Icode, PPROC pProc, Int i, PICODE duIcode,
                            operDu du)
@@ -342,7 +344,6 @@ static void genDU1(PPROC pProc)
     PICODE picode, ticode; /* Current and target bb    */
     PBB pbb, tbb;          /* Current and target basic block */
     boolT res;
-    COND_EXPR *exp, *lhs;
 
     /* Traverse tree in dfsLast order */
     for (i = 0; i < pProc->numBBs; i++) {
@@ -639,16 +640,15 @@ static void findExps(PPROC pProc)
  * expressions.  Generates new hlIcodes in the form of expression trees.
  * For HLI_CALL hlIcodes, places the arguments in the argument list.    */
 {
-    Int i, j, k, lastInst, lastInstN, numHlIcodes;
+    Int i, j, k, lastInst, numHlIcodes;
     PICODE picode, /* Current icode                            */
         ticode;    /* Target icode                             */
-    PBB pbb, nbb;  /* Current and next basic block             */
+    PBB pbb;       /* Current basic block             */
     boolT res;
-    COND_EXPR *exp,   /* expression pointer - for HLI_POP and HLI_CALL    */
-        *lhs;         /* exp ptr for return value of a HLI_CALL		*/
-    PSTKFRAME args;   /* pointer to arguments - for HLI_CALL          */
-    byte regi, regi2; /* register(s) to be forward substituted	*/
-    ID *retVal;       /* function return value       */
+    COND_EXPR *exp, /* expression pointer - for HLI_POP and HLI_CALL    */
+        *lhs;       /* exp ptr for return value of a HLI_CALL		*/
+    byte regi;      /* register to be forward substituted	*/
+    ID *retVal;     /* function return value       */
 
     /* Initialize expression stack */
     initExpStk();

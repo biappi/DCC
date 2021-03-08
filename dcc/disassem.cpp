@@ -130,7 +130,6 @@ static char *strSrc(PICODE pc);
 static char *strHex(dword d);
 static Int checkScanned(dword pcCur);
 static void setProc(PPROC proc);
-static void dispData(word dataSeg);
 static void flops(PICODE pi);
 boolT callArg(word off, char *temp); /* Check for procedure name */
 
@@ -1292,6 +1291,7 @@ void interactDis(PPROC initProc, Int initIC) {
 /****************************************************************************
  *          Display the current image position as data                      *
  ****************************************************************************/
+#if 0
 static void dispData(word dataSeg) {
     int y, c, i;
     Int pc, pcStart;
@@ -1337,6 +1337,7 @@ static void dispData(word dataSeg) {
         /*       getyx(stdscr, y, x);	*/
     }
 }
+#endif
 
 boolT callArg(word off, char *sym) {
     dword imageOff;

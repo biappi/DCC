@@ -496,6 +496,7 @@ static boolT idiom9(PICODE pIcode, PICODE pEnd) {
  *			  because this is most likely a long conditional
  *equality test. Found in Borland Turbo C.
  ****************************************************************************/
+#if 0
 static boolT idiom10old(PICODE pIcode, PICODE pEnd) {
     if (pIcode < pEnd) {
         /* Check OR reg, reg */
@@ -514,6 +515,7 @@ static boolT idiom10old(PICODE pIcode, PICODE pEnd) {
     }
     return (FALSE);
 }
+#endif
 
 /*****************************************************************************
  * idiom10 - Jump if not equal to 0

@@ -92,6 +92,7 @@ char *cChar(byte c)
     return (res);
 }
 
+#if 0
 static void printGlobVar(PSYM psym)
 /* Prints the variable's name and initial contents on the file.
  * Note: to get to the value of the variable:
@@ -130,8 +131,10 @@ static void printGlobVar(PSYM psym)
                      strContents);
     }
 }
+#endif
 
 // Note: Not called at present.
+#if 0
 static void writeGlobSymTable()
 /* Writes the contents of the symbol table, along with any variable
  * initialization. */
@@ -170,6 +173,7 @@ static void writeGlobSymTable()
         appendStrTab(&cCode.decl, "\n");
     }
 }
+#endif
 
 static void writeHeader(FILE *fp, char *fileName)
 /* Writes the header information and global variables to the output C file
@@ -223,6 +227,7 @@ static void emitGotoLabel(PICODE pt, Int indLevel)
 }
 
 // Note: Not currently called!
+#if 0
 static void emitFwdGotoLabel(PICODE pt, Int indLevel)
 /* Checks the given icode to determine whether it has a label associated
  * to it.  If so, a goto is emitted to this label; otherwise, a new label
@@ -240,6 +245,7 @@ static void emitFwdGotoLabel(PICODE pt, Int indLevel)
     appendStrTab(&cCode.code, "%sgoto l%ld;\n", indent(indLevel),
                  pt->ic.ll.hllLabNum);
 }
+#endif
 
 static void writeBB(PBB pBB, PICODE hli, Int lev, PPROC pProc, Int *numLoc)
 /* Writes the code for the current basic block.
