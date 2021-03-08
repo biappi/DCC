@@ -920,7 +920,7 @@ static void use(opLoc d, PICODE pIcode, PPROC pProc, PSTATE pstate, Int size,
             pIcode->du.use |= duReg[pm->regi];
         }
 
-        else if (psym = lookupAddr(pm, pstate, size, USE)) {
+        else if ((psym = lookupAddr(pm, pstate, size, USE))) {
             setBits(BM_DATA, psym->label, (dword)size);
             pIcode->ic.ll.flg |= SYM_USE;
             pIcode->ic.ll.caseTbl.numEntries = psym - symtab.sym;
@@ -965,7 +965,7 @@ static void def(opLoc d, PICODE pIcode, PPROC pProc, PSTATE pstate, Int size,
             pIcode->du.use |= duReg[pm->regi];
         }
 
-        else if (psym = lookupAddr(pm, pstate, size, DEF)) {
+        else if ((psym = lookupAddr(pm, pstate, size, DEF))) {
             setBits(BM_DATA, psym->label, (dword)size);
             pIcode->ic.ll.flg |= SYM_DEF;
             pIcode->ic.ll.caseTbl.numEntries = psym - symtab.sym;

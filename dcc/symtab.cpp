@@ -268,8 +268,9 @@ boolT findVal(dword symOff, PPROC symProc, word *pIndex)
         if (valTab[j].symProc == 0) {
             return FALSE; /* No entry at all */
         }
-        if ((valTab[j].symOff == symOff)
-            /*&& (valTab[j].symProc == symProc)*/) {
+        if (valTab[j].symOff == symOff)
+        /*&& (valTab[j].symProc == symProc)) */
+        {
             *pIndex = j;
             return TRUE; /* Symbol found */
         }

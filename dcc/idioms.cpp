@@ -986,7 +986,7 @@ void findIdioms(PPROC pProc)
             break;
 
         case iMOV: /* Idiom 2 */
-            if (idx = idiom2(pIcode, pEnd, ip, pProc)) {
+            if ((idx = idiom2(pIcode, pEnd, ip, pProc))) {
                 invalidateIcode(pIcode);
                 invalidateIcode(pIcode + 1);
                 pIcode += 3;
@@ -1004,7 +1004,7 @@ void findIdioms(PPROC pProc)
                 pIcode += 2;
                 ip++;
             }
-            else if (idx = idiom13(pIcode, pEnd)) /* Idiom 13 */
+            else if ((idx = idiom13(pIcode, pEnd))) /* Idiom 13 */
             {
                 lhs = idCondExpReg(idx, 0, &pProc->localId);
                 setRegDU(pIcode, idx, E_DEF);
@@ -1035,7 +1035,7 @@ void findIdioms(PPROC pProc)
                 }
 
             /* Check for idioms */
-            if (idx = idiom3(pIcode, pEnd)) /* idiom 3 */
+            if ((idx = idiom3(pIcode, pEnd))) /* idiom 3 */
             {
                 if (pIcode->ic.ll.flg & I) {
                     (pIcode->ic.ll.immed.proc.proc)->cbParam = (int16)idx;
@@ -1046,7 +1046,7 @@ void findIdioms(PPROC pProc)
                     ip++;
                 }
             }
-            else if (idx = idiom17(pIcode, pEnd)) /* idiom 17 */
+            else if ((idx = idiom17(pIcode, pEnd))) /* idiom 17 */
             {
                 if (pIcode->ic.ll.flg & I) {
                     (pIcode->ic.ll.immed.proc.proc)->cbParam = (int16)idx;
@@ -1101,7 +1101,7 @@ void findIdioms(PPROC pProc)
             break;
 
         case iSHL:
-            if (idx = idiom15(pIcode, pEnd)) /* idiom 15 */
+            if ((idx = idiom15(pIcode, pEnd))) /* idiom 15 */
             {
                 lhs =
                     idCondExpReg(pIcode->ic.ll.dst.regi,
