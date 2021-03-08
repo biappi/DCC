@@ -6,11 +6,7 @@
 
 #include "dcc.h"
 #include <stdio.h>
-#ifdef __BORLAND__
-#include <alloc.h>
-#else
 #include <stdlib.h> /* For free() */
-#endif
 #include <string.h>
 
 static Int numInt; /* Number of intervals      */

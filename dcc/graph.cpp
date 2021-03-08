@@ -5,11 +5,7 @@
 
 #include "dcc.h"
 #include <string.h>
-#if __BORLAND__
-#include <alloc.h>
-#else
 #include <stdlib.h> /* For free() */
-#endif
 
 static PBB rmJMP(PPROC pProc, Int marker, PBB pBB);
 static void mergeFallThrough(PPROC pProc, PBB pBB);

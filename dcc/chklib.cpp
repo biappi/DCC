@@ -7,11 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef __BORLAND__
-#include <mem.h>
-#else
 #include <memory.h>
-#endif
 #include <string.h>
 #include "dcc.h"
 #include "perfhlib.h"

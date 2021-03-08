@@ -7,11 +7,7 @@
 
 #include "dcc.h"
 #include "string.h"
-#ifdef __BORLAND__
-#include <mem.h>
-#else
 #include <memory.h>
-#endif
 
 static boolT isJCond(llIcode opcode)
 /* Returns whether the given icode opcode is within the range of valid

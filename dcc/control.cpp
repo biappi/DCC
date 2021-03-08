@@ -6,11 +6,7 @@
 #include "dcc.h"
 #include <stdio.h>
 #include <string.h>
-#if __BORLAND__
-#include <alloc.h>
-#else
 #include <stdlib.h>
-#endif
 
 typedef struct list {
     Int nodeIdx; /* dfsLast index to the node */

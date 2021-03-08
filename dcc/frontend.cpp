@@ -8,10 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef __BORLAND__
-#include <alloc.h>
-#else
-#endif
 
 typedef struct {        /*        PSP structure        */
     word int20h;        /* interrupt 20h        */

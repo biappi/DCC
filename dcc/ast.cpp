@@ -5,11 +5,7 @@
  * (C) Cristina Cifuentes
  */
 
-#if __BORLAND__
-#include <alloc.h>
-#else
 #include <stdlib.h> /* For free() */
-#endif
 #include <string.h>
 #include "dcc.h"
 

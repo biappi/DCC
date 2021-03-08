@@ -7,11 +7,7 @@
 #include "symtab.h"
 #include <stdio.h>
 #include <string.h>
-#ifdef __BORLAND__
-#include <alloc.h>
-#else
 #include <stdlib.h> /* For free() */
-#endif
 #ifdef _CONSOLE
 #include <windows.h> /* For console mode routines */
 #endif
