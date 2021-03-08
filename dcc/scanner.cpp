@@ -1571,7 +1571,8 @@ static PICODE pIcode; /* Ptr to Icode record filled in by scan() */
  Scans one machine instruction at offset ip in prog.Image and returns error.
  At the same time, fill in low-level icode details for the scanned inst.
  ****************************************************************************/
-Int scan(dword ip, PICODE p) {
+Int scan(dword ip, PICODE p)
+{
     Int op;
 
     memset(p, 0, sizeof(ICODE));
@@ -1610,7 +1611,8 @@ Int scan(dword ip, PICODE p) {
 /***************************************************************************
  relocItem - returns TRUE if word pointed at is in relocation table
  **************************************************************************/
-static boolT relocItem(byte *p) {
+static boolT relocItem(byte *p)
+{
     Int i;
     dword off = p - prog.Image;
 
@@ -1623,7 +1625,8 @@ static boolT relocItem(byte *p) {
 /***************************************************************************
  getWord - returns next word from image
  **************************************************************************/
-static word getWord(void) {
+static word getWord(void)
+{
     word w = LH(pInst);
     pInst += 2;
     return w;
@@ -1632,7 +1635,8 @@ static word getWord(void) {
 /****************************************************************************
  signex - returns byte sign extended to Int
  ***************************************************************************/
-static Int signex(byte b) {
+static Int signex(byte b)
+{
     long s = b;
     return ((b & 0x80) ? (Int)(0xFFFFFF00 | s) : (Int)s);
 }
@@ -1643,7 +1647,8 @@ static Int signex(byte b) {
  * 	Note: fdst == TRUE is for the r/m part of the field (dest, unless
  *TO_REG) fdst == FALSE is for reg part of the field
  ***************************************************************************/
-static void setAddress(Int i, boolT fdst, word seg, int16 reg, word off) {
+static void setAddress(Int i, boolT fdst, word seg, int16 reg, word off)
+{
     PMEM pm;
 
     /* If not to register (i.e. to r/m), and talking about r/m,
@@ -1656,12 +1661,14 @@ static void setAddress(Int i, boolT fdst, word seg, int16 reg, word off) {
     if (seg) /* segment override */
     {
         pm->seg = pm->segOver = (byte)seg;
-    } else { /* no override, check indexed register */
+    }
+    else { /* no override, check indexed register */
         if ((reg >= INDEXBASE) &&
             (reg == INDEXBASE + 2 || reg == INDEXBASE + 3 ||
              reg == INDEXBASE + 6)) {
             pm->seg = rSS; /* indexed on bp */
-        } else {
+        }
+        else {
             pm->seg = rDS; /* any other indexed reg */
         }
     }
@@ -1680,7 +1687,8 @@ static void setAddress(Int i, boolT fdst, word seg, int16 reg, word off) {
 /****************************************************************************
  rm - Decodes r/m part of modrm byte for dst (unless TO_REG) part of icode
  ***************************************************************************/
-static void rm(Int i) {
+static void rm(Int i)
+{
     byte mod = *pInst >> 6;
     byte rm = *pInst++ & 7;
 
@@ -1689,7 +1697,8 @@ static void rm(Int i) {
         if (rm == 6) {
             setAddress(i, TRUE, SegPrefix, 0, getWord());
             pIcode->ic.ll.flg |= WORD_OFF;
-        } else
+        }
+        else
             setAddress(i, TRUE, SegPrefix, rm + INDEXBASE, 0);
         break;
 
@@ -1715,7 +1724,8 @@ static void rm(Int i) {
 /****************************************************************************
  modrm - Sets up src and dst from modrm byte
  ***************************************************************************/
-static void modrm(Int i) {
+static void modrm(Int i)
+{
     setAddress(i, FALSE, 0, REG(*pInst) + rAX, 0);
     rm(i);
 }
@@ -1723,7 +1733,8 @@ static void modrm(Int i) {
 /****************************************************************************
  segrm - seg encoded as reg of modrm
  ****************************************************************************/
-static void segrm(Int i) {
+static void segrm(Int i)
+{
     Int reg = REG(*pInst) + rES;
 
     if (reg > rDS || (reg == rCS && (stateTable[i].flg & TO_REG)))
@@ -1737,7 +1748,8 @@ static void segrm(Int i) {
 /****************************************************************************
  regop - src/dst reg encoded as low 3 bits of opcode
  ***************************************************************************/
-static void regop(Int i) {
+static void regop(Int i)
+{
     setAddress(i, FALSE, 0, ((int16)i & 7) + rAX, 0);
     pIcode->ic.ll.dst.regi = pIcode->ic.ll.src.regi;
 }
@@ -1745,7 +1757,8 @@ static void regop(Int i) {
 /*****************************************************************************
  segop - seg encoded in middle of opcode
  *****************************************************************************/
-static void segop(Int i) {
+static void segop(Int i)
+{
     setAddress(i, TRUE, 0, (((int16)i & 0x18) >> 3) + rES, 0);
 }
 
@@ -1755,16 +1768,10 @@ static void segop(Int i) {
 static void axImp(Int i) { setAddress(i, TRUE, 0, rAX, 0); }
 
 static void axSrcIm(Int i)
-/* Implied AX source */
-{
-    pIcode->ic.ll.src.regi = rAX;
-}
+/* Implied AX source */ { pIcode->ic.ll.src.regi = rAX; }
 
 static void alImp(Int i)
-/* Implied AL source */
-{
-    pIcode->ic.ll.src.regi = rAL;
-}
+/* Implied AL source */ { pIcode->ic.ll.src.regi = rAL; }
 
 /*****************************************************************************
  memImp - Plugs implied src memory operand with any segment override
@@ -1774,7 +1781,8 @@ static void memImp(Int i) { setAddress(i, FALSE, SegPrefix, 0, 0); }
 /****************************************************************************
  memOnly - Instruction is not valid if modrm refers to register (i.e. mod == 3)
  ***************************************************************************/
-static void memOnly(Int i) {
+static void memOnly(Int i)
+{
     if ((*pInst & 0xC0) == 0xC0)
         pIcode->ic.ll.opcode = (llIcode)0;
 }
@@ -1782,7 +1790,8 @@ static void memOnly(Int i) {
 /****************************************************************************
  memReg0 - modrm for 'memOnly' and Reg field must also be 0
  ****************************************************************************/
-static void memReg0(Int i) {
+static void memReg0(Int i)
+{
     if (REG(*pInst) || (*pInst & 0xC0) == 0xC0)
         pIcode->ic.ll.opcode = (llIcode)0;
     else
@@ -1792,7 +1801,8 @@ static void memReg0(Int i) {
 /***************************************************************************
  immed - Sets up dst and opcode from modrm byte
  **************************************************************************/
-static void immed(Int i) {
+static void immed(Int i)
+{
     static llIcode immedTable[8] = {iADD, iOR,  iADC, iSBB,
                                     iAND, iSUB, iXOR, iCMP};
     static byte uf[8] = {0, 0, Cf, Cf, 0, 0, 0, 0};
@@ -1809,7 +1819,8 @@ static void immed(Int i) {
 /****************************************************************************
  shift  - Sets up dst and opcode from modrm byte
  ***************************************************************************/
-static void shift(Int i) {
+static void shift(Int i)
+{
     static llIcode shiftTable[8] = {(llIcode)iROL, (llIcode)iROR, (llIcode)iRCL,
                                     (llIcode)iRCR, (llIcode)iSHL, (llIcode)iSHR,
                                     (llIcode)0,    (llIcode)iSAR};
@@ -1827,7 +1838,8 @@ static void shift(Int i) {
 /****************************************************************************
  trans - Sets up dst and opcode from modrm byte
  ***************************************************************************/
-static void trans(Int i) {
+static void trans(Int i)
+{
     static llIcode transTable[8] = {
         (llIcode)iINC, (llIcode)iDEC,  (llIcode)iCALL, (llIcode)iCALLF,
         (llIcode)iJMP, (llIcode)iJMPF, (llIcode)iPUSH, (llIcode)0};
@@ -1850,7 +1862,8 @@ static void trans(Int i) {
 /****************************************************************************
  arith - Sets up dst and opcode from modrm byte
  ****************************************************************************/
-static void arith(Int i) {
+static void arith(Int i)
+{
     byte opcode;
     static llIcode arithTable[8] = {
         (llIcode)iTEST, (llIcode)0,     (llIcode)iNOT, (llIcode)iNEG,
@@ -1867,10 +1880,12 @@ static void arith(Int i) {
             data1(i);
         else
             data2(i);
-    } else if (!(opcode == iNOT || opcode == iNEG)) {
+    }
+    else if (!(opcode == iNOT || opcode == iNEG)) {
         memcpy(&pIcode->ic.ll.src, &pIcode->ic.ll.dst, sizeof(ICODEMEM));
         setAddress(i, TRUE, 0, rAX, 0); /* dst = AX  */
-    } else if (opcode == iNEG || opcode == iNOT)
+    }
+    else if (opcode == iNEG || opcode == iNOT)
         pIcode->ic.ll.flg |= NO_SRC;
 
     if ((opcode == iDIV) || (opcode == iIDIV)) {
@@ -1882,7 +1897,8 @@ static void arith(Int i) {
 /*****************************************************************************
  data1 - Sets up immed from 1 byte data
  *****************************************************************************/
-static void data1(Int i) {
+static void data1(Int i)
+{
     pIcode->ic.ll.immed.op =
         (stateTable[i].flg & S) ? signex(*pInst++) : *pInst++;
     pIcode->ic.ll.flg |= I;
@@ -1891,7 +1907,8 @@ static void data1(Int i) {
 /*****************************************************************************
  data2 - Sets up immed from 2 byte data
  ****************************************************************************/
-static void data2(Int i) {
+static void data2(Int i)
+{
     if (relocItem(pInst))
         pIcode->ic.ll.flg |= SEG_IMMED;
 
@@ -1903,7 +1920,8 @@ static void data2(Int i) {
     if (pIcode->ic.ll.opcode == iENTER) {
         pIcode->ic.ll.dst.off = getWord();
         pIcode->ic.ll.flg |= NO_OPS;
-    } else
+    }
+    else
         pIcode->ic.ll.immed.op = getWord();
     pIcode->ic.ll.flg |= I;
 }
@@ -1917,7 +1935,8 @@ static void dispM(Int i) { setAddress(i, FALSE, SegPrefix, 0, getWord()); }
 /****************************************************************************
  dispN - 2 byte disp as immed relative to ip
  ****************************************************************************/
-static void dispN(Int i) {
+static void dispN(Int i)
+{
     long off = (short)getWord(); /* Signed displacement */
 
     /* Note: the result of the subtraction could be between 32k and 64k, and
@@ -1930,7 +1949,8 @@ static void dispN(Int i) {
 /***************************************************************************
  dispS - 1 byte disp as immed relative to ip
  ***************************************************************************/
-static void dispS(Int i) {
+static void dispS(Int i)
+{
     long off = signex(*pInst++); /* Signed displacement */
 
     pIcode->ic.ll.immed.op = (dword)(off + (unsigned)(pInst - prog.Image));
@@ -1940,7 +1960,8 @@ static void dispS(Int i) {
 /****************************************************************************
  dispF - 4 byte disp as immed 20-bit target address
  ***************************************************************************/
-static void dispF(Int i) {
+static void dispF(Int i)
+{
     dword off = (unsigned)getWord();
     dword seg = (unsigned)getWord();
 
@@ -1952,21 +1973,24 @@ static void dispF(Int i) {
  prefix - picks up prefix byte for following instruction (LOCK is ignored
           on purpose)
  ****************************************************************************/
-static void prefix(Int i) {
+static void prefix(Int i)
+{
     if (pIcode->ic.ll.opcode == iREPE || pIcode->ic.ll.opcode == iREPNE)
         RepPrefix = pIcode->ic.ll.opcode;
     else
         SegPrefix = pIcode->ic.ll.opcode;
 }
 
-inline void BumpOpcode(llIcode &ic) {
+inline void BumpOpcode(llIcode &ic)
+{
     ic = (llIcode)(((int)ic) + 1); // Bump this icode via the int type
 }
 
 /*****************************************************************************
  strop - checks RepPrefix and converts string instructions accordingly
  *****************************************************************************/
-static void strop(Int i) {
+static void strop(Int i)
+{
     if (RepPrefix) {
         //		pIcode->ic.ll.opcode += ((pIcode->ic.ll.opcode == iCMPS
         //||
@@ -1987,7 +2011,8 @@ static void strop(Int i) {
 /***************************************************************************
  escop - esc operands
  ***************************************************************************/
-static void escop(Int i) {
+static void escop(Int i)
+{
     pIcode->ic.ll.immed.op = REG(*pInst) + (dword)((i & 7) << 3);
     pIcode->ic.ll.flg |= I;
     rm(i);
@@ -1996,7 +2021,8 @@ static void escop(Int i) {
 /****************************************************************************
  const1
  ****************************************************************************/
-static void const1(Int i) {
+static void const1(Int i)
+{
     pIcode->ic.ll.immed.op = 1;
     pIcode->ic.ll.flg |= I;
 }
@@ -2004,7 +2030,8 @@ static void const1(Int i) {
 /*****************************************************************************
  const3
  ****************************************************************************/
-static void const3(Int i) {
+static void const3(Int i)
+{
     pIcode->ic.ll.immed.op = 3;
     pIcode->ic.ll.flg |= I;
 }
@@ -2017,7 +2044,8 @@ static void none1(Int i) {}
 /****************************************************************************
  none2 - Sets the NO_OPS flag if the operand is immediate
  ****************************************************************************/
-static void none2(Int i) {
+static void none2(Int i)
+{
     if (pIcode->ic.ll.flg & I)
         pIcode->ic.ll.flg |= NO_OPS;
 }
@@ -2025,7 +2053,8 @@ static void none2(Int i) {
 /****************************************************************************
  Checks for int 34 to int 3B - if so, converts to ESC nn instruction
  ****************************************************************************/
-static void checkInt(Int i) {
+static void checkInt(Int i)
+{
     word wOp = (word)pIcode->ic.ll.immed.op;
     if ((wOp >= 0x34) && (wOp <= 0x3B)) {
         /* This is a Borland/Microsoft floating point emulation instruction.

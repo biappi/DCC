@@ -12,7 +12,8 @@
 /*****************************************************************************
  * JmpInst - Returns TRUE if opcode is a conditional or unconditional jump
  ****************************************************************************/
-boolT JmpInst(llIcode opcode) {
+boolT JmpInst(llIcode opcode)
+{
     switch (opcode) {
     case iJMP:
     case iJMPF:
@@ -51,7 +52,8 @@ boolT JmpInst(llIcode opcode) {
  *                          [PUSH SI]
  * In which case, the stack variable flags are set
  ****************************************************************************/
-static Int checkStkVars(PICODE pIcode, PICODE pEnd, PPROC pProc) {
+static Int checkStkVars(PICODE pIcode, PICODE pEnd, PPROC pProc)
+{
     /* Look for PUSH SI */
     if ((pIcode < pEnd) && (pIcode->ic.ll.opcode == iPUSH) &&
         (pIcode->ic.ll.dst.regi == rSI)) {
@@ -62,10 +64,12 @@ static Int checkStkVars(PICODE pIcode, PICODE pEnd, PPROC pProc) {
             (pIcode->ic.ll.dst.regi == rDI)) {
             pProc->flg |= DI_REGVAR;
             return 2;
-        } else
+        }
+        else
             return 1;
-    } else if ((pIcode < pEnd) && (pIcode->ic.ll.opcode == iPUSH) &&
-               (pIcode->ic.ll.dst.regi == rDI)) {
+    }
+    else if ((pIcode < pEnd) && (pIcode->ic.ll.opcode == iPUSH) &&
+             (pIcode->ic.ll.dst.regi == rDI)) {
         pProc->flg |= DI_REGVAR;
 
         /* Look for PUSH SI */
@@ -73,9 +77,11 @@ static Int checkStkVars(PICODE pIcode, PICODE pEnd, PPROC pProc) {
             (pIcode->ic.ll.dst.regi == rSI)) {
             pProc->flg |= SI_REGVAR;
             return 2;
-        } else
+        }
+        else
             return 1;
-    } else
+    }
+    else
         return 0;
 }
 
@@ -95,7 +101,8 @@ static Int checkStkVars(PICODE pIcode, PICODE pEnd, PPROC pProc) {
  *          [PUSH SI]
  *          [PUSH DI]
  ****************************************************************************/
-static Int idiom1(PICODE pIcode, PICODE pEnd, PPROC pProc) {
+static Int idiom1(PICODE pIcode, PICODE pEnd, PPROC pProc)
+{
     Int n;
 
     /* PUSH BP as first instruction of procedure */
@@ -112,7 +119,8 @@ static Int idiom1(PICODE pIcode, PICODE pEnd, PPROC pProc) {
                 (pIcode->ic.ll.flg & (I | TARGET | CASE)) == I &&
                 pIcode->ic.ll.opcode == iSUB && pIcode->ic.ll.dst.regi == rSP) {
                 return (3 + checkStkVars(++pIcode, pEnd, pProc));
-            } else
+            }
+            else
                 return (2 + checkStkVars(pIcode, pEnd, pProc));
         }
 
@@ -131,9 +139,11 @@ static Int idiom1(PICODE pIcode, PICODE pEnd, PPROC pProc) {
                     pIcode->ic.ll.src.regi == rSP) {
                     pProc->args.minOff = 2 + (n * 2);
                     return (2 + n);
-                } else
+                }
+                else
                     return 0; // Cristina: check this please!
-            } else
+            }
+            else
                 return 0; // Cristina: check this please!
         }
     }
@@ -149,12 +159,14 @@ static Int idiom1(PICODE pIcode, PICODE pEnd, PPROC pProc) {
  *      or  [POP SI]
  *          [POP DI]
  ****************************************************************************/
-static void popStkVars(PICODE pIcode, PICODE pEnd, PPROC pProc) {
+static void popStkVars(PICODE pIcode, PICODE pEnd, PPROC pProc)
+{
     /* Match [POP DI] */
     if (pIcode->ic.ll.opcode == iPOP) {
         if ((pProc->flg & DI_REGVAR) && (pIcode->ic.ll.dst.regi == rDI)) {
             invalidateIcode(pIcode);
-        } else {
+        }
+        else {
             if ((pProc->flg & SI_REGVAR) && (pIcode->ic.ll.dst.regi == rSI)) {
                 invalidateIcode(pIcode);
             }
@@ -165,7 +177,8 @@ static void popStkVars(PICODE pIcode, PICODE pEnd, PPROC pProc) {
     if ((pIcode + 1)->ic.ll.opcode == iPOP) {
         if ((pProc->flg & SI_REGVAR) && ((pIcode + 1)->ic.ll.dst.regi == rSI)) {
             invalidateIcode(pIcode + 1);
-        } else {
+        }
+        else {
             if ((pProc->flg & DI_REGVAR) &&
                 ((pIcode + 1)->ic.ll.dst.regi == rDI))
                 invalidateIcode(pIcode + 1);
@@ -181,7 +194,8 @@ static void popStkVars(PICODE pIcode, PICODE pEnd, PPROC pProc) {
  *          POP  BP
  *          RET(F)
  *****************************************************************************/
-static Int idiom2(PICODE pIcode, PICODE pEnd, Int ip, PPROC pProc) {
+static Int idiom2(PICODE pIcode, PICODE pEnd, Int ip, PPROC pProc)
+{
     PICODE nicode;
 
     /* Match MOV SP, BP */
@@ -221,7 +235,8 @@ static Int idiom2(PICODE pIcode, PICODE pEnd, Int ip, PPROC pProc) {
  *MOV sp, bp. Need to flag the procedure in these cases. Used by compilers to
  *restore the stack when invoking a procedure using the C calling convention.
  ****************************************************************************/
-static Int idiom3(PICODE pIcode, PICODE pEnd) {
+static Int idiom3(PICODE pIcode, PICODE pEnd)
+{
     /* Match ADD  SP, immed */
     if ((++pIcode < pEnd) && (pIcode->ic.ll.flg & I) &&
         (pIcode->ic.ll.opcode == iADD) && (pIcode->ic.ll.dst.regi == rSP))
@@ -244,7 +259,8 @@ static Int idiom3(PICODE pIcode, PICODE pEnd) {
  *  Found in Turbo C when restoring the stack for a procedure that uses the
  *  C calling convention.  Used to restore the stack of 2 or 4 bytes args.
  ****************************************************************************/
-static Int idiom17(PICODE pIcode, PICODE pEnd) {
+static Int idiom17(PICODE pIcode, PICODE pEnd)
+{
     Int i = 0; /* Count on # pops */
     byte regi;
 
@@ -279,7 +295,8 @@ static Int idiom17(PICODE pIcode, PICODE pEnd) {
  *			[POP SI]
  *			RET(F) [immed]
  ****************************************************************************/
-static void idiom4(PICODE pIcode, PICODE pEnd, PPROC pProc) {
+static void idiom4(PICODE pIcode, PICODE pEnd, PPROC pProc)
+{
     /* Check for [POP DI]
      *           [POP SI] */
     popStkVars(pIcode - 3, pEnd, pProc);
@@ -309,7 +326,8 @@ static void idiom4(PICODE pIcode, PICODE pEnd, PPROC pProc) {
  *      Found in Borland Turbo C code.
  *      Commonly used idiom for long addition.
  ****************************************************************************/
-static boolT idiom5(PICODE pIcode, PICODE pEnd) {
+static boolT idiom5(PICODE pIcode, PICODE pEnd)
+{
     if (pIcode < pEnd)
         if ((pIcode + 1)->ic.ll.opcode == iADC)
             return (TRUE);
@@ -326,7 +344,8 @@ static boolT idiom5(PICODE pIcode, PICODE pEnd) {
  *      Found in Borland Turbo C code.
  *      Commonly used idiom for long substraction.
  ****************************************************************************/
-static boolT idiom6(PICODE pIcode, PICODE pEnd) {
+static boolT idiom6(PICODE pIcode, PICODE pEnd)
+{
     if (pIcode < pEnd)
         if ((pIcode + 1)->ic.ll.opcode == iSBB)
             return (TRUE);
@@ -340,7 +359,8 @@ static boolT idiom6(PICODE pIcode, PICODE pEnd) {
  *          =>  ax = 0
  *      Found in Borland Turbo C and Microsoft C code.
  ****************************************************************************/
-static boolT idiom7(PICODE pIcode) {
+static boolT idiom7(PICODE pIcode)
+{
     PMEM dst, src;
 
     dst = &pIcode->ic.ll.dst;
@@ -349,11 +369,13 @@ static boolT idiom7(PICODE pIcode) {
     {
         if ((dst->segValue == src->segValue) && (dst->off == src->off))
             return (TRUE);
-    } else if (dst->regi < INDEXBASE) /* register */
+    }
+    else if (dst->regi < INDEXBASE) /* register */
     {
         if (dst->regi == src->regi)
             return (TRUE);
-    } else if ((dst->off) && (dst->seg == rSS) && (dst->regi == INDEXBASE + 6))
+    }
+    else if ((dst->off) && (dst->seg == rSS) && (dst->regi == INDEXBASE + 6))
     /* offset from BP */
     {
         if ((dst->off == src->off) && (dst->seg == src->seg) &&
@@ -376,7 +398,8 @@ static boolT idiom7(PICODE pIcode) {
  *				cx:bx
  *		Found in Borland Turbo C code.
  ****************************************************************************/
-static boolT idiom21(PICODE picode, PICODE pend) {
+static boolT idiom21(PICODE picode, PICODE pend)
+{
     PMEM dst, src;
 
     dst = &picode->ic.ll.dst;
@@ -402,7 +425,8 @@ static boolT idiom21(PICODE picode, PICODE pend) {
  *          =>  dx:ax = dx:ax >> 1      (dx:ax are signed long)
  *      Found in Microsoft C code for long signed variable shift right.
  ****************************************************************************/
-static boolT idiom8(PICODE pIcode, PICODE pEnd) {
+static boolT idiom8(PICODE pIcode, PICODE pEnd)
+{
     if (pIcode < pEnd) {
         if (((pIcode->ic.ll.flg & I) == I) && (pIcode->ic.ll.immed.op == 1))
             if (((pIcode + 1)->ic.ll.opcode == iRCR) &&
@@ -424,7 +448,8 @@ static boolT idiom8(PICODE pIcode, PICODE pEnd) {
  *          =>  ax = ax << 2
  *      Found in Borland Turbo C code to index an array (array multiplication)
  ****************************************************************************/
-static Int idiom15(PICODE picode, PICODE pend) {
+static Int idiom15(PICODE picode, PICODE pend)
+{
     Int n = 1;
     byte regi;
 
@@ -459,7 +484,8 @@ static Int idiom15(PICODE picode, PICODE pend) {
  *          =>  dx:ax = dx:ax << 1
  *      Found in Borland Turbo C code for long variable shift left.
  ****************************************************************************/
-static boolT idiom12(PICODE pIcode, PICODE pEnd) {
+static boolT idiom12(PICODE pIcode, PICODE pEnd)
+{
     if (pIcode < pEnd) {
         if (((pIcode->ic.ll.flg & I) == I) && (pIcode->ic.ll.immed.op == 1))
             if (((pIcode + 1)->ic.ll.opcode == iRCL) &&
@@ -479,7 +505,8 @@ static boolT idiom12(PICODE pIcode, PICODE pEnd) {
  *          =>  dx:ax = dx:ax >> 1   (dx:ax are unsigned long)
  *      Found in Microsoft C code for long unsigned variable shift right.
  ****************************************************************************/
-static boolT idiom9(PICODE pIcode, PICODE pEnd) {
+static boolT idiom9(PICODE pIcode, PICODE pEnd)
+{
     if (pIcode < pEnd) {
         if (((pIcode->ic.ll.flg & I) == I) && (pIcode->ic.ll.immed.op == 1))
             if (((pIcode + 1)->ic.ll.opcode == iRCR) &&
@@ -538,7 +565,8 @@ static boolT idiom10old(PICODE pIcode, PICODE pEnd) {
  *		modified to simplify the analysis.
  *      Found in Borland Turbo C.
  ****************************************************************************/
-static void idiom10(PICODE pIcode, PICODE pEnd) {
+static void idiom10(PICODE pIcode, PICODE pEnd)
+{
     if (pIcode < pEnd) {
         /* Check OR reg, reg */
         if (((pIcode->ic.ll.flg & I) != I) && (pIcode->ic.ll.src.regi > 0) &&
@@ -564,7 +592,8 @@ static void idiom10(PICODE pIcode, PICODE pEnd) {
  *      Found in Borland Turbo C, used for multiplication and division of
  *      byte operands (ie. they need to be extended to words).
  ****************************************************************************/
-static byte idiom13(PICODE picode, PICODE pend) {
+static byte idiom13(PICODE picode, PICODE pend)
+{
     byte regi;
 
     if (picode < pend) {
@@ -601,7 +630,8 @@ static byte idiom13(PICODE picode, PICODE pend) {
  *      Found in Borland Turbo C, used for division of unsigned integer
  *      operands.
  ****************************************************************************/
-static boolT idiom14(PICODE picode, PICODE pend, byte *regL, byte *regH) {
+static boolT idiom14(PICODE picode, PICODE pend, byte *regL, byte *regH)
+{
     if (picode < pend) {
         /* Check for regL */
         *regL = picode->ic.ll.dst.regi;
@@ -634,7 +664,8 @@ static boolT idiom14(PICODE picode, PICODE pend, byte *regL, byte *regH) {
  *      => dx:ax = - dx:ax
  *      Found in Borland Turbo C.
  ****************************************************************************/
-static boolT idiom11(PICODE pIcode, PICODE pEnd) {
+static boolT idiom11(PICODE pIcode, PICODE pEnd)
+{
     condId type; /* type of argument */
 
     if ((pIcode + 2) < pEnd) {
@@ -680,7 +711,8 @@ static boolT idiom11(PICODE pIcode, PICODE pEnd) {
  *			=> ax = !ax
  *		Found in Borland Turbo C when negating bitwise.
  ****************************************************************************/
-static boolT idiom16(PICODE picode, PICODE pend) {
+static boolT idiom16(PICODE picode, PICODE pend)
+{
     byte regi;
 
     if ((picode + 2) < pend) {
@@ -712,7 +744,8 @@ static boolT idiom16(PICODE picode, PICODE pend) {
  *			=>  HLI_JCOND (si++ < 8)
  * 		Found in Borland Turbo C.  Intrinsic to C languages.
  ****************************************************************************/
-static boolT idiom18(PICODE picode, PICODE pend, PPROC pproc) {
+static boolT idiom18(PICODE picode, PICODE pend, PPROC pproc)
+{
     boolT type = 0; /* type of variable: 1 = reg-var, 2 = local */
     byte regi;      /* register of the MOV */
 
@@ -725,7 +758,8 @@ static boolT idiom18(PICODE picode, PICODE pend, PPROC pproc) {
             type = 1;
         else if ((picode->ic.ll.dst.regi == rDI) && (pproc->flg & DI_REGVAR))
             type = 1;
-    } else if (picode->ic.ll.dst.off) /* local variable */
+    }
+    else if (picode->ic.ll.dst.off) /* local variable */
         type = 2;
     else /* indexed */
         /* not supported yet */;
@@ -745,7 +779,8 @@ static boolT idiom18(PICODE picode, PICODE pend, PPROC pproc) {
                     return (TRUE);
             }
         }
-    } else if (type == 2) /* local */
+    }
+    else if (type == 2) /* local */
     {
         if (((picode - 1)->ic.ll.opcode == iMOV) &&
             ((picode - 1)->ic.ll.src.off == picode->ic.ll.dst.off)) {
@@ -774,7 +809,8 @@ static boolT idiom18(PICODE picode, PICODE pend, PPROC pproc) {
  *			=> HLI_JCOND (++[bp+4] > 0)
  *		Found in Borland Turbo C.  Intrinsic to C language.
  ****************************************************************************/
-static boolT idiom19(PICODE picode, PICODE pend, PPROC pproc) {
+static boolT idiom19(PICODE picode, PICODE pend, PPROC pproc)
+{
     if (picode->ic.ll.dst.regi == 0) /* global variable */
         /* not supported yet */;
     else if (picode->ic.ll.dst.regi < INDEXBASE) /* register */
@@ -784,12 +820,14 @@ static boolT idiom19(PICODE picode, PICODE pend, PPROC pproc) {
             if ((picode < pend) && ((picode + 1)->ic.ll.opcode >= iJB) &&
                 ((picode + 1)->ic.ll.opcode < iJCXZ))
                 return (TRUE);
-    } else if (picode->ic.ll.dst.off) /* stack variable */
+    }
+    else if (picode->ic.ll.dst.off) /* stack variable */
     {
         if ((picode < pend) && ((picode + 1)->ic.ll.opcode >= iJB) &&
             ((picode + 1)->ic.ll.opcode < iJCXZ))
             return (TRUE);
-    } else /* indexed */
+    }
+    else /* indexed */
         /* not supported yet */;
     return (FALSE);
 }
@@ -808,7 +846,8 @@ static boolT idiom19(PICODE picode, PICODE pend, PPROC pproc) {
  *			=> HLI_JCOND (++si < 2)
  *		Found in Turbo C.  Intrinsic to C language.
  ****************************************************************************/
-static boolT idiom20(PICODE picode, PICODE pend, PPROC pproc) {
+static boolT idiom20(PICODE picode, PICODE pend, PPROC pproc)
+{
     boolT type = 0; /* type of variable: 1 = reg-var, 2 = local */
     byte regi;      /* register of the MOV */
 
@@ -821,7 +860,8 @@ static boolT idiom20(PICODE picode, PICODE pend, PPROC pproc) {
             type = 1;
         else if ((picode->ic.ll.dst.regi == rDI) && (pproc->flg & DI_REGVAR))
             type = 1;
-    } else if (picode->ic.ll.dst.off) /* local variable */
+    }
+    else if (picode->ic.ll.dst.off) /* local variable */
         type = 2;
     else /* indexed */
         /* not supported yet */;
@@ -841,7 +881,8 @@ static boolT idiom20(PICODE picode, PICODE pend, PPROC pproc) {
                     return (TRUE);
             }
         }
-    } else if (type == 2) /* local */
+    }
+    else if (type == 2) /* local */
     {
         if ((picode < pend) && ((picode + 1)->ic.ll.opcode == iMOV) &&
             ((picode + 1)->ic.ll.src.off == picode->ic.ll.dst.off)) {
@@ -862,7 +903,8 @@ static boolT idiom20(PICODE picode, PICODE pend, PPROC pproc) {
 /*****************************************************************************
  * findIdioms  - translates LOW_LEVEL icode idioms into HIGH_LEVEL icodes.
  ****************************************************************************/
-void findIdioms(PPROC pProc) {
+void findIdioms(PPROC pProc)
+{
     Int ip;              /* Index to current icode                   */
     PICODE pEnd, pIcode; /* Pointers to end of BB and current icodes */
     int16 delta;
@@ -894,7 +936,8 @@ void findIdioms(PPROC pProc) {
                 invalidateIcode(pIcode + 1);
                 pIcode += 3;
                 ip += 2;
-            } else if (idiom19(pIcode, pEnd, pProc)) {
+            }
+            else if (idiom19(pIcode, pEnd, pProc)) {
                 lhs = idCondExp(pIcode, DST, pProc, ip, pIcode + 1, E_USE);
                 if (pIcode->ic.ll.opcode == iDEC)
                     lhs = unaryCondExp(PRE_DEC, lhs);
@@ -907,7 +950,8 @@ void findIdioms(PPROC pProc) {
                 invalidateIcode(pIcode);
                 pIcode += 2;
                 ip++;
-            } else if (idiom20(pIcode, pEnd, pProc)) {
+            }
+            else if (idiom20(pIcode, pEnd, pProc)) {
                 lhs = idCondExp(pIcode + 1, SRC, pProc, ip, pIcode, E_USE);
                 if (pIcode->ic.ll.opcode == iDEC)
                     lhs = unaryCondExp(PRE_DEC, lhs);
@@ -922,7 +966,8 @@ void findIdioms(PPROC pProc) {
                 invalidateIcode(pIcode + 2);
                 pIcode += 3;
                 ip += 2;
-            } else
+            }
+            else
                 pIcode++;
             break;
 
@@ -935,7 +980,8 @@ void findIdioms(PPROC pProc) {
                     ip++;
                 }
                 ip--;
-            } else
+            }
+            else
                 pIcode++;
             break;
 
@@ -945,7 +991,8 @@ void findIdioms(PPROC pProc) {
                 invalidateIcode(pIcode + 1);
                 pIcode += 3;
                 ip += 2;
-            } else if (idiom14(pIcode, pEnd, &regL, &regH)) /* Idiom 14 */
+            }
+            else if (idiom14(pIcode, pEnd, &regL, &regH)) /* Idiom 14 */
             {
                 idx = newLongRegId(&pProc->localId, TYPE_LONG_SIGN, regH, regL,
                                    ip);
@@ -956,7 +1003,8 @@ void findIdioms(PPROC pProc) {
                 invalidateIcode(pIcode + 1);
                 pIcode += 2;
                 ip++;
-            } else if (idx = idiom13(pIcode, pEnd)) /* Idiom 13 */
+            }
+            else if (idx = idiom13(pIcode, pEnd)) /* Idiom 13 */
             {
                 lhs = idCondExpReg(idx, 0, &pProc->localId);
                 setRegDU(pIcode, idx, E_DEF);
@@ -966,7 +1014,8 @@ void findIdioms(PPROC pProc) {
                 invalidateIcode(pIcode + 1);
                 pIcode += 2;
                 ip++;
-            } else
+            }
+            else
                 pIcode++;
             break;
 
@@ -996,7 +1045,8 @@ void findIdioms(PPROC pProc) {
                     invalidateIcode(pIcode++);
                     ip++;
                 }
-            } else if (idx = idiom17(pIcode, pEnd)) /* idiom 17 */
+            }
+            else if (idx = idiom17(pIcode, pEnd)) /* idiom 17 */
             {
                 if (pIcode->ic.ll.flg & I) {
                     (pIcode->ic.ll.immed.proc.proc)->cbParam = (int16)idx;
@@ -1007,7 +1057,8 @@ void findIdioms(PPROC pProc) {
                     for (idx /= 2; idx > 0; idx--)
                         invalidateIcode(pIcode++);
                 }
-            } else
+            }
+            else
                 pIcode++;
             break;
 
@@ -1063,7 +1114,8 @@ void findIdioms(PPROC pProc) {
                     invalidateIcode(pIcode++);
                     ip++;
                 }
-            } else if (idiom12(pIcode, pEnd)) /* idiom 12 */
+            }
+            else if (idiom12(pIcode, pEnd)) /* idiom 12 */
             {
                 idx = newLongRegId(&pProc->localId, TYPE_LONG_UNSIGN,
                                    (pIcode + 1)->ic.ll.dst.regi,
@@ -1076,7 +1128,8 @@ void findIdioms(PPROC pProc) {
                 invalidateIcode(pIcode + 1);
                 pIcode += 2;
                 ip++;
-            } else
+            }
+            else
                 pIcode++;
             break;
 
@@ -1127,7 +1180,8 @@ void findIdioms(PPROC pProc) {
                 invalidateIcode(pIcode + 2);
                 pIcode += 3;
                 ip += 2;
-            } else if (idiom16(pIcode, pEnd)) {
+            }
+            else if (idiom16(pIcode, pEnd)) {
                 lhs = idCondExpReg(pIcode->ic.ll.dst.regi, pIcode->ic.ll.flg,
                                    &pProc->localId);
                 rhs = copyCondExp(lhs);
@@ -1137,7 +1191,8 @@ void findIdioms(PPROC pProc) {
                 invalidateIcode(pIcode + 2);
                 pIcode += 3;
                 ip += 2;
-            } else
+            }
+            else
                 pIcode++;
             break;
 
@@ -1161,7 +1216,8 @@ void findIdioms(PPROC pProc) {
                 invalidateIcode(pIcode + 1);
                 pIcode++;
                 ip++;
-            } else if (idiom7(pIcode)) {
+            }
+            else if (idiom7(pIcode)) {
                 lhs = idCondExp(pIcode, DST, pProc, ip, pIcode, NONE);
                 rhs = idCondExpKte(0, 2);
                 newAsgnHlIcode(pIcode, lhs, rhs);
@@ -1218,7 +1274,8 @@ void bindIcodeOff(PPROC pProc)
                 if (!pProc->Icode.labelSrch(pIcode[i].ic.ll.immed.op,
                                             (Int *)&pIcode[i].ic.ll.immed.op))
                     pIcode[i].ic.ll.flg |= NO_LABEL;
-            } else if (pIcode[i].ic.ll.flg & SWITCH) {
+            }
+            else if (pIcode[i].ic.ll.flg & SWITCH) {
                 p = pIcode[i].ic.ll.caseTbl.entries;
                 for (j = 0; j < pIcode[i].ic.ll.caseTbl.numEntries; j++, p++)
                     pProc->Icode.labelSrch(*p, (Int *)p);

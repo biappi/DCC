@@ -35,7 +35,8 @@ static void addToGraph(int e, int v1, int v2);
 static bool isCycle(void);
 
 void hashParams(int _NumEntry, int _EntryLen, int _SetSize, char _SetMin,
-                int _NumVert) {
+                int _NumVert)
+{
     /* These parameters are stored in statics so as to obviate the need for
         passing all these (or defererencing pointers) for every call to hash()
     */
@@ -78,7 +79,8 @@ BadAlloc:
     exit(1);
 }
 
-void hashCleanup(void) {
+void hashCleanup(void)
+{
     /* Free the storage for variable sized tables etc */
     if (T1base)
         free(T1base);
@@ -94,7 +96,8 @@ void hashCleanup(void) {
         free(g);
 }
 
-void map(void) {
+void map(void)
+{
     int i, j, c;
     word f1, f2;
     bool cycle;
@@ -135,14 +138,16 @@ void map(void) {
         if (cycle || (cycle = isCycle())) /* OK - is there a cycle? */
         {
             printf("Iteration %d\n", ++c);
-        } else {
+        }
+        else {
             break;
         }
     } while (/* there is a cycle */ 1);
 }
 
 /* Initialise the graph */
-static void initGraph(void) {
+static void initGraph(void)
+{
     int i;
 
     for (i = 1; i <= NumVert; i++) {
@@ -160,7 +165,8 @@ static void initGraph(void) {
 
 /* Add an edge e between vertices v1 and v2 */
 /* e, v1, v2 are 0 based */
-static void addToGraph(int e, int v1, int v2) {
+static void addToGraph(int e, int v1, int v2)
+{
     e++;
     v1++;
     v2++; /* So much more convenient */
@@ -174,7 +180,8 @@ static void addToGraph(int e, int v1, int v2) {
     graphFirst[v2] = -e;
 }
 
-bool DFS(int parentE, int v) {
+bool DFS(int parentE, int v)
+{
     int e, w;
 
     /* Depth first search of the graph, starting at vertex v, looking for
@@ -232,15 +239,16 @@ bool DFS(int parentE, int v) {
                         /*                      *(long *)key1 = 0;      /* Wipe
                          * the key */
                         memset(key1, 0, EntryLen);
-                    } else {
+                    }
+                    else {
                         /* A genuine (unit) cycle. */
                         printf("There is a unit cycle involving vertex %d and "
                                "edge %d\n",
                                v, e);
                         return TRUE;
                     }
-
-                } else {
+                }
+                else {
                     /* We have reached a previously visited vertex not the
                         parent. Therefore, we have uncovered a genuine cycle */
                     printf("There is a cycle involving vertex %d and edge %d\n",
@@ -248,7 +256,8 @@ bool DFS(int parentE, int v) {
                     return TRUE;
                 }
             }
-        } else /* Not yet seen. Traverse it */
+        }
+        else /* Not yet seen. Traverse it */
         {
             if (DFS(e, w)) {
                 /* Cycle found deeper down. Exit */
@@ -259,7 +268,8 @@ bool DFS(int parentE, int v) {
     return FALSE;
 }
 
-static bool isCycle(void) {
+static bool isCycle(void)
+{
     int v;
 
     for (v = 1; v <= NumVert; v++) {
@@ -275,7 +285,8 @@ static bool isCycle(void) {
     return FALSE;
 }
 
-void traverse(int u) {
+void traverse(int u)
+{
     int w, e;
 
     visited[u] = TRUE;
@@ -294,7 +305,8 @@ void traverse(int u) {
     }
 }
 
-void assign(void) {
+void assign(void)
+{
     int v;
 
     for (v = 0; v < NumVert; v++) {
@@ -310,7 +322,8 @@ void assign(void) {
     }
 }
 
-int hash(byte *string) {
+int hash(byte *string)
+{
     word u, v;
     int j;
 

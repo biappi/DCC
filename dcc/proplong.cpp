@@ -532,7 +532,8 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
 static void propLongGlb(Int i, ID *pLocId, PPROC pProc)
 /* Propagates the long global address across all LOW_LEVEL icodes.
  * Transforms some LOW_LEVEL icodes into HIGH_LEVEL     */
-{}
+{
+}
 
 void propLong(PPROC pProc)
 /* Propagated identifier information, thus converting some LOW_LEVEL icodes

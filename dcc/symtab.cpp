@@ -53,7 +53,8 @@ TABLEINFO_TYPE tableInfo[NUM_TABLE_TYPES]; /* Array of info about tables */
 static void expandSym(void);
 
 /* Create a new symbol table. Returns "handle" */
-void createSymTables(void) {
+void createSymTables(void)
+{
     /* Initilise the comment table */
     /* NB - there is no symbol hashed comment table */
 
@@ -93,7 +94,8 @@ void createSymTables(void) {
     curTableType = Label;
 }
 
-void selectTable(tableType tt) {
+void selectTable(tableType tt)
+{
     if (curTableType == tt)
         return; /* Nothing to do */
 
@@ -104,7 +106,8 @@ void selectTable(tableType tt) {
     curTableType = tt;
 }
 
-void destroySymTables(void) {
+void destroySymTables(void)
+{
     selectTable(Label);
     free(symTab); /* The symbol hashed label table */
     free(valTab); /* And the value hashed label table */
@@ -113,7 +116,8 @@ void destroySymTables(void) {
 }
 
 /* Hash the symbolic name */
-word symHash(char *name, word *pre) {
+word symHash(char *name, word *pre)
+{
     int i;
     word h = 0;
     char ch;
@@ -130,7 +134,8 @@ word symHash(char *name, word *pre) {
 
 /* Hash the symOff and symProc fields */
 /* Note: for the time being, there no use is made of the symProc field */
-word valHash(dword symOff, PPROC symProc, word *pre) {
+word valHash(dword symOff, PPROC symProc, word *pre)
+{
     word h = 0;
 
     h = (word)(symOff ^ (symOff >> 8));
@@ -139,7 +144,8 @@ word valHash(dword symOff, PPROC symProc, word *pre) {
     return h % tableSize; /* Post modulo hash value */
 }
 
-void enterSym(char *symName, dword symOff, PPROC symProc, boolT bSymToo) {
+void enterSym(char *symName, dword symOff, PPROC symProc, boolT bSymToo)
+{
     word h, pre, j;
 
     if ((numEntry / 9 * 10) >= tableSize) {
@@ -159,7 +165,8 @@ void enterSym(char *symName, dword symOff, PPROC symProc, boolT bSymToo) {
         valTab[h].postHash = h;       /* Post modulo hash value */
         valTab[h].nextOvf = NIL;      /* No overflow */
         valTab[h].prevOvf = NIL;      /* No back link */
-    } else {
+    }
+    else {
         /* Linear probing, for now */
         j = (h + 1) % tableSize;
         while (j != h) {
@@ -175,7 +182,8 @@ void enterSym(char *symName, dword symOff, PPROC symProc, boolT bSymToo) {
                 valTab[h].nextOvf = j;
                 valTab[j].prevOvf = h; /* The backlink */
                 break;
-            } else {
+            }
+            else {
                 /* Probe further */
                 j = (j + 1) % tableSize;
             }
@@ -200,7 +208,8 @@ void enterSym(char *symName, dword symOff, PPROC symProc, boolT bSymToo) {
         symTab[h].postHash = h;       /* Post modulo hash value */
         symTab[h].nextOvf = NIL;      /* No overflow */
         symTab[h].prevOvf = NIL;      /* No back link */
-    } else {
+    }
+    else {
         /* Linear probing, for now */
         j = (h + 1) % tableSize;
         while (j != h) {
@@ -216,7 +225,8 @@ void enterSym(char *symName, dword symOff, PPROC symProc, boolT bSymToo) {
                 symTab[h].nextOvf = j;
                 symTab[j].prevOvf = h; /* The backlink */
                 break;
-            } else {
+            }
+            else {
                 /* Probe further */
                 j = (j + 1) % tableSize;
             }
@@ -228,7 +238,8 @@ void enterSym(char *symName, dword symOff, PPROC symProc, boolT bSymToo) {
     }
 }
 
-boolT findSym(char *symName, word *pIndex) {
+boolT findSym(char *symName, word *pIndex)
+{
     word h, j, pre;
 
     h = symHash(symName, &pre);
@@ -247,7 +258,8 @@ boolT findSym(char *symName, word *pIndex) {
 }
 
 /* Find symbol by value */
-boolT findVal(dword symOff, PPROC symProc, word *pIndex) {
+boolT findVal(dword symOff, PPROC symProc, word *pIndex)
+{
     word h, j, pre;
 
     h = valHash(symOff, symProc, &pre);
@@ -266,7 +278,8 @@ boolT findVal(dword symOff, PPROC symProc, word *pIndex) {
     return FALSE; /* End of chain */
 }
 
-word findBlankSym(char *symName) {
+word findBlankSym(char *symName)
+{
     word h, j, pre;
 
     h = symHash(symName, &pre);
@@ -283,7 +296,8 @@ word findBlankSym(char *symName) {
 }
 
 /* Using the symbolic name, read the value */
-boolT readSym(char *symName, dword *pSymOff, PPROC *pSymProc) {
+boolT readSym(char *symName, dword *pSymOff, PPROC *pSymProc)
+{
     word i;
 
     if (!findSym(symName, &i)) {
@@ -295,7 +309,8 @@ boolT readSym(char *symName, dword *pSymOff, PPROC *pSymProc) {
 }
 
 /* Using the value, read the symbolic name */
-boolT readVal(char *symName, dword symOff, PPROC symProc) {
+boolT readVal(char *symName, dword symOff, PPROC symProc)
+{
     word i;
 
     if (!findVal(symOff, symProc, &i)) {
@@ -313,7 +328,8 @@ boolT readVal(char *symName, dword symOff, PPROC symProc) {
 
 /* Known limitation: strings are never deleted from the string table */
 
-void deleteSym(char *symName) {
+void deleteSym(char *symName)
+{
     word i, j, back;
     dword symOff;
     PPROC symProc;
@@ -333,7 +349,8 @@ void deleteSym(char *symName) {
             the previous record, however */
         symTab[symTab[i].prevOvf].nextOvf = NIL;
         j = i; /* So we wipe out the current name */
-    } else {
+    }
+    else {
         /* Yes, move this entry to this vacated spot. Note that the nextOvf
             field will still point to the next record in the overflow chain,
             but we need to preserve the backlink for adjusting the current
@@ -359,7 +376,8 @@ void deleteSym(char *symName) {
             the previous record, however */
         valTab[valTab[i].prevOvf].nextOvf = NIL;
         j = i; /* So we wipe out the current entry */
-    } else {
+    }
+    else {
         /* Yes, move this entry to this vacated spot. Note that the nextOvf
             field will still point to the next record in the overflow chain,
             but we need to preserve the backlink for adjusting the current
@@ -372,7 +390,8 @@ void deleteSym(char *symName) {
     valTab[j].symProc = 0; /* Rub out the entry */
 }
 
-void deleteVal(dword symOff, PPROC symProc, boolT bSymToo) {
+void deleteVal(dword symOff, PPROC symProc, boolT bSymToo)
+{
     word i, j, back;
     char *symName;
 
@@ -391,7 +410,8 @@ void deleteVal(dword symOff, PPROC symProc, boolT bSymToo) {
             the previous record, however */
         valTab[valTab[i].prevOvf].nextOvf = NIL;
         j = i; /* So we wipe out the current entry */
-    } else {
+    }
+    else {
         /* Yes, move this entry to this vacated spot. Note that the nextOvf
             field will still point to the next record in the overflow chain,
             but we need to preserve the backlink for adjusting the current
@@ -418,7 +438,8 @@ void deleteVal(dword symOff, PPROC symProc, boolT bSymToo) {
             the previous record, however */
         symTab[symTab[i].prevOvf].nextOvf = NIL;
         j = i; /* So we wipe out the current name */
-    } else {
+    }
+    else {
         /* Yes, move this entry to this vacated spot. Note that the nextOvf
             field will still point to the next record in the overflow chain,
             but we need to preserve the backlink for adjusting the current
@@ -431,7 +452,8 @@ void deleteVal(dword symOff, PPROC symProc, boolT bSymToo) {
     symTab[j].pSymName = 0; /* Rub out the name */
 }
 
-static void expandSym(void) {
+static void expandSym(void)
+{
     word i, j, n, newPost;
 
     printf("\nResizing table...\r");
@@ -475,7 +497,8 @@ static void expandSym(void) {
 
 /* This function adds to the string table. At this stage, strings are not
     deleted */
-char *addStrTbl(char *pStr) {
+char *addStrTbl(char *pStr)
+{
     char *p;
 
     if ((strTabNext + strlen(pStr) + 1) >= STRTABSIZE) {

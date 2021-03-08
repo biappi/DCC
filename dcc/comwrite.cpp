@@ -150,10 +150,12 @@ void writeIntComment(PICODE icode, char *s)
     if (icode->ic.ll.immed.op == 0x21) {
         sprintf(t, "\t/* %s */\n", int21h[icode->ic.ll.dst.off]);
         strcat(s, t);
-    } else if (icode->ic.ll.immed.op > 0x1F && icode->ic.ll.immed.op < 0x2F) {
+    }
+    else if (icode->ic.ll.immed.op > 0x1F && icode->ic.ll.immed.op < 0x2F) {
         sprintf(t, "\t/* %s */\n", intOthers[icode->ic.ll.immed.op - 0x20]);
         strcat(s, t);
-    } else if (icode->ic.ll.immed.op == 0x2F)
+    }
+    else if (icode->ic.ll.immed.op == 0x2F)
         switch (icode->ic.ll.dst.off) {
         case 0x01:
             strcat(s, "\t/* Print spooler */\n");
@@ -171,7 +173,8 @@ void writeIntComment(PICODE icode, char *s)
         strcat(s, "\n");
 }
 
-void writeProcComments(PPROC p, strTable *strTab) {
+void writeProcComments(PPROC p, strTable *strTab)
+{
     int i;
     ID *id;       /* Pointer to register argument identifier */
     PSTKSYM psym; /* Pointer to register argument symbol */
@@ -191,7 +194,8 @@ void writeProcComments(PPROC p, strTable *strTab) {
                 else /* BYTE_REG */
                     appendStrTab(strTab, " *     %s = %s.\n", psym->name,
                                  byteReg[id->id.regi - rAL]);
-            } else /* long register */
+            }
+            else /* long register */
             {
                 id = &p->localId.id[psym->regs->expr.ident.idNode.longIdx];
                 appendStrTab(strTab, " *     %s = %s:%s.\n", psym->name,
@@ -199,7 +203,8 @@ void writeProcComments(PPROC p, strTable *strTab) {
                              wordReg[id->id.longId.l - rAX]);
             }
         }
-    } else
+    }
+    else
         appendStrTab(strTab, "/* Takes no parameters.\n");
 
     /* Type of procedure */

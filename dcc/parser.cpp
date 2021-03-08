@@ -55,7 +55,8 @@ void parse(PCALL_GRAPH *pcallGraph)
         setState(&state, rCS, prog.segMain);
         strcpy(pProcList->name, "main");
         state.IP = prog.offMain;
-    } else {
+    }
+    else {
         /* Create initial procedure at program start address */
         pProcList->procEntry = (dword)state.IP;
     }
@@ -162,7 +163,8 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
                 eIcode.ic.ll.flg |= B;
                 eIcode.ic.ll.src.regi = rAX;
                 setRegDU(&eIcode, rAX, E_USE);
-            } else /* implicit dx:ax */
+            }
+            else /* implicit dx:ax */
             {
                 eIcode.ic.ll.flg |= IM_SRC;
                 setRegDU(&eIcode, rAX, E_USE);
@@ -186,7 +188,8 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
             eIcode.ic.ll.flg = (Icode.ic.ll.flg | SYNTHETIC);
             eIcode.ic.ll.label = SynthLab++;
             pIcode = pProc->Icode.addIcode(&eIcode);
-        } else if (Icode.ic.ll.opcode == iXCHG) {
+        }
+        else if (Icode.ic.ll.opcode == iXCHG) {
             /* MOV rTMP, regDst */
             memset(&eIcode, 0, sizeof(ICODE));
             eIcode.type = LOW_LEVEL;
@@ -218,7 +221,8 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
             eIcode.ic.ll.flg |= SYNTHETIC;
             eIcode.ic.ll.label = SynthLab++;
             pIcode = pProc->Icode.addIcode(&eIcode);
-        } else
+        }
+        else
             pIcode = pProc->Icode.addIcode(&Icode);
 
         switch (Icode.ic.ll.opcode) {
@@ -323,10 +327,12 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
                                    : strSize(&prog.Image[operand + 0x100], '$');
                         updateSymType(operand, TYPE_STR, size);
                     }
-            } else if ((Icode.ic.ll.immed.op == 0x2F) && (pstate->f[rAH])) {
+            }
+            else if ((Icode.ic.ll.immed.op == 0x2F) && (pstate->f[rAH])) {
                 pProc->Icode.GetIcode(pProc->Icode.GetNumIcodes() - 1)
                     ->ic.ll.dst.off = pstate->r[rAH];
-            } else /* Program termination: int20h, int27h */
+            }
+            else /* Program termination: int20h, int27h */
                 done = (boolT)(Icode.ic.ll.immed.op == 0x20 ||
                                Icode.ic.ll.immed.op == 0x27);
             if (done)
@@ -346,7 +352,8 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
             if (pstate->JCond.regi == Icode.ic.ll.dst.regi) {
                 if ((Icode.ic.ll.flg & I) && Icode.ic.ll.immed.op == 1) {
                     pstate->JCond.immed *= 2;
-                } else {
+                }
+                else {
                     pstate->JCond.regi = 0;
                 }
             }
@@ -380,7 +387,8 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
         if (err == INVALID_386OP || err == INVALID_OPCODE) {
             fatalError(err, prog.Image[Icode.ic.ll.label], Icode.ic.ll.label);
             pProc->flg |= PROC_BADINST;
-        } else if (err == IP_OUT_OF_RANGE)
+        }
+        else if (err == IP_OUT_OF_RANGE)
             fatalError(err, Icode.ic.ll.label);
         else
             reportError(err, Icode.ic.ll.label);
@@ -603,8 +611,8 @@ static boolT process_CALL(PICODE pIcode, PPROC pProc, PCALL_GRAPH pcallGraph,
             setState(pstate, rDS, localState.r[rDS]);
             setState(pstate, rES, localState.r[rES]);
             setState(pstate, rSS, localState.r[rSS]);
-
-        } else
+        }
+        else
             insertCallGraph(pcallGraph, pProc, p);
 
         pProc->Icode.GetIcode(ip)->ic.ll.immed.proc.proc =
@@ -630,7 +638,8 @@ static void process_MOV(PICODE pIcode, PSTATE pstate)
             psym = lookupAddr(&pIcode->ic.ll.src, pstate, 2, USE);
             if (psym && ((psym->flg & SEG_IMMED) || (psym->duVal & VAL)))
                 setState(pstate, dstReg, LH(&prog.Image[psym->label]));
-        } else if (srcReg < INDEXBASE && pstate->f[srcReg]) /* reg */
+        }
+        else if (srcReg < INDEXBASE && pstate->f[srcReg]) /* reg */
         {
             setState(pstate, dstReg, pstate->r[srcReg]);
 
@@ -638,7 +647,8 @@ static void process_MOV(PICODE pIcode, PSTATE pstate)
             if (pstate->JCond.regi == srcReg)
                 pstate->JCond.regi = dstReg;
         }
-    } else if (dstReg == 0) { /* direct memory offset */
+    }
+    else if (dstReg == 0) { /* direct memory offset */
         psym = lookupAddr(&pIcode->ic.ll.dst, pstate, 2, DEF);
         if (psym && !(psym->duVal & VAL)) { /* no initial value yet */
             if (pIcode->ic.ll.flg & I) {    /* immediate */
@@ -646,7 +656,8 @@ static void process_MOV(PICODE pIcode, PSTATE pstate)
                 prog.Image[psym->label + 1] =
                     (byte)(pIcode->ic.ll.immed.op >> 8);
                 psym->duVal |= VAL;
-            } else if (srcReg == 0) { /* direct mem offset */
+            }
+            else if (srcReg == 0) { /* direct mem offset */
                 psym2 = lookupAddr(&pIcode->ic.ll.src, pstate, 2, USE);
                 if (psym2 && ((psym->flg & SEG_IMMED) || (psym->duVal & VAL))) {
                     prog.Image[psym->label] = (byte)prog.Image[psym2->label];
@@ -654,7 +665,8 @@ static void process_MOV(PICODE pIcode, PSTATE pstate)
                         (byte)(prog.Image[psym2->label + 1] >> 8);
                     psym->duVal |= VAL;
                 }
-            } else if (srcReg < INDEXBASE && pstate->f[srcReg]) /* reg */
+            }
+            else if (srcReg < INDEXBASE && pstate->f[srcReg]) /* reg */
             {
                 prog.Image[psym->label] = (byte)pstate->r[srcReg];
                 prog.Image[psym->label + 1] = (byte)(pstate->r[srcReg] >> 8);
@@ -762,7 +774,8 @@ static PSYM lookupAddr(PMEM pm, PSTATE pstate, Int size, word duFlag)
             if (psym->label >= (dword)prog.cbImage)
                 return (NULL);
             return (psym);
-        } else if (pstate->f[pm->seg]) { /* new value */
+        }
+        else if (pstate->f[pm->seg]) { /* new value */
             pm->segValue = pstate->r[pm->seg];
             operand = opAdr(pm->segValue, pm->off);
             i = symtab.csym;
@@ -1053,11 +1066,13 @@ static void process_operands(PICODE pIcode, PPROC pProc, PSTATE pstate, Int ix)
             if (cb == 1) {
                 pIcode->du.def |= duReg[rAX];
                 pIcode->du1.numRegsDef++;
-            } else {
+            }
+            else {
                 pIcode->du.def |= (duReg[rAX] | duReg[rDX]);
                 pIcode->du1.numRegsDef += 2;
             }
-        } else
+        }
+        else
             def(DST, pIcode, pProc, pstate, cb, ix);
         break;
 
@@ -1068,7 +1083,8 @@ static void process_operands(PICODE pIcode, PPROC pProc, PSTATE pstate, Int ix)
             pIcode->du.def |= duReg[rAX];
             pIcode->du1.numRegsDef++;
             pIcode->du.use |= duReg[rAL];
-        } else /* word */
+        }
+        else /* word */
         {
             pIcode->du.def |= (duReg[rDX] | duReg[rAX]);
             pIcode->du1.numRegsDef += 2;
@@ -1156,7 +1172,8 @@ static void process_operands(PICODE pIcode, PPROC pProc, PSTATE pstate, Int ix)
         pIcode->du1.numRegsDef++;
         if (pIcode->ic.ll.opcode == iREP_INS || pIcode->ic.ll.opcode == iINS) {
             pIcode->du.use |= duReg[rDI] | duReg[rES] | duReg[rDX];
-        } else {
+        }
+        else {
             pIcode->du.use |=
                 duReg[rDI] | duReg[rES] | duReg[(cb == 2) ? rAX : rAL];
         }

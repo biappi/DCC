@@ -367,7 +367,8 @@ static void writeCode(PBB pBB, Int indLevel, PPROC pProc, Int *numLoc,
                 succ = pBB->edges[THEN].BBptr;
                 if (succ->dfsLastNum == pBB->loopFollow)
                     succ = pBB->edges[ELSE].BBptr;
-            } else
+            }
+            else
                 succ = pBB->edges[0].BBptr;
             if (succ->traversed != DFS_ALPHA)
                 writeCode(succ, indLevel, pProc, numLoc, latch->dfsLastNum,
@@ -386,7 +387,8 @@ static void writeCode(PBB pBB, Int indLevel, PPROC pProc, Int *numLoc,
                         numLoc);
             appendStrTab(&cCode.code, "%s}	/* end of while */\n",
                          indent(indLevel));
-        } else if (loopType == ENDLESS_TYPE)
+        }
+        else if (loopType == ENDLESS_TYPE)
             appendStrTab(&cCode.code, "%s}	/* end of loop */\n",
                          indent(indLevel));
         else if (loopType == REPEAT_TYPE) {
@@ -431,7 +433,8 @@ static void writeCode(PBB pBB, Int indLevel, PPROC pProc, Int *numLoc,
                                      indent(indLevel - 1), l);
                         writeCode(succ, indLevel, pProc, numLoc, latchNode,
                                   follow);
-                    } else /* empty THEN part => negate ELSE part */
+                    }
+                    else /* empty THEN part => negate ELSE part */
                     {
                         l = writeJcondInv(
                             pProc->Icode.GetIcode(pBB->start + pBB->length - 1)
@@ -443,7 +446,8 @@ static void writeCode(PBB pBB, Int indLevel, PPROC pProc, Int *numLoc,
                                   numLoc, latchNode, follow);
                         emptyThen = TRUE;
                     }
-                } else /* already visited => emit label */
+                }
+                else /* already visited => emit label */
                     emitGotoLabel(pProc->Icode.GetIcode(succ->start), indLevel);
 
                 /* process the ELSE part */
@@ -459,7 +463,8 @@ static void writeCode(PBB pBB, Int indLevel, PPROC pProc, Int *numLoc,
                                   follow);
                     }
                     /* else (empty ELSE part) */
-                } else if (!emptyThen) /* already visited => emit label */
+                }
+                else if (!emptyThen) /* already visited => emit label */
                 {
                     appendStrTab(&cCode.code, "%s}\n%selse {\n",
                                  indent(indLevel - 1), indent(indLevel - 1));
@@ -472,7 +477,8 @@ static void writeCode(PBB pBB, Int indLevel, PPROC pProc, Int *numLoc,
                 if (succ->traversed != DFS_ALPHA)
                     writeCode(succ, indLevel, pProc, numLoc, latchNode,
                               ifFollow);
-            } else /* no follow => if..then..else */
+            }
+            else /* no follow => if..then..else */
             {
                 l = writeJcond(
                     pProc->Icode.GetIcode(pBB->start + pBB->length - 1)->ic.hl,

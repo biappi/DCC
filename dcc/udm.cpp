@@ -14,7 +14,8 @@ static void displayDfs(PBB pBB);
 /****************************************************************************
  * udm
  ****************************************************************************/
-void udm(void) {
+void udm(void)
+{
     PPROC pProc;
     derSeq *derivedG;
 
@@ -87,7 +88,8 @@ static const char *loopType[] = {"noLoop", "while", "repeat", "loop", "for"};
 /****************************************************************************
  * displayCFG - Displays the Basic Block list
  ***************************************************************************/
-static void displayCFG(PPROC pProc) {
+static void displayCFG(PPROC pProc)
+{
     Int i;
     PBB pBB;
 
@@ -106,7 +108,8 @@ static void displayCFG(PPROC pProc) {
 /*****************************************************************************
  * displayDfs - Displays the CFG using a depth first traversal
  ****************************************************************************/
-static void displayDfs(PBB pBB) {
+static void displayDfs(PBB pBB)
+{
     Int i;
 
     if (!pBB)

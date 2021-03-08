@@ -11,13 +11,15 @@
 void *reallocVar(void *p, Int newsize); /* frontend.c !?   */
 #define ICODE_DELTA 25                  // Amount to allocate for new chunk
 
-CIcodeRec::CIcodeRec() {
+CIcodeRec::CIcodeRec()
+{
     numIcode = 0;
     alloc = 0;
     icode = 0; // Initialise the pointer to 0
 }
 
-CIcodeRec::~CIcodeRec() {
+CIcodeRec::~CIcodeRec()
+{
     if (icode) {
         free(icode);
     }
@@ -52,19 +54,22 @@ PICODE CIcodeRec::GetNextIcode(PICODE pCurIcode)
 }
 */
 
-boolT CIcodeRec::IsValid(PICODE pCurIcode) {
+boolT CIcodeRec::IsValid(PICODE pCurIcode)
+{
     int idx = pCurIcode - icode; // Current index
     return idx < numIcode;
 }
 
 int CIcodeRec::GetNumIcodes() { return numIcode; }
 
-void CIcodeRec::SetInBB(int start, int end, struct _BB *pnewBB) {
+void CIcodeRec::SetInBB(int start, int end, struct _BB *pnewBB)
+{
     for (int i = start; i <= end; i++)
         icode[i].inBB = pnewBB;
 }
 
-void CIcodeRec::SetImmediateOp(int ip, dword dw) {
+void CIcodeRec::SetImmediateOp(int ip, dword dw)
+{
     icode[ip].ic.ll.immed.op = dw;
 }
 
@@ -72,7 +77,8 @@ void CIcodeRec::SetLlFlag(int ip, dword flag) { icode[ip].ic.ll.flg |= flag; }
 
 dword CIcodeRec::GetLlFlag(int ip) { return icode[ip].ic.ll.flg; }
 
-void CIcodeRec::ClearLlFlag(int ip, dword flag) {
+void CIcodeRec::ClearLlFlag(int ip, dword flag)
+{
     icode[ip].ic.ll.flg &= (~flag);
 }
 

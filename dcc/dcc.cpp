@@ -26,7 +26,8 @@ static void displayTotalStats();
  * main
  ***************************************************************************/
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     /* Extract switches and filename */
     strcpy(option.filename, initargs(argc, argv));
 
@@ -62,7 +63,8 @@ int main(int argc, char *argv[]) {
 /****************************************************************************
  * initargs - Extract command line arguments
  ***************************************************************************/
-static char *initargs(int argc, char *argv[]) {
+static char *initargs(int argc, char *argv[])
+{
     char *pc;
     progname = *argv; /* Save invocation name for error messages */
 
@@ -98,7 +100,8 @@ static char *initargs(int argc, char *argv[]) {
                 if (*(pc + 1)) {
                     asm1_name = asm2_name = pc + 1;
                     goto NextArg;
-                } else if (--argc > 0) {
+                }
+                else if (--argc > 0) {
                     asm1_name = asm2_name = *++argv;
                     goto NextArg;
                 }

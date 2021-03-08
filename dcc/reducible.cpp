@@ -47,7 +47,8 @@ queue *appendQueue(queue **Q, BB *node)
                 ;
             if (l->node != node)
                 l->next = pq;
-        } else { /* (*Q) == NULL */
+        }
+        else { /* (*Q) == NULL */
             *Q = pq;
         }
     }
@@ -95,7 +96,8 @@ static queue *appendNodeInt(queue *pqH, BB *node, interval *pI)
         if (pq == prev) {
             pqH = pqH->next;
             pI->numOutEdges -= (byte)pq->node->numInEdges - 1;
-        } else if (pq) {
+        }
+        else if (pq) {
             prev->next = pq->next;
             pI->numOutEdges -= (byte)pq->node->numInEdges - 1;
         }
@@ -154,16 +156,19 @@ static void findIntervals(derSeq *derivedGi)
                         succ->beenOnH = TRUE;
                         pI->numOutEdges++;
                     }
-                } else /* node has been visited before */
+                }
+                else /* node has been visited before */
                     if (succ->inEdgeCount == 0) {
                     if (succ->reachingInt == header ||
                         succ->inInterval == pI) /* same interval */
                     {
                         if (succ != header)
                             H = appendNodeInt(H, succ, pI);
-                    } else /* out edge */
+                    }
+                    else /* out edge */
                         pI->numOutEdges++;
-                } else if (succ != header && succ->beenOnH)
+                }
+                else if (succ != header && succ->beenOnH)
                     pI->numOutEdges++;
             }
         }
@@ -172,7 +177,8 @@ static void findIntervals(derSeq *derivedGi)
         if (!first) {
             J->next = pI;
             J = pI;
-        } else /* first interval */
+        }
+        else /* first interval */
             first = FALSE;
     }
 }
@@ -309,7 +315,8 @@ static boolT nextOrderGraph(derSeq *derivedGi)
                 curr->edges[i].BBptr = BBnode;
                 BBnode->numInEdges++;
                 BBnode->inEdgeCount++;
-            } else
+            }
+            else
                 fatalError(INVALID_INT_BB);
         }
         curr = curr->next;
@@ -350,7 +357,8 @@ static byte findDerivedSeq(derSeq *derivedGi)
 static void nodeSplitting(BB *G)
 /* Converts the irreducible graph G into an equivalent reducible one, by
  * means of node splitting.  */
-{}
+{
+}
 
 void displayDerivedSeq(derSeq *derGi)
 /* Displays the derived sequence and intervals of the graph G */

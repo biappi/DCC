@@ -266,7 +266,8 @@ static byte pattMsChkstk[] = {
 };
 
 /* This procedure is called to initialise the library check code */
-void SetupLibCheck(void) {
+void SetupLibCheck(void)
+{
     word w, len;
     int i;
 
@@ -374,7 +375,8 @@ void SetupLibCheck(void) {
     prog.bSigs = TRUE;
 }
 
-void CleanupLibCheck(void) {
+void CleanupLibCheck(void)
+{
     /* Deallocate all the stuff allocated in SetupLibCheck() */
     if (T1base)
         free(T1base);
@@ -391,7 +393,8 @@ void CleanupLibCheck(void) {
 /* Check this function to see if it is a library function. Return TRUE if
     it is, and copy its name to pProc->name
 */
-boolT LibCheck(PPROC pProc) {
+boolT LibCheck(PPROC pProc)
+{
     long fileOffset;
     int h, i, j, arg;
     Int Idx;
@@ -463,7 +466,8 @@ boolT LibCheck(PPROC pProc) {
                 if (pFunc[i].bVararg)
                     pProc->flg |= PROC_VARARG;
             }
-        } else if (i == NIL) {
+        }
+        else if (i == NIL) {
             /* Have a symbol for it, but does not appear in a header file.
                 Treat it as if it is not a library function */
             pProc->flg |= PROC_RUNTIME; /* => is a runtime routine */
@@ -482,14 +486,16 @@ boolT LibCheck(PPROC pProc) {
     return (boolT)((pProc->flg & PROC_ISLIB) != 0);
 }
 
-void grab(int n, FILE *f) {
+void grab(int n, FILE *f)
+{
     if (fread(buf, 1, n, f) != (unsigned)n) {
         printf("Could not grab\n");
         exit(11);
     }
 }
 
-word readFileShort(FILE *f) {
+word readFileShort(FILE *f)
+{
     byte b1, b2;
 
     if (fread(&b1, 1, 1, f) != 1) {
@@ -504,7 +510,8 @@ word readFileShort(FILE *f) {
 }
 
 // Read a section of the file, considering endian issues
-void readFileSection(word *p, int len, FILE *f) {
+void readFileSection(word *p, int len, FILE *f)
+{
     for (int i = 0; i < len; i += 2) {
         *p++ = readFileShort(f);
     }
@@ -520,7 +527,8 @@ void dispKey(int i) {}
     for the pattern that is used up by the WILD byte, tough - it will match with
     everything else as well. */
 boolT locatePattern(byte *source, Int iMin, Int iMax, byte *pattern,
-                    Int iPatLen, Int *index) {
+                    Int iPatLen, Int *index)
+{
     Int i, j;
     byte *pSrc; /* Pointer to start of considered source */
     Int iLast;
@@ -549,7 +557,8 @@ boolT locatePattern(byte *source, Int iMin, Int iMax, byte *pattern,
     return 0;    /* Indicate failure */
 }
 
-void checkStartup(STATE *pState) {
+void checkStartup(STATE *pState)
+{
     /* This function checks the startup code for various compilers' way of
     loading DS. If found, it sets DS. This may not be needed in the future if
     pushing and popping of registers is implemented.
@@ -586,8 +595,9 @@ void checkStartup(STATE *pState) {
             prog.offMain = startOff;    /* Code starts immediately */
             prog.segMain = prog.initCS; /* At the 5 byte jump */
             goto gotVendor;             /* Already have vendor */
-        } else if (locatePattern(prog.Image, init, init + 26, pattBorl5Init,
-                                 sizeof(pattBorl5Init), &i)) {
+        }
+        else if (locatePattern(prog.Image, init, init + 26, pattBorl5Init,
+                               sizeof(pattBorl5Init), &i)) {
 
             setState(pState, rDS, LH(&prog.Image[i + 1]));
             printf("Borland Pascal v5.0 detected\n");
@@ -597,8 +607,9 @@ void checkStartup(STATE *pState) {
             prog.offMain = startOff; /* Code starts immediately */
             prog.segMain = prog.initCS;
             goto gotVendor; /* Already have vendor */
-        } else if (locatePattern(prog.Image, init, init + 26, pattBorl7Init,
-                                 sizeof(pattBorl7Init), &i)) {
+        }
+        else if (locatePattern(prog.Image, init, init + 26, pattBorl7Init,
+                               sizeof(pattBorl7Init), &i)) {
 
             setState(pState, rDS, LH(&prog.Image[i + 1]));
             printf("Borland Pascal v7 detected\n");
@@ -624,31 +635,35 @@ void checkStartup(STATE *pState) {
         prog.offMain = ((dword)para << 4) + rel;
         prog.segMain = (word)para;
         chModel = 'l'; /* Large model */
-    } else if (locatePattern(prog.Image, startOff, startOff + 0x180,
-                             pattMainCompact, sizeof(pattMainCompact), &i)) {
+    }
+    else if (locatePattern(prog.Image, startOff, startOff + 0x180,
+                           pattMainCompact, sizeof(pattMainCompact), &i)) {
         rel = LHS(
             &prog.Image[i + OFFMAINCOMPACT]); /* This is the rel addr of main */
         prog.offMain =
             i + OFFMAINCOMPACT + 2 + rel; /* Save absolute image offset */
         prog.segMain = prog.initCS;
         chModel = 'c'; /* Compact model */
-    } else if (locatePattern(prog.Image, startOff, startOff + 0x180,
-                             pattMainMedium, sizeof(pattMainMedium), &i)) {
+    }
+    else if (locatePattern(prog.Image, startOff, startOff + 0x180,
+                           pattMainMedium, sizeof(pattMainMedium), &i)) {
         rel = LH(&prog.Image[i + OFFMAINMEDIUM]); /* This is abs off of main */
         para = LH(
             &prog.Image[i + OFFMAINMEDIUM + 2]); /* This is abs seg of main */
         prog.offMain = ((dword)para << 4) + rel;
         prog.segMain = (word)para;
         chModel = 'm'; /* Medium model */
-    } else if (locatePattern(prog.Image, startOff, startOff + 0x180,
-                             pattMainSmall, sizeof(pattMainSmall), &i)) {
+    }
+    else if (locatePattern(prog.Image, startOff, startOff + 0x180,
+                           pattMainSmall, sizeof(pattMainSmall), &i)) {
         rel = LHS(&prog.Image[i + OFFMAINSMALL]); /* This is rel addr of main */
         prog.offMain =
             i + OFFMAINSMALL + 2 + rel; /* Save absolute image offset */
         prog.segMain = prog.initCS;
         chModel = 's'; /* Small model */
-    } else if (memcmp(&prog.Image[startOff], pattTPasStart,
-                      sizeof(pattTPasStart)) == 0) {
+    }
+    else if (memcmp(&prog.Image[startOff], pattTPasStart,
+                    sizeof(pattTPasStart)) == 0) {
         rel = LHS(&prog.Image[startOff + 1]); /* Get the jump offset */
         prog.offMain = rel + startOff + 3;    /* Save absolute image offset */
         prog.offMain += 0x20; /* These first 32 bytes are setting up */
@@ -659,7 +674,8 @@ void checkStartup(STATE *pState) {
         printf("Turbo Pascal 3.0 detected\n");
         printf("Main at %04X\n", prog.offMain);
         goto gotVendor; /* Already have vendor */
-    } else {
+    }
+    else {
         printf("Main could not be located!\n");
         prog.offMain = -1;
     }
@@ -736,7 +752,8 @@ gotVendor:
         if (sSigName[strlen(sSigName) - 1] != '/') {
             strcat(sSigName, "/"); /* Append a slash if necessary */
         }
-    } else {
+    }
+    else {
         strcpy(sSigName, "./"); /* Current directory */
     }
     strcat(sSigName, "dcc");
@@ -758,7 +775,8 @@ gotVendor:
     by dcc, rather than considered as known functions. When a prototype is
     found (in searchPList()), the parameter info is written to the proc struct.
 */
-void readProtoFile(void) {
+void readProtoFile(void)
+{
     FILE *fProto;
     char *pPath;         /* Point to the environment string */
     char szProFName[81]; /* Full name of dclibs.lst */
@@ -772,7 +790,8 @@ void readProtoFile(void) {
         if (szProFName[strlen(szProFName) - 1] != '/') {
             strcat(szProFName, "/"); /* Append a slash if necessary */
         }
-    } else {
+    }
+    else {
         strcpy(szProFName, "./"); /* Current directory */
     }
     strcat(szProFName, DCCLIBS);
@@ -828,7 +847,8 @@ void readProtoFile(void) {
     fclose(fProto);
 }
 
-int searchPList(char *name) {
+int searchPList(char *name)
+{
     /* Search through the symbol names for the name */
     /* Use binary search */
     int mx, mn, i, res;
@@ -841,10 +861,12 @@ int searchPList(char *name) {
         res = strcmp(pFunc[i].name, name);
         if (res == 0) {
             return i; /* Found! */
-        } else {
+        }
+        else {
             if (res < 0) {
                 mn = i + 1;
-            } else {
+            }
+            else {
                 mx = i - 1;
             }
         }
@@ -854,7 +876,8 @@ int searchPList(char *name) {
     res = strcmp(pFunc[mn].name, name);
     if (res == 0) {
         return mn; /* Found! */
-    } else {
+    }
+    else {
         return NIL;
     }
 }

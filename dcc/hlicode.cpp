@@ -88,7 +88,8 @@ boolT removeDefRegi(byte regi, PICODE picode, Int thisDefIdx, LOCAL_ID *locId)
     if (numDefs == 0) {
         invalidateIcode(picode);
         return (TRUE);
-    } else {
+    }
+    else {
         switch (picode->ic.hl.opcode) {
         case HLI_ASSIGN:
             removeRegFromLong(regi, locId, picode->ic.hl.oper.asgn.lhs);
@@ -162,7 +163,8 @@ void highLevelGen(PPROC pProc)
                 if (pIcode->ic.ll.flg & B) {
                     lhs = idCondExpReg(rAL, 0, &pProc->localId);
                     setRegDU(pIcode, rAL, E_DEF);
-                } else {
+                }
+                else {
                     lhs = idCondExpReg(rAX, 0, &pProc->localId);
                     setRegDU(pIcode, rAX, E_DEF);
                 }
@@ -191,7 +193,8 @@ void highLevelGen(PPROC pProc)
                 if (pIcode->ic.ll.flg & B) {
                     lhs = idCondExpReg(rAH, 0, &pProc->localId);
                     setRegDU(pIcode, rAH, E_DEF);
-                } else {
+                }
+                else {
                     lhs = idCondExpReg(rDX, 0, &pProc->localId);
                     setRegDU(pIcode, rDX, E_DEF);
                 }
@@ -318,8 +321,8 @@ void inverseCondOp(COND_EXPR **exp)
         default:
             break;
         } /* eos */
-
-    } else if ((*exp)->type == NEGATION)
+    }
+    else if ((*exp)->type == NEGATION)
         *exp = (*exp)->expr.unaryExp;
 
     /* other types are left unmodified */

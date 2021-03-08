@@ -14,7 +14,8 @@ static void dfsNumbering(PBB pBB, PBB *dfsLast, Int *first, Int *last);
 /*****************************************************************************
  * createCFG - Create the basic control flow graph
  ****************************************************************************/
-PBB createCFG(PPROC pProc) {
+PBB createCFG(PPROC pProc)
+{
     /* Splits Icode associated with the procedure into Basic Blocks.
      * The links between BBs represent the control flow graph of the
      * procedure.
@@ -89,10 +90,12 @@ PBB createCFG(PPROC pProc) {
                     for (i = 0; i < pIcode->ic.ll.caseTbl.numEntries; i++)
                         pBB->edges[i].ip = pIcode->ic.ll.caseTbl.entries[i];
                     pProc->hasCase = TRUE;
-                } else if ((pIcode->ic.ll.flg & (I | NO_LABEL)) == I) {
+                }
+                else if ((pIcode->ic.ll.flg & (I | NO_LABEL)) == I) {
                     pBB = newBB(pBB, start, ip, ONE_BRANCH, 1, pProc);
                     pBB->edges[0].ip = pIcode->ic.ll.immed.op;
-                } else
+                }
+                else
                     newBB(pBB, start, ip, NOWHERE_NODE, 0, pProc);
                 start = ip + 1;
                 break;
@@ -159,7 +162,8 @@ PBB createCFG(PPROC pProc) {
  * newBB - Allocate new BB and link to end of list
  *****************************************************************************/
 PBB newBB(PBB pBB, Int start, Int ip, byte nodeType, Int numOutEdges,
-          PPROC pproc) {
+          PPROC pproc)
+{
     PBB pnewBB;
 
     pnewBB = allocStruc(BB);
@@ -194,7 +198,8 @@ PBB newBB(PBB pBB, Int start, Int ip, byte nodeType, Int numOutEdges,
 /*****************************************************************************
  * freeCFG - Deallocates a cfg
  ****************************************************************************/
-void freeCFG(PBB cfg) {
+void freeCFG(PBB cfg)
+{
     PBB pBB;
 
     for (pBB = cfg; pBB; pBB = cfg) {
@@ -210,7 +215,8 @@ void freeCFG(PBB cfg) {
 /*****************************************************************************
  * compressCFG - Remove redundancies and add in-edge information
  ****************************************************************************/
-void compressCFG(PPROC pProc) {
+void compressCFG(PPROC pProc)
+{
     PBB pBB, pNxt;
     Int ip, first = 0, last, i;
 
@@ -250,7 +256,8 @@ void compressCFG(PPROC pProc) {
                 free(pBB);
                 stats.numBBaft--;
             }
-        } else {
+        }
+        else {
             pBB->inEdgeCount = pBB->numInEdges;
             pBB->inEdges = (PBB *)allocMem(pBB->numInEdges * sizeof(PBB));
         }
@@ -268,7 +275,8 @@ void compressCFG(PPROC pProc) {
 /****************************************************************************
  * rmJMP - If BB addressed is just a JMP it is replaced with its target
  ***************************************************************************/
-static PBB rmJMP(PPROC pProc, Int marker, PBB pBB) {
+static PBB rmJMP(PPROC pProc, Int marker, PBB pBB)
+{
     marker += DFS_JMP;
 
     while (pBB->nodeType == ONE_BRANCH && pBB->length == 1) {
@@ -282,7 +290,8 @@ static PBB rmJMP(PPROC pProc, Int marker, PBB pBB) {
             }
 
             pBB = pBB->edges[0].BBptr;
-        } else { /* We are going around in circles */
+        }
+        else { /* We are going around in circles */
             pBB->nodeType = NOWHERE_NODE;
             pProc->Icode.GetIcode(pBB->start)->ic.ll.immed.op =
                 (dword)pBB->start;
@@ -306,7 +315,8 @@ static PBB rmJMP(PPROC pProc, Int marker, PBB pBB) {
 /*****************************************************************************
  * mergeFallThrough
  ****************************************************************************/
-static void mergeFallThrough(PPROC pProc, PBB pBB) {
+static void mergeFallThrough(PPROC pProc, PBB pBB)
+{
     PBB pChild;
     Int i, ip;
 
@@ -354,7 +364,8 @@ static void mergeFallThrough(PPROC pProc, PBB pBB) {
  * dfsNumbering - Numbers nodes during first and last visits and determine
  * in-edges
  ****************************************************************************/
-static void dfsNumbering(PBB pBB, PBB *dfsLast, Int *first, Int *last) {
+static void dfsNumbering(PBB pBB, PBB *dfsLast, Int *first, Int *last)
+{
     PBB pChild;
     byte i;
 

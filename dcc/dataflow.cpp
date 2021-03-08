@@ -35,7 +35,8 @@ static COND_EXPR *srcIdent(PICODE Icode, PPROC pProc, Int i, PICODE duIcode,
             n = idCondExpKte(Icode->ic.ll.immed.op, 1);
         else
             n = idCondExpKte(Icode->ic.ll.immed.op, 2);
-    } else
+    }
+    else
         n = idCondExp(Icode, SRC, pProc, i, duIcode, du);
     return (n);
 }
@@ -262,7 +263,8 @@ static void liveRegAnalysis(PPROC pproc, dword liveOut)
                         picode->du.use = liveOut;
                     }
                 }
-            } else /* Check successors */
+            }
+            else /* Check successors */
             {
                 for (j = 0; j < pbb->numOutEdges; j++)
                     pbb->liveOut |= pbb->edges[j].BBptr->liveIn;
@@ -279,7 +281,8 @@ static void liveRegAnalysis(PPROC pproc, dword liveOut)
                             FALSE) /* hasn't been processed */
                             dataFlow(pcallee, pbb->liveOut);
                         pbb->liveOut = pcallee->liveIn;
-                    } else /* library routine */
+                    }
+                    else /* library routine */
                     {
                         if ((pcallee->flg &
                              PROC_IS_FUNC) && /* returns a value */
@@ -395,7 +398,8 @@ static void genDU1(PPROC pProc)
                             if ((!(ticode->du.def & duReg[regi])) &&
                                 (pbb->liveOut & duReg[regi]))
                                 picode->du.lastDefRegi |= duReg[regi];
-                        } else /* only 1 instruction in this basic block */
+                        }
+                        else /* only 1 instruction in this basic block */
                         {
                             /* Check if last definition of this register */
                             if (pbb->liveOut & duReg[regi])
@@ -479,7 +483,8 @@ static void genDU1(PPROC pProc)
                                             }
                                         }
                                     }
-                            } else /* liveOut */
+                            }
+                            else /* liveOut */
                                 picode->du.lastDefRegi |= duReg[regi];
                         }
                         defRegIdx++;
@@ -512,7 +517,8 @@ static void forwardSubs(COND_EXPR *lhs, COND_EXPR *rhs, PICODE picode,
     if (res) {
         invalidateIcode(picode);
         (*numHlIcodes)--;
-    } else {
+    }
+    else {
         /* Try to insert it on lhs of ticode*/
         res = insertSubTreeReg(
             rhs, &ticode->ic.hl.oper.asgn.lhs,
@@ -539,7 +545,8 @@ static void forwardSubsLong(Int longIdx, COND_EXPR *exp, PICODE picode,
     if (res) {
         invalidateIcode(picode);
         (*numHlIcodes)--;
-    } else {
+    }
+    else {
         /* Try to insert it on lhs of ticode*/
         res = insertSubTreeLongReg(exp, &ticode->ic.hl.oper.asgn.lhs, longIdx);
         if (res) {
@@ -576,7 +583,8 @@ static boolT xClear(COND_EXPR *rhs, Int f, Int t, Int lastBBinst, PPROC pproc)
                 return (TRUE);
             else
                 return (FALSE);
-        } else
+        }
+        else
             return (TRUE);
         /* else if (rhs->expr.ident.idType == LONG_VAR)
         {
@@ -619,12 +627,14 @@ static void processCArg(PPROC pp, PPROC pProc, PICODE picode, Int numArgs,
             if (pp->flg & PROC_VARARG) {
                 if (numArgs < pp->args.csym)
                     adjustActArgType(exp, pp->args.sym[numArgs].type, pProc);
-            } else {
+            }
+            else {
                 adjustActArgType(exp, pp->args.sym[numArgs].type, pProc);
             }
         }
         res = newStkArg(picode, exp, picode->ic.ll.opcode, pProc);
-    } else /* user function */
+    }
+    else /* user function */
     {
         if (pp->args.numArgs > 0)
             adjustForArgType(&pp->args, numArgs, expType(exp, pProc));
@@ -818,7 +828,8 @@ static void findExps(PPROC pProc)
                                 {
                                     invalidateIcode(picode);
                                     numHlIcodes--;
-                                } else /* cannot substitute function */
+                                }
+                                else /* cannot substitute function */
                                 {
                                     lhs =
                                         idCondExpID(retVal, &pProc->localId, j);
@@ -970,7 +981,8 @@ static void findExps(PPROC pProc)
                                 {
                                     invalidateIcode(picode);
                                     numHlIcodes--;
-                                } else /* cannot substitute function */
+                                }
+                                else /* cannot substitute function */
                                 {
                                     lhs =
                                         idCondExpID(retVal, &pProc->localId, j);
@@ -1018,7 +1030,8 @@ static void findExps(PPROC pProc)
                                         exp, pp->args.sym[numArgs].type, pProc);
                                 res = newStkArg(picode, exp,
                                                 picode->ic.ll.opcode, pProc);
-                            } else /* user function */
+                            }
+                            else /* user function */
                             {
                                 if (pp->args.numArgs > 0)
                                     adjustForArgType(&pp->args, numArgs,
@@ -1029,7 +1042,8 @@ static void findExps(PPROC pProc)
                             if (res == FALSE)
                                 k += hlTypeSize(exp, pProc);
                         }
-                    } else /* CALL_C */
+                    }
+                    else /* CALL_C */
                     {
                         cb = picode->ic.hl.oper.call.args->cb;
                         numArgs = 0;
@@ -1095,7 +1109,8 @@ void dataFlow(PPROC pProc, dword liveOut)
             pProc->retVal.id.longId.l = rAX;
             idx = newLongRegId(&pProc->localId, TYPE_LONG_SIGN, rDX, rAX, 0);
             propLongId(&pProc->localId, rAX, rDX, "\0");
-        } else if (isAx || isBx || isCx || isDx) /* word */
+        }
+        else if (isAx || isBx || isCx || isDx) /* word */
         {
             pProc->retVal.type = TYPE_WORD_SIGN;
             pProc->retVal.loc = REG_FRAME;

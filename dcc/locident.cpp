@@ -270,7 +270,8 @@ Int newLongId(LOCAL_ID *locSym, opLoc sd, PICODE pIcode, hlFirst f, Int ix,
         pmL = (sd == SRC) ? &pIcode->ic.ll.src : &pIcode->ic.ll.dst;
         pmH = (sd == SRC) ? &(pIcode + off)->ic.ll.src
                           : &(pIcode + off)->ic.ll.dst;
-    } else /* HIGH_FIRST */
+    }
+    else /* HIGH_FIRST */
     {
         pmH = (sd == SRC) ? &pIcode->ic.ll.src : &pIcode->ic.ll.dst;
         pmL = (sd == SRC) ? &(pIcode + off)->ic.ll.src
@@ -298,7 +299,8 @@ Int newLongId(LOCAL_ID *locSym, opLoc sd, PICODE pIcode, hlFirst f, Int ix,
             idx = newLongIdxId(locSym, pmH->segValue, pmH->off, pmL->off, rBX,
                                ix, TYPE_LONG_SIGN);
             setRegDU(pIcode, rBX, E_USE);
-        } else /* idx <> bp, bx */
+        }
+        else /* idx <> bp, bx */
             printf("long not supported, idx <> bp\n");
     }
 
@@ -333,7 +335,8 @@ boolT checkLongEq(LONG_STKID_TYPE longId, PICODE pIcode, Int i, Int idx,
             *rhs = idCondExpLong(&pProc->localId, SRC, pIcode, HIGH_FIRST, idx,
                                  E_USE, off);
         return (TRUE);
-    } else if ((longId.offH == pmHsrc->off) && (longId.offL == pmLsrc->off)) {
+    }
+    else if ((longId.offH == pmHsrc->off) && (longId.offL == pmLsrc->off)) {
         *lhs = idCondExpLong(&pProc->localId, DST, pIcode, HIGH_FIRST, idx,
                              E_DEF, off);
         *rhs = idCondExpLongIdx(i);
@@ -367,7 +370,8 @@ boolT checkLongRegEq(LONGID_TYPE longId, PICODE pIcode, Int i, Int idx,
             *rhs = idCondExpLong(&pProc->localId, SRC, pIcode, HIGH_FIRST, idx,
                                  E_USE, off);
         return (TRUE);
-    } else if ((longId.h == pmHsrc->regi) && (longId.l == pmLsrc->regi)) {
+    }
+    else if ((longId.h == pmHsrc->regi) && (longId.l == pmLsrc->regi)) {
         *lhs = idCondExpLong(&pProc->localId, DST, pIcode, HIGH_FIRST, idx,
                              E_DEF, off);
         *rhs = idCondExpLongIdx(i);
@@ -411,7 +415,8 @@ void propLongId(LOCAL_ID *locid, byte regL, byte regH, const char *name)
                 strcpy(id->macro, "LO");
                 id->hasMacro = TRUE;
                 id->illegal = TRUE;
-            } else if (id->id.regi == regH) {
+            }
+            else if (id->id.regi == regH) {
                 strcpy(id->name, name);
                 strcpy(id->macro, "HI");
                 id->hasMacro = TRUE;

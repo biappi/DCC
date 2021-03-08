@@ -185,7 +185,8 @@ static void findNodesInLoop(PBB latchNode, PBB head, PPROC pProc,
                     head->loopFollow = latchNode->edges[THEN].BBptr->dfsLastNum;
                 pProc->Icode.SetLlFlag(latchNode->start + latchNode->length - 1,
                                        JX_LOOP);
-            } else {
+            }
+            else {
                 head->loopType = WHILE_TYPE;
                 if (inList(loopNodes, head->edges[THEN].BBptr->dfsLastNum))
                     head->loopFollow = head->edges[ELSE].BBptr->dfsLastNum;
@@ -207,7 +208,8 @@ static void findNodesInLoop(PBB latchNode, PBB head, PPROC pProc,
         if (latchNode->nodeType == LOOP_NODE) {
         head->loopType = REPEAT_TYPE;
         head->loopFollow = latchNode->edges[0].BBptr->dfsLastNum;
-    } else if (intNodeType == TWO_BRANCH) {
+    }
+    else if (intNodeType == TWO_BRANCH) {
         head->loopType = WHILE_TYPE;
         pbb = latchNode;
         thenDfs = head->edges[THEN].BBptr->dfsLastNum;
@@ -216,7 +218,8 @@ static void findNodesInLoop(PBB latchNode, PBB head, PPROC pProc,
             if (pbb->dfsLastNum == thenDfs) {
                 head->loopFollow = elseDfs;
                 break;
-            } else if (pbb->dfsLastNum == elseDfs) {
+            }
+            else if (pbb->dfsLastNum == elseDfs) {
                 head->loopFollow = thenDfs;
                 break;
             }
@@ -233,7 +236,8 @@ static void findNodesInLoop(PBB latchNode, PBB head, PPROC pProc,
         if (pbb->dfsLastNum > head->dfsLastNum)
             pProc->dfsLast[head->loopFollow]->loopHead = NO_NODE; /*****/
         pProc->Icode.SetLlFlag(head->start + head->length - 1, JX_LOOP);
-    } else {
+    }
+    else {
         head->loopType = ENDLESS_TYPE;
         findEndlessFollow(pProc, loopNodes, head);
     }
@@ -293,7 +297,8 @@ static void structLoops(PPROC pProc, derSeq *derivedG)
                 if (inInt(pred, intNodes) && isBackEdge(pred, intHead)) {
                     if (!latchNode) {
                         latchNode = pred;
-                    } else {
+                    }
+                    else {
                         if (pred->dfsLastNum > latchNode->dfsLastNum)
                             latchNode = pred;
                     }
@@ -456,7 +461,8 @@ static void structIfs(PPROC pProc)
                 currNode->ifFollow = follow;
                 if (unresolved)
                     flagNodes(&unresolved, follow, pProc);
-            } else
+            }
+            else
                 insertList(&unresolved, curr);
         }
         freeList(&domDesc);

@@ -60,7 +60,8 @@ static void displayMemMap(void);
  * FrontEnd - invokes the loader, parser, disassembler (if asm1), icode
  * rewritter, and displays any useful information.
  ****************************************************************************/
-void FrontEnd(char *filename, PCALL_GRAPH *pcallGraph) {
+void FrontEnd(char *filename, PCALL_GRAPH *pcallGraph)
+{
     PPROC pProc;
     PSYM psym;
     Int i, c;
@@ -117,7 +118,8 @@ void FrontEnd(char *filename, PCALL_GRAPH *pcallGraph) {
 /****************************************************************************
  * displayLoadInfo - Displays low level loader type info.
  ***************************************************************************/
-static void displayLoadInfo(void) {
+static void displayLoadInfo(void)
+{
     Int i;
 
     printf("File type is %s\n", (prog.fCOM) ? "COM" : "EXE");
@@ -148,7 +150,8 @@ static void displayLoadInfo(void) {
 /*****************************************************************************
  * fill - Fills line for displayMemMap()
  ****************************************************************************/
-static void fill(Int ip, char *bf) {
+static void fill(Int ip, char *bf)
+{
     static byte type[4] = {'.', 'd', 'c', 'x'};
     byte i;
 
@@ -164,7 +167,8 @@ static void fill(Int ip, char *bf) {
 /*****************************************************************************
  * displayMemMap - Displays the memory bitmap
  ****************************************************************************/
-static void displayMemMap(void) {
+static void displayMemMap(void)
+{
     char c, b1[33], b2[33], b3[33];
     byte i;
     Int ip = 0;
@@ -194,7 +198,8 @@ static void displayMemMap(void) {
 /*****************************************************************************
  * LoadImage
  ****************************************************************************/
-static void LoadImage(char *filename) {
+static void LoadImage(char *filename)
+{
     FILE *fp;
     Int i, cb;
     byte buf[4];
@@ -260,9 +265,10 @@ static void LoadImage(char *filename) {
         }
         /* Seek to start of image */
         fseek(fp, (Int)LH(&header.numParaHeader) * 16, SEEK_SET);
-    } else { /* COM file
-              * In this case the load module size is just the file length
-              */
+    }
+    else { /* COM file
+            * In this case the load module size is just the file length
+            */
         fseek(fp, 0, SEEK_END);
         cb = ftell(fp);
 
@@ -316,7 +322,8 @@ static void LoadImage(char *filename) {
 /*****************************************************************************
  * allocMem - malloc with failure test
  ****************************************************************************/
-void *allocMem(Int cb) {
+void *allocMem(Int cb)
+{
     byte *p;
 
     // printf("Attempt to allocMem %5ld bytes\n", cb);
@@ -383,7 +390,8 @@ switch (_heapset('Z'))
 /*****************************************************************************
  * reallocVar - reallocs extra variable space
  ****************************************************************************/
-void *reallocVar(void *p, Int newsize) {
+void *reallocVar(void *p, Int newsize)
+{
 /*printf("Attempt to reallocVar %5d bytes\n", newsize);/**/
 #if 0
 switch (_heapset('Z'))

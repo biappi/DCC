@@ -145,7 +145,8 @@ COND_EXPR *idCondExpReg(byte regi, flags32 icodeFlg, LOCAL_ID *locsym)
         newExp->expr.ident.idNode.regiIdx =
             newByteWordRegId(locsym, TYPE_BYTE_SIGN, regi);
         newExp->expr.ident.regiType = BYTE_REG;
-    } else /* word */
+    }
+    else /* word */
     {
         newExp->expr.ident.idNode.regiIdx =
             newByteWordRegId(locsym, TYPE_WORD_SIGN, regi);
@@ -317,7 +318,8 @@ COND_EXPR *idCondExpID(ID *retVal, LOCAL_ID *locsym, Int ix)
                            retVal->id.longId.l, ix);
         newExp->expr.ident.idType = LONG_VAR;
         newExp->expr.ident.idNode.longIdx = idx;
-    } else if (retVal->type == TYPE_WORD_SIGN) {
+    }
+    else if (retVal->type == TYPE_WORD_SIGN) {
         newExp->expr.ident.idType = REGISTER;
         newExp->expr.ident.idNode.regiIdx =
             newByteWordRegId(locsym, TYPE_WORD_SIGN, retVal->id.regi);
@@ -379,7 +381,8 @@ COND_EXPR *idCondExp(PICODE pIcode, opLoc sd, PPROC pProc, Int i,
                 newExp = idCondExpParam(pm->off, &pProc->args);
             else /* local variable */
                 newExp = idCondExpLoc(pm->off, &pProc->localId);
-        } else if ((pm->seg == rDS) && (pm->regi == INDEXBASE + 7)) /* bx */
+        }
+        else if ((pm->seg == rDS) && (pm->regi == INDEXBASE + 7)) /* bx */
         {
             if (pm->off > 0) /* global variable */
                 newExp = idCondExpIdxGlob(pm->segValue, pm->off, rBX,
@@ -387,7 +390,8 @@ COND_EXPR *idCondExp(PICODE pIcode, opLoc sd, PPROC pProc, Int i,
             else
                 newExp = idCondExpOther(pm->seg, pm->regi, pm->off);
             setRegDU(duIcode, rBX, (operDu)USE);
-        } else /* idx <> bp, bx */
+        }
+        else /* idx <> bp, bx */
             newExp = idCondExpOther(pm->seg, pm->regi, pm->off);
         /**** check long ops, indexed global var *****/
     }
@@ -414,7 +418,8 @@ COND_EXPR *idCondExp(PICODE pIcode, opLoc sd, PPROC pProc, Int i,
                 break;
             }
             newExp = unaryCondExp(DEREFERENCE, newExp);
-        } else
+        }
+        else
             newExp = idCondExpOther(pm->seg, pm->regi, 0);
     }
 
@@ -439,7 +444,8 @@ condId idType(PICODE pIcode, opLoc sd)
             return (PARAM);
         else
             return (LOCAL_VAR);
-    } else
+    }
+    else
         return (OTHER);
 }
 
@@ -524,7 +530,8 @@ hlType expType(COND_EXPR *exp, PPROC pproc)
                 return (first);
             else
                 return (second);
-        } else
+        }
+        else
             return (first);
 
     case POST_INC:
@@ -649,7 +656,8 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
         if (exp->expr.unaryExp->type == IDENTIFIER) {
             needBracket = FALSE;
             strcat(condExp, "!");
-        } else
+        }
+        else
             strcat(condExp, "! (");
         e = walkCondExpr(exp->expr.unaryExp, pProc, numLoc);
         strcat(condExp, e);
@@ -661,7 +669,8 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
         if (exp->expr.unaryExp->type == IDENTIFIER) {
             needBracket = FALSE;
             strcat(condExp, "&");
-        } else
+        }
+        else
             strcat(condExp, "&(");
         e = walkCondExpr(exp->expr.unaryExp, pProc, numLoc);
         strcat(condExp, e);
@@ -673,7 +682,8 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
         if (exp->expr.unaryExp->type == IDENTIFIER) {
             needBracket = FALSE;
             strcat(condExp, "*");
-        } else
+        }
+        else
             strcat(condExp, "*(");
         e = walkCondExpr(exp->expr.unaryExp, pProc, numLoc);
         strcat(condExp, e);
@@ -776,7 +786,8 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
                 sprintf(o, "%s", id->name);
                 propLongId(&pProc->localId, id->id.longId.l, id->id.longId.h,
                            id->name);
-            } else /* GLB_FRAME */
+            }
+            else /* GLB_FRAME */
             {
                 if (id->id.longGlb.regi == 0) /* not indexed */
                     sprintf(o, "[%d]",
@@ -872,7 +883,8 @@ boolT insertSubTreeReg(COND_EXPR *exp, COND_EXPR **tree, byte regi,
             {
                 *tree = exp;
                 return TRUE;
-            } else if ((regi >= rAX) && (regi <= rBX)) /* word/byte reg */
+            }
+            else if ((regi >= rAX) && (regi <= rBX)) /* word/byte reg */
             {
                 if ((treeReg == (regi + rAL - 1)) ||
                     (treeReg == (regi + rAH - 1))) {
@@ -996,7 +1008,8 @@ COND_EXPR *popExpStk()
         expStk = expStk->next;
         free(top);
         return (topExp);
-    } else
+    }
+    else
         return (NULL);
 }
 

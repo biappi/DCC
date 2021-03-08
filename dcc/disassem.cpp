@@ -159,7 +159,8 @@ static char cbuf[256]; /* Has to be 256 for wgetstr() to work */
 HANDLE hConsole; /* All 32 bit console style routines need this handle */
 #endif
 
-void attrSet(char attrib) {
+void attrSet(char attrib)
+{
 #ifdef _CONSOLE
     switch (attrib) {
     case A_NORMAL:
@@ -196,7 +197,8 @@ void attrSet(char attrib) {
 void initConsole() { hConsole = GetStdHandle(STD_OUTPUT_HANDLE); }
 #endif
 
-void erase(void) {
+void erase(void)
+{
 #ifdef _CONSOLE
     COORD coordScreen = {0, 0}; /* here's where we'll home the
                                    cursor */
@@ -229,7 +231,8 @@ void erase(void) {
 #endif
 }
 
-void move(int r, int c) {
+void move(int r, int c)
+{
 #ifdef _CONSOLE
     COORD pos;
     pos.X = c;
@@ -250,7 +253,8 @@ void move(int r, int c) {
  *			  pass == 2 generates output on file .a2
  *			  pass == 3 generates output on file .b
  ****************************************************************************/
-void disassem(Int pass, PPROC ppProc) {
+void disassem(Int pass, PPROC ppProc)
+{
     Int i;
 
     pProc = ppProc; /* Save the passes pProc */
@@ -288,7 +292,8 @@ void disassem(Int pass, PPROC ppProc) {
                     /* This icode is the target of a jump */
                     pc[pc[i].ic.ll.immed.op].ic.ll.flg |= TARGET;
                     pc[i].ic.ll.flg |= JMP_ICODE; /* So its not done twice */
-                } else {
+                }
+                else {
                     /* This jump cannot be linked to a label */
                     pc[i].ic.ll.flg |= NO_LABEL;
                 }
@@ -326,7 +331,8 @@ void disassem(Int pass, PPROC ppProc) {
  * i is index into Icode for this proc                                      *
  * It is assumed that icode i is already scanned                            *
  ****************************************************************************/
-static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
+static void dis1Line(Int i, boolT fWindow, char attr, Int pass)
+{
     PICODE pIcode = &pc[i];
 
     /* Disassembly stage 1 --
@@ -336,7 +342,8 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
         ((pIcode->ic.ll.flg & NO_CODE) ||
          ((pIcode->ic.ll.flg & SYNTHETIC) && (pIcode->ic.ll.opcode != iJMP)))) {
         return;
-    } else if (pIcode->ic.ll.flg & NO_CODE) {
+    }
+    else if (pIcode->ic.ll.flg & NO_CODE) {
         return;
     }
 
@@ -393,7 +400,8 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
         strcpy(&buf[8], szOps[pIcode->ic.ll.opcode]);
         buf[eop = strlen(buf)] = ' ';
         p = buf + 8 + (POS_OPR - POS_OPC);
-    } else {
+    }
+    else {
         strcpy(&buf[POS_OPC], szOps[pIcode->ic.ll.opcode]);
         buf[eop = strlen(buf)] = ' ';
         p = buf + POS_OPR;
@@ -442,7 +450,8 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
     case iPUSH:
         if (pIcode->ic.ll.flg & I) {
             strcpy(p + WID_PTR, strHex(pIcode->ic.ll.immed.op));
-        } else {
+        }
+        else {
             strcpy(p, strDst(pIcode->ic.ll.flg | I, &pIcode->ic.ll.dst));
         }
         break;
@@ -457,7 +466,8 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
                    ", ");
             formatRM(p + strlen(p), pIcode->ic.ll.flg, &pIcode->ic.ll.src);
             strcat(p, strSrc(pIcode));
-        } else
+        }
+        else
             strcpy(p, strDst(pIcode->ic.ll.flg | I, &pIcode->ic.ll.src));
         break;
 
@@ -500,7 +510,8 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
 
         if (pIcode->ic.ll.flg & NO_LABEL) {
             strcpy(p + WID_PTR, strHex(pIcode->ic.ll.immed.op));
-        } else if (pIcode->ic.ll.flg & I) {
+        }
+        else if (pIcode->ic.ll.flg & I) {
             j = pIcode->ic.ll.immed.op;
             if (!pl[j]) /* Forward jump */
             {
@@ -508,12 +519,15 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
             }
             if (pIcode->ic.ll.opcode == iJMPF) {
                 sprintf(p, " far ptr L%d", pl[j]);
-            } else {
+            }
+            else {
                 sprintf(p + WID_PTR, "L%d", pl[j]);
             }
-        } else if (pIcode->ic.ll.opcode == iJMPF) {
+        }
+        else if (pIcode->ic.ll.opcode == iJMPF) {
             strcat(strcpy(p - 1, "dword ptr"), strSrc(pIcode) + 1);
-        } else {
+        }
+        else {
             strcpy(p, strDst(I, &pIcode->ic.ll.src));
         }
         break;
@@ -524,9 +538,11 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
             sprintf(p, "%s ptr %s",
                     (pIcode->ic.ll.opcode == iCALL) ? " near" : "  far",
                     (pIcode->ic.ll.immed.proc.proc)->name);
-        } else if (pIcode->ic.ll.opcode == iCALLF) {
+        }
+        else if (pIcode->ic.ll.opcode == iCALLF) {
             strcat(strcpy(p, "dword ptr"), strSrc(pIcode) + 1);
-        } else {
+        }
+        else {
             strcpy(p, strDst(I, &pIcode->ic.ll.src));
         }
         break;
@@ -541,7 +557,8 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
     case iINT:
         if (pIcode->ic.ll.flg & I) {
             strcpy(p + WID_PTR, strHex(pIcode->ic.ll.immed.op));
-        } else {
+        }
+        else {
             buf[eop] = '\0';
         }
         break;
@@ -572,12 +589,14 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
                 pIcode->ic.ll.opcode == iOUTS ||
                 pIcode->ic.ll.opcode == iREP_OUTS) {
                 strcat(p, szWreg[pIcode->ic.ll.src.segOver - rAX]);
-            } else {
+            }
+            else {
                 strcat(strcat(p, "es:[di], "),
                        szWreg[pIcode->ic.ll.src.segOver - rAX]);
             }
             strcat(p, ":[si]");
-        } else
+        }
+        else
             strcpy(&buf[eop], (pIcode->ic.ll.flg & B) ? "B" : "W");
         break;
 
@@ -585,7 +604,8 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
         if (pIcode->ic.ll.src.segOver) {
             strcpy(&buf[eop + 1], szPtr[1]);
             strcat(strcat(p, szWreg[pIcode->ic.ll.src.segOver - rAX]), ":[bx]");
-        } else
+        }
+        else
             buf[eop] = '\0';
         break;
 
@@ -609,7 +629,8 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
     /* Comments */
     if (pIcode->ic.ll.flg & SYNTHETIC) {
         fImpure = FALSE;
-    } else {
+    }
+    else {
         for (j = pIcode->ic.ll.label, fImpure = 0; j > 0 && j < (Int)nextInst;
              j++) {
             fImpure |= BITMAP(j, BM_DATA);
@@ -669,21 +690,25 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
             printfd(buf);
             dis_newline();
             attrSet(A_NORMAL);
-        } else if (pass == 3) /* output to .b code buffer */
+        }
+        else if (pass == 3) /* output to .b code buffer */
             appendStrTab(&cCode.code, "%s\n", buf);
         else /* output to .a1 or .a2 file */
             fprintf(fp, "%03d %06X %s\n", i, pIcode->ic.ll.label, buf);
-    } else /* SYNTHETIC instruction */
+    }
+    else /* SYNTHETIC instruction */
     {
         strcat(buf, ";Synthetic inst");
         if (fWindow) {
             printfd("     ");
             printfd(buf);
             dis_newline();
-        } else if (pass == 3) /* output to .b code buffer */
+        }
+        else if (pass == 3) /* output to .b code buffer */
         {
             appendStrTab(&cCode.code, "%s\n", buf);
-        } else /* output to .a1 or .a2 file */
+        }
+        else /* output to .a1 or .a2 file */
         {
             fprintf(fp, "%03d        %s\n", i, buf);
         }
@@ -693,12 +718,14 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass) {
 /****************************************************************************
  * formatRM
  ***************************************************************************/
-static void formatRM(char *p, flags32 flg, PMEM pm) {
+static void formatRM(char *p, flags32 flg, PMEM pm)
+{
     char seg[4];
 
     if (pm->segOver) {
         strcat(strcpy(seg, szWreg[pm->segOver - rAX]), ":");
-    } else
+    }
+    else
         *seg = '\0';
 
     if (pm->regi == 0) {
@@ -717,24 +744,28 @@ static void formatRM(char *p, flags32 flg, PMEM pm) {
         if (pm->off < 0) {
             sprintf(p, "%s[%s-%s]", seg, szIndex[pm->regi - INDEXBASE],
                     strHex((dword)(-pm->off)));
-        } else {
+        }
+        else {
             sprintf(p, "%s[%s+%s]", seg, szIndex[pm->regi - INDEXBASE],
                     strHex((dword)pm->off));
         }
-    } else
+    }
+    else
         sprintf(p, "%s[%s]", seg, szIndex[pm->regi - INDEXBASE]);
 }
 
 /*****************************************************************************
  * strDst
  ****************************************************************************/
-static char *strDst(flags32 flg, PMEM pm) {
+static char *strDst(flags32 flg, PMEM pm)
+{
     static char buf[30];
 
     /* Immediates to memory require size descriptor */
     if ((flg & I) && (pm->regi == 0 || pm->regi >= INDEXBASE)) {
         memcpy(buf, szPtr[flg & B], WID_PTR);
-    } else {
+    }
+    else {
         memset(buf, ' ', WID_PTR);
     }
 
@@ -745,7 +776,8 @@ static char *strDst(flags32 flg, PMEM pm) {
 /****************************************************************************
  * strSrc                                                                   *
  ****************************************************************************/
-static char *strSrc(PICODE pc) {
+static char *strSrc(PICODE pc)
+{
     static char buf[30] = {", "};
 
     if (pc->ic.ll.flg & I)
@@ -761,7 +793,8 @@ static char *strSrc(PICODE pc) {
 /****************************************************************************
  * strHex                                                                   *
  ****************************************************************************/
-static char *strHex(dword d) {
+static char *strHex(dword d)
+{
     static char buf[10];
 
     d &= 0xFFFF;
@@ -786,7 +819,8 @@ dword pcLast;   /* Image offset of last instr in proc */
 int NSCROLL;    /* Number of limes to scroll. Pseudo constant */
 
 /* Paint the title line */
-void dispTitle(void) {
+void dispTitle(void)
+{
     char buf[80];
 
     move(0, 0); /* Must move before setting attributes */
@@ -807,7 +841,8 @@ void dispTitle(void) {
  *           updateScr - update the screen                                    *
  ****************************************************************************/
 /* bNew is true if must recalculate the top line */
-void updateScr(boolT bNew) {
+void updateScr(boolT bNew)
+{
     int y, x;
     Int i, ic;
 
@@ -823,11 +858,13 @@ void updateScr(boolT bNew) {
                              pc[icTop].ic.ll.label) {
                 /* Then this instruction is contiguous with the current */
                 icTop--;
-            } else
+            }
+            else
                 break;
         }
         pcTop = pc[icTop].ic.ll.label;
-    } else {
+    }
+    else {
         dispTitle();
     }
 
@@ -837,7 +874,8 @@ void updateScr(boolT bNew) {
         if ((ic >= numIcode) || (nextInst != pc[ic].ic.ll.label)) {
             if (labelSrch(pc, numIcode, nextInst, &i)) {
                 ic = i;
-            } else {
+            }
+            else {
                 pcLast = pc[ic - 1].ic.ll.label; /* Remember end of proc */
                 break;                           /* Must be past last */
             }
@@ -915,13 +953,15 @@ updateScrOp(boolT bNew)
 
 #endif
 
-void pushPosStack(void) {
+void pushPosStack(void)
+{
     /* Push the current position on the position stack */
     posStack[iPS].ic = icCur;
     posStack[iPS++].pProc = pProc;
 }
 
-void popPosStack(void) {
+void popPosStack(void)
+{
     /* Push the current position on the position stack */
     /* Note: relies on the byte wraparound. Beware! */
     if ((intptr_t)(posStack[--iPS].pProc) != -1) {
@@ -930,7 +970,8 @@ void popPosStack(void) {
         }
         icCur = posStack[iPS].ic;
         pcCur = pc[icCur].ic.ll.label;
-    } else
+    }
+    else
         iPS++; /* Stack empty.. don't pop */
 }
 
@@ -938,7 +979,8 @@ void popPosStack(void) {
     Scan it if necessary, adjusting the allocation of pc[] and pl[]
     if necessary. Returns -1 if an error, otherwise the icode offset
 */
-static Int checkScanned(dword pcCur) {
+static Int checkScanned(dword pcCur)
+{
     Int i;
 
     /* First we check if the current icode is in range */
@@ -981,7 +1023,8 @@ static Int checkScanned(dword pcCur) {
 /* Set up to use the procedure proc */
 /* This includes some important initialisations, allocations, etc that are
     normally done in disassem() */
-static void setProc(PPROC proc) {
+static void setProc(PPROC proc)
+{
     Int i;
 
     pProc = proc; /* Keep in a static */
@@ -1012,7 +1055,8 @@ static void setProc(PPROC proc) {
                 /* This icode is the target of a jump */
                 pc[pc[i].ic.ll.immed.op].ic.ll.flg |= TARGET;
                 pc[i].ic.ll.flg |= JMP_ICODE; /* So its not done twice */
-            } else {
+            }
+            else {
                 /* This jump cannot be linked to a label */
                 pc[i].ic.ll.flg |= NO_LABEL;
             }
@@ -1029,7 +1073,8 @@ static void setProc(PPROC proc) {
 /****************************************************************************
  *          interactDis - interactive disassembler                          *
  ****************************************************************************/
-void interactDis(PPROC initProc, Int initIC) {
+void interactDis(PPROC initProc, Int initIC)
+{
 
 #if 1
     printf(
@@ -1073,7 +1118,8 @@ void interactDis(PPROC initProc, Int initIC) {
         if (nEsc) {
             ch += EXT; /* Got the NULL before, so this is extended */
             nEsc = 0;
-        } else if (ch == 0) {
+        }
+        else if (ch == 0) {
             nEsc = 1; /* Got one escape (actually, NULL) char */
             break;
         }
@@ -1147,15 +1193,17 @@ void interactDis(PPROC initProc, Int initIC) {
                         /* immed.op is an icode offset */
                         icCur = pc[icCur].ic.ll.immed.op;
                         pcCur = pc[icCur].ic.ll.label;
-                    } else {
+                    }
+                    else {
                         /* immed.op is still an image offset.
                             Quite likely we need to scan */
                         pcCur = pc[icCur].ic.ll.immed.op;
                         if ((icCur = checkScanned(pcCur)) == -1)
                             break;
                     }
-                } else if ((pc[icCur].ic.ll.opcode == iCALL) ||
-                           (pc[icCur].ic.ll.opcode == iCALLF)) {
+                }
+                else if ((pc[icCur].ic.ll.opcode == iCALL) ||
+                         (pc[icCur].ic.ll.opcode == iCALLF)) {
                     /* The dest is a pointer to a proc struct */
                     // First check that the procedure has icodes (e.g. may be
                     // a library function, or just not disassembled yet)
@@ -1164,21 +1212,24 @@ void interactDis(PPROC initProc, Int initIC) {
                         pushPosStack();
                         setProc(pp);
                     }
-                } else {
+                }
+                else {
                     /* Other immediate */
                     pushPosStack();
                     pcCur = pc[icCur].ic.ll.immed.op;
                     dispData(pProc->state.r[rDS]);
                     break;
                 }
-            } else if (pc[icCur].ic.ll.dst.off != 0) {
+            }
+            else if (pc[icCur].ic.ll.dst.off != 0) {
                 pushPosStack();
                 pcCur = pc[icCur].ic.ll.dst.off;
                 if (!labelSrch(pc, numIcode, pcCur, &icCur)) {
                     dispData(pProc->state.r[rDS]);
                     break;
                 }
-            } else if (pc[icCur].ic.ll.src.off != 0) {
+            }
+            else if (pc[icCur].ic.ll.src.off != 0) {
                 pushPosStack();
                 pcCur = pc[icCur].ic.ll.src.off;
                 if (!labelSrch(pc, numIcode, pcCur, &icCur)) {
@@ -1256,7 +1307,8 @@ void interactDis(PPROC initProc, Int initIC) {
             if (findVal(pcCur, 0, &w)) {
                 readVal(cbuf, pcCur, 0); /* Make it the default string */
                 deleteVal(pcCur, 0, FALSE);
-            } else {
+            }
+            else {
                 cbuf[0] = '\0'; /* Remove prev string */
             }
 
@@ -1339,7 +1391,8 @@ static void dispData(word dataSeg) {
 }
 #endif
 
-boolT callArg(word off, char *sym) {
+boolT callArg(word off, char *sym)
+{
     dword imageOff;
     PPROC p, pPrev;
 
@@ -1371,7 +1424,8 @@ boolT callArg(word off, char *sym) {
 }
 
 /* Handle the floating point opcodes (icode iESC) */
-static void flops(PICODE pIcode) {
+static void flops(PICODE pIcode)
+{
     char bf[30];
     byte op = (byte)pIcode->ic.ll.immed.op;
 
@@ -1387,7 +1441,8 @@ static void flops(PICODE pIcode) {
 
         if ((op == 0x29) || (op == 0x1F)) {
             strcpy(bf, "tbyte ptr ");
-        } else
+        }
+        else
             switch (op & 0x30) {
             case 0x00:
             case 0x10:
@@ -1415,7 +1470,8 @@ static void flops(PICODE pIcode) {
 
         formatRM(bf + 10, pIcode->ic.ll.flg, &pIcode->ic.ll.dst);
         strcpy(p, bf);
-    } else {
+    }
+    else {
         /* The mod/rm mod bits are set to 11 (i.e. register).
            Could be specials (0x0C-0x0F, etc), or the st(i) versions of
                    normal opcodes. Because the opcodes are slightly different
@@ -1453,7 +1509,8 @@ static void flops(PICODE pIcode) {
                 /* This is the ST(i), ST form. */
                 sprintf(&buf[POS_OPR2], "ST(%d),ST",
                         pIcode->ic.ll.dst.regi - rAX);
-            } else {
+            }
+            else {
                 /* ST, ST(i) */
                 sprintf(&buf[POS_OPR2], "ST,ST(%d)",
                         pIcode->ic.ll.dst.regi - rAX);

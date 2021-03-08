@@ -32,7 +32,8 @@ static bool FourWild(byte pat[]); /* Make the next 4 bytes wild */
 void fixWildCards(byte pat[]);    /* Main routine */
 
 /* Handle the mod/rm case. Returns true if pattern exhausted */
-static bool ModRM(byte pat[]) {
+static bool ModRM(byte pat[])
+{
     byte op;
 
     /* A standard mod/rm byte follows opcode */
@@ -72,7 +73,8 @@ static bool ModRM(byte pat[]) {
 }
 
 /* Change the next two bytes to wild cards */
-static bool TwoWild(byte pat[]) {
+static bool TwoWild(byte pat[])
+{
     pat[pc++] = WILD;
     if (pc >= PATLEN)
         return TRUE; /* Pattern exhausted */
@@ -83,20 +85,23 @@ static bool TwoWild(byte pat[]) {
 }
 
 /* Change the next four bytes to wild cards */
-static bool FourWild(byte pat[]) {
+static bool FourWild(byte pat[])
+{
     TwoWild(pat);
     return TwoWild(pat);
 }
 
 /* Chop from the current point by wiping with zeroes. Can't rely on anything
     after this point */
-static void chop(byte pat[]) {
+static void chop(byte pat[])
+{
     if (pc >= PATLEN)
         return; /* Could go negative otherwise */
     memset(&pat[pc], 0, PATLEN - pc);
 }
 
-static bool op0F(byte pat[]) {
+static bool op0F(byte pat[])
+{
     /* The two byte opcodes */
     byte op = pat[pc++];
     switch (op & 0xF0) {
@@ -175,7 +180,8 @@ static bool op0F(byte pat[]) {
     processor is in 16 bit address mode (real mode).
     PATLEN bytes are scanned.
 */
-void fixWildCards(byte pat[]) {
+void fixWildCards(byte pat[])
+{
 
     byte op, quad, intArg;
 
@@ -206,35 +212,41 @@ void fixWildCards(byte pat[]) {
                 if (op & 2) {
                     /* Push, pop, other 1 byte opcodes */
                     continue;
-                } else {
+                }
+                else {
                     if (op & 1) {
                         /* Word immediate operands */
                         pc += 2;
                         continue;
-                    } else {
+                    }
+                    else {
                         /* Byte immediate operands */
                         pc++;
                         continue;
                     }
                 }
-            } else {
+            }
+            else {
                 /* All these have mod/rm bytes */
                 if (ModRM(pat))
                     return;
                 continue;
             }
-        } else if (quad == 0x40) {
+        }
+        else if (quad == 0x40) {
             if ((op & 0x60) == 0x40) {
                 /* 0x40 - 0x5F -- these are inc, dec, push, pop of general
                     registers */
                 continue;
-            } else {
+            }
+            else {
                 /* 0x60 - 0x70 */
                 if (op & 0x10) {
                     /* 70-7F 2 byte jump opcodes */
                     pc++;
                     continue;
-                } else {
+                }
+                else {
                     /* Odds and sods */
                     switch (op) {
                     case 0x60: /* pusha */
@@ -266,7 +278,8 @@ void fixWildCards(byte pat[]) {
                     }
                 }
             }
-        } else if (quad == 0x80) {
+        }
+        else if (quad == 0x80) {
             switch (op & 0xF0) {
             case 0x80: /* 80 - 8F */
                 /* All have a mod/rm byte */
@@ -304,7 +317,8 @@ void fixWildCards(byte pat[]) {
                     if (TwoWild(pat))
                         return;
                     continue;
-                } else if ((op & 0xFE) == 0xA8) {
+                }
+                else if ((op & 0xFE) == 0xA8) {
                     /* test al,#byte or test ax,#word */
                     if (op & 1)
                         pc += 2;
@@ -320,14 +334,16 @@ void fixWildCards(byte pat[]) {
                         might be relocatable. For now, make them wild */
                     if (TwoWild(pat))
                         return;
-                } else {
+                }
+                else {
                     /* mov reg, #8 */
                     pc++;
                 }
                 continue;
             }
             }
-        } else {
+        }
+        else {
             /* In the last quadrant of the op code table */
             switch (op) {
             case 0xC0: /* 386: Rotate group 2 ModRM, byte, #byte */

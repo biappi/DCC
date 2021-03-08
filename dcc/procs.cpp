@@ -56,7 +56,8 @@ boolT insertCallGraph(PCALL_GRAPH pcallGraph, PPROC caller, PPROC callee)
     if (pcallGraph->proc == caller) {
         insertArc(pcallGraph, callee);
         return (TRUE);
-    } else {
+    }
+    else {
         for (i = 0; i < pcallGraph->numOutEdges; i++)
             if (insertCallGraph(pcallGraph->outEdges[i], caller, callee))
                 return (TRUE);
@@ -115,7 +116,8 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
             tidx = newByteWordRegId(&tproc->localId, TYPE_WORD_SIGN, regL);
         else
             tidx = newByteWordRegId(&tproc->localId, TYPE_BYTE_SIGN, regL);
-    } else if (type == LONG_VAR) {
+    }
+    else if (type == LONG_VAR) {
         regL = pproc->localId.id[lhs->expr.ident.idNode.longIdx].id.longId.l;
         regH = pproc->localId.id[lhs->expr.ident.idNode.longIdx].id.longId.h;
         tidx = newLongRegId(&tproc->localId, TYPE_LONG_SIGN, regH, regL, 0);
@@ -130,7 +132,8 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
                 regExist = TRUE;
                 i = ts->csym;
             }
-        } else if (type == LONG_VAR) {
+        }
+        else if (type == LONG_VAR) {
             if ((ts->sym[i].regs != NULL) &&
                 (ts->sym[i].regs->expr.ident.idNode.longIdx == tidx)) {
                 regExist = TRUE;
@@ -151,12 +154,14 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
             if (regL < rAL) {
                 ts->sym[ts->csym].type = TYPE_WORD_SIGN;
                 ts->sym[ts->csym].regs = idCondExpRegIdx(tidx, WORD_REG);
-            } else {
+            }
+            else {
                 ts->sym[ts->csym].type = TYPE_BYTE_SIGN;
                 ts->sym[ts->csym].regs = idCondExpRegIdx(tidx, BYTE_REG);
             }
             sprintf(tproc->localId.id[tidx].name, "arg%d", ts->csym);
-        } else if (type == LONG_VAR) {
+        }
+        else if (type == LONG_VAR) {
             ts->sym[ts->csym].regs = idCondExpLongIdx(tidx);
             ts->sym[ts->csym].type = TYPE_LONG_SIGN;
             sprintf(tproc->localId.id[tidx].name, "arg%d", ts->csym);
