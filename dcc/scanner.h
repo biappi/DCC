@@ -2,7 +2,7 @@
  * (C) Cristina Cifuentes, Jeff Ledermann
  */
 
-#define LH(p)  ((int)((byte *)(p))[0] + ((int)((byte *)(p))[1] << 8))
+#define LH(p) ((int)((byte *)(p))[0] + ((int)((byte *)(p))[1] << 8))
 
 static void rm(Int i);
 static void modrm(Int i);
@@ -35,4 +35,4 @@ static void none2(Int i);
 static void checkInt(Int i);
 
 /* Extracts reg bits from middle of mod-reg-rm byte */
-#define REG(x)  ((byte)(x & 0x38) >> 3)
+#define REG(x) ((byte)(x & 0x38) >> 3)
