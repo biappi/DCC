@@ -193,9 +193,8 @@ static byte pattMainSmall[] = {
     0xFF, 0x36, WILD, WILD, /* Push argv */
     0xFF, 0x36, WILD, WILD, /* Push argc */
     0xE8, WILD, WILD        /* call _main */
-    /*  0x50,                                   /* push ax... not in Borland V3
-     */
-    /*  0xE8                                    /* call _exit */
+    /*  0x50, */            /* push ax... not in Borland V3 */
+    /*  0xE8, */            /* call _exit */
 };
 /* Num bytes from start pattern to the relative offset of main() */
 #define OFFMAINSMALL 13
@@ -206,11 +205,10 @@ static byte pattMainMedium[] = {
     0xFF, 0x36, WILD, WILD, /* Push argv */
     0xFF, 0x36, WILD, WILD, /* Push argc */
     0x9A, WILD, WILD, WILD,
-    WILD /* call far _main */
-    /*  0x50                                    /* push ax */
-    /*  0x0E,                                   /* push cs NB not tested Borland
-     */
-    /*  0xE8                                    /* call _exit */
+    WILD                    /* call far _main */
+    /*  0x50,            */ /* push ax */
+    /*  0x0E,            */ /* push cs NB not tested Borland */
+    /*  0xE8,            */ /* call _exit */
 };
 /* Num bytes from start pattern to the relative offset of main() */
 #define OFFMAINMEDIUM 13
@@ -223,8 +221,8 @@ static byte pattMainCompact[] = {
     0xFF, 0x36, WILD, WILD, /* Push argv hi */
     0xFF, 0x36, WILD, WILD, /* Push argc */
     0xE8, WILD, WILD,       /* call _main */
-    /*  0x50,                                   /* push ax */
-    /*  0xE8                                    /* call _exit */
+    /*  0x50,            */ /* push ax */
+    /*  0xE8             */ /* call _exit */
 };
 /* Num bytes from start pattern to the relative offset of main() */
 #define OFFMAINCOMPACT 21
@@ -237,10 +235,10 @@ static byte pattMainLarge[] = {
     0xFF, 0x36, WILD, WILD, /* Push argv hi */
     0xFF, 0x36, WILD, WILD, /* Push argc */
     0x9A, WILD, WILD, WILD,
-    WILD /* call far _main */
-    /*  0x50                                    /* push ax */
-    /*  0x0E,                                   /* push cs */
-    /*  0xE8                                    /* call _exit */
+    WILD                    /* call far _main */
+    /*  0x50             */ /* push ax */
+    /*  0x0E,            */ /* push cs */
+    /*  0xE8             */ /* call _exit */
 };
 /* Num bytes from start pattern to the relative offset of main() */
 #define OFFMAINLARGE 21

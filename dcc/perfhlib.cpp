@@ -236,8 +236,6 @@ bool DFS(int parentE, int v)
                         printf(" & ");
                         dispKey(abs(parentE) - 1);
                         printf(")\n");
-                        /*                      *(long *)key1 = 0;      /* Wipe
-                         * the key */
                         memset(key1, 0, EntryLen);
                     }
                     else {

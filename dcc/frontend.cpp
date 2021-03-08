@@ -383,7 +383,7 @@ switch (_heapset('Z'))
     {
         fatalError(MALLOC_FAILED, cb);
     }
-    /*printf("allocMem: %p\n", p);/**/
+    /* printf("allocMem: %p\n", p); */
     return p;
 }
 
@@ -392,8 +392,8 @@ switch (_heapset('Z'))
  ****************************************************************************/
 void *reallocVar(void *p, Int newsize)
 {
-/*printf("Attempt to reallocVar %5d bytes\n", newsize);/**/
 #if 0
+/* printf("Attempt to reallocVar %5d bytes\n", newsize); */
 switch (_heapset('Z'))
 {
 	case _HEAPBADBEGIN: printf("aV: Bad heap begin\n"); /*getchar()*/; break;
@@ -447,7 +447,7 @@ switch (_heapset('Z'))
         fatalError(MALLOC_FAILED, newsize);
     }
 
-    /*printf("reallocVar: %p\n", p);/**/
+    /* printf("reallocVar: %p\n", p); */
     return p;
 }
 

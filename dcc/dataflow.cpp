@@ -772,10 +772,13 @@ static void findExps(PPROC pProc)
                                 }
                                 break;
 
-                                /****case HLI_CALL:    /* register arguments
-                                  newRegArg (pProc, picode, ticode);
-                                                                  invalidateIcode
-                                  (picode); numHlIcodes--; break;	*/
+#if 0
+                            case HLI_CALL: /* register arguments */
+                                newRegArg(pProc, picode, ticode);
+                                invalidateIcode(picode);
+                                numHlIcodes--;
+                                break;
+#endif
 
                             default:
                                 break;

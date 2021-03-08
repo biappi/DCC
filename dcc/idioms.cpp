@@ -46,7 +46,7 @@ boolT JmpInst(llIcode opcode)
 }
 
 /*****************************************************************************
-/* checkStkVars - Checks for PUSH SI
+ * checkStkVars - Checks for PUSH SI
  *                          [PUSH DI]
  *                or         PUSH DI
  *                          [PUSH SI]
