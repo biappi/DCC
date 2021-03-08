@@ -77,12 +77,12 @@ void udm(void) {
     }
 }
 
-static char *nodeType[] = {"branch",   "if",        "case",     "fall",
-                           "return",   "call",      "loop",     "repeat",
-                           "interval", "cycleHead", "caseHead", "terminate",
-                           "nowhere"};
+static const char *nodeType[] = {
+    "branch",   "if",        "case",   "fall",     "return",
+    "call",     "loop",      "repeat", "interval", "cycleHead",
+    "caseHead", "terminate", "nowhere"};
 
-static char *loopType[] = {"noLoop", "while", "repeat", "loop", "for"};
+static const char *loopType[] = {"noLoop", "while", "repeat", "loop", "for"};
 
 /****************************************************************************
  * displayCFG - Displays the Basic Block list

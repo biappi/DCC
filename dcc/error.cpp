@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-static char *errorMessage[] = {
+static const char *errorMessage[] = {
     "Invalid option -%c\n",                         /* INVALID_ARG    */
     "Invalid instruction %02X at location %06lX\n", /* INVALID_OPCODE */
     "Don't understand 80386 instruction %02X at location %06lX\n",

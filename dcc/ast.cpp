@@ -10,10 +10,10 @@
 #include "dcc.h"
 
 /* Index registers **** temp solution */
-static char *idxReg[8] = {"bx+si", "bx+di", "bp+si", "bp+di",
-                          "si",    "di",    "bp",    "bx"};
+static const char *idxReg[8] = {"bx+si", "bx+di", "bp+si", "bp+di",
+                                "si",    "di",    "bp",    "bx"};
 /* Conditional operator symbols in C.  Index by condOp enumeration type */
-static char *condOpSym[] = {
+static const char *condOpSym[] = {
     " <= ", " < ", " == ", " != ", " > ",  " >= ", " & ", " | ",  " ^ ", " ~ ",
     " + ",  " - ", " * ",  " / ",  " >> ", " << ", " % ", " && ", " || "};
 

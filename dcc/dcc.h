@@ -210,9 +210,9 @@ extern dword duReg[30];     /* def/use bits for registers		*/
 extern dword maskDuReg[30]; /* masks off du bits for regs		*/
 
 /* Registers used by icode instructions */
-static char *allRegs[21] = {"ax", "cx", "dx", "bx", "sp", "bp", "si",
-                            "di", "es", "cs", "ss", "ds", "al", "cl",
-                            "dl", "bl", "ah", "ch", "dh", "bh", "tmp"};
+static const char *allRegs[21] = {"ax", "cx", "dx", "bx", "sp", "bp", "si",
+                                  "di", "es", "cs", "ss", "ds", "al", "cl",
+                                  "dl", "bl", "ah", "ch", "dh", "bh", "tmp"};
 
 /* Memory map states */
 #define BM_UNKNOWN 0 /* Unscanned memory     */

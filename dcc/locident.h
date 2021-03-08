@@ -29,7 +29,7 @@ typedef enum {
     TYPE_DOUBLE,      /* double precision float	*/
 } hlType;
 
-static char *hlTypes[13] = {
+static const char *hlTypes[13] = {
     "",     "char",          "unsigned char", "int",   "unsigned int",
     "long", "unsigned long", "record",        "int *", "char *",
     "",     "float",         "double"};

@@ -28,7 +28,7 @@
 
 #define DELTA_ICODE 16 /* Number of icodes to realloc by each time */
 
-static char *szOps[] = {
+static const char *szOps[] = {
     "CBW",       "AAA",      "AAD",        "AAM",       "AAS",  "ADC",
     "ADD",       "AND",      "BOUND",      "CALL",      "CALL", "CLC",
     "CLD",       "CLI",      "CMC",        "CMP",       "CMPS", "REPNE CMPS",
@@ -50,7 +50,7 @@ static char *szOps[] = {
     "REPNE",     "REPE",     "MOD"};
 
 /* The following opcodes are for mod != 3 */
-static char *szFlops1[] = {
+static const char *szFlops1[] = {
     /* 0        1        2       3        4        5        6        7  */
     "FADD",    "FMUL",   "FCOM",   "FCOMP",
     "FSUB",    "FSUBR",  "FDIV",   "FDIVR", /* 00 */
@@ -71,7 +71,7 @@ static char *szFlops1[] = {
 };
 
 /* The following opcodes are for mod == 3 */
-static char *szFlops2[] = {
+static const char *szFlops2[] = {
     /* 0        1        2       3        4        5        6        7  */
     "FADD",   "FMUL",   "FCOM",   "FCOMP",
     "FSUB",   "FSUBR",  "FDIV",   "FDIVR", /* 00 */
@@ -91,36 +91,36 @@ static char *szFlops2[] = {
     "",       "???",    "FBSTP",  "FISTP" /* 38 */
 };
 
-static char *szFlops0C[] = {"FCHS", "FABS", "???", "???",
-                            "FTST", "FXAM", "???", "???"};
+static const char *szFlops0C[] = {"FCHS", "FABS", "???", "???",
+                                  "FTST", "FXAM", "???", "???"};
 
-static char *szFlops0D[] = {"FLD1",   "FLDL2T", "FLDL2E", "FLDP1",
-                            "FLDLG2", "FLDLN2", "FLDZ",   "???"};
+static const char *szFlops0D[] = {"FLD1",   "FLDL2T", "FLDL2E", "FLDP1",
+                                  "FLDLG2", "FLDLN2", "FLDZ",   "???"};
 
-static char *szFlops0E[] = {"F2XM1",   "FYL2X",  "FPTAN",   "FPATAN",
-                            "FXTRACT", "FPREM1", "FDECSTP", "FINCSTP"};
+static const char *szFlops0E[] = {"F2XM1",   "FYL2X",  "FPTAN",   "FPATAN",
+                                  "FXTRACT", "FPREM1", "FDECSTP", "FINCSTP"};
 
-static char *szFlops0F[] = {"FPREM",   "FYLXP1", "FSQRT", "FSINCOS",
-                            "FRNDINT", "FSCALE", "FSIN",  "FCOS"};
+static const char *szFlops0F[] = {"FPREM",   "FYLXP1", "FSQRT", "FSINCOS",
+                                  "FRNDINT", "FSCALE", "FSIN",  "FCOS"};
 
-static char *szFlops15[] = {"???", "FUCOMPP", "???", "???",
-                            "???", "???",     "???", "???"};
+static const char *szFlops15[] = {"???", "FUCOMPP", "???", "???",
+                                  "???", "???",     "???", "???"};
 
-static char *szFlops1C[] = {"???",  "???",  "FCLEX", "FINIT",
-                            "FTST", "FXAM", "???",   "???"};
+static const char *szFlops1C[] = {"???",  "???",  "FCLEX", "FINIT",
+                                  "FTST", "FXAM", "???",   "???"};
 
-static char *szFlops33[] = {"???", "FCOMPP", "???", "???",
-                            "???", "???",    "???", "???"};
+static const char *szFlops33[] = {"???", "FCOMPP", "???", "???",
+                                  "???", "???",    "???", "???"};
 
-static char *szFlops3C[] = {"FSTSWAX", "???", "???", "???",
-                            "???",     "???", "???", "???"};
+static const char *szFlops3C[] = {"FSTSWAX", "???", "???", "???",
+                                  "???",     "???", "???", "???"};
 
-static char *szIndex[8] = {"bx+si", "bx+di", "bp+si", "bp+di",
-                           "si",    "di",    "bp",    "bx"};
-static char *szBreg[8] = {"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"};
-static char *szWreg[12] = {"ax", "cx", "dx", "bx", "sp", "bp",
-                           "si", "di", "es", "cs", "ss", "ds"};
-static char *szPtr[2] = {" word ptr ", " byte ptr "};
+static const char *szIndex[8] = {"bx+si", "bx+di", "bp+si", "bp+di",
+                                 "si",    "di",    "bp",    "bx"};
+static const char *szBreg[8] = {"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"};
+static const char *szWreg[12] = {"ax", "cx", "dx", "bx", "sp", "bp",
+                                 "si", "di", "es", "cs", "ss", "ds"};
+static const char *szPtr[2] = {" word ptr ", " byte ptr "};
 
 static void dis1Line(Int i, boolT fWin, char attr, Int pass);
 void dis1LineOp(Int i, boolT fWin, char attr, word *len, PPROC pProc);
