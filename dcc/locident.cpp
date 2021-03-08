@@ -263,7 +263,7 @@ Int newLongId(LOCAL_ID *locSym, opLoc sd, PICODE pIcode, hlFirst f, Int ix,
  * Note: long constants should be checked first and stored as a long integer
  *       number in an expression record.    */
 {
-    Int idx;
+    Int idx = 0;
     PMEM pmH, pmL;
 
     if (f == LOW_FIRST) {

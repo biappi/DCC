@@ -1653,8 +1653,8 @@ static void setAddress(Int i, boolT fdst, word seg, int16 reg, word off)
 
     /* If not to register (i.e. to r/m), and talking about r/m,
             then this is dest */
-    pm = (!(stateTable[i].flg & TO_REG) == fdst) ? &pIcode->ic.ll.dst
-                                                 : &pIcode->ic.ll.src;
+    pm = ((!(stateTable[i].flg & TO_REG)) == fdst) ? &pIcode->ic.ll.dst
+                                                   : &pIcode->ic.ll.src;
 
     /* Set segment.  A later procedure (lookupAddr in proclist.c) will
      * provide the value of this segment in the field segValue.  */

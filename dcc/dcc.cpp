@@ -55,9 +55,10 @@ int main(int argc, char *argv[])
         displayTotalStats();
 
     /*
-        freeDataStructures(pProcList);
+    freeDataStructures(pProcList);
     */
-    return;
+
+    return 0;
 }
 
 /****************************************************************************

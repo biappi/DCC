@@ -831,7 +831,7 @@ COND_EXPR *copyCondExp(COND_EXPR *exp)
 /* Makes a copy of the given expression.  Allocates newExp storage for each
  * node.  Returns the copy. */
 {
-    COND_EXPR *newExp; /* Expression node copy */
+    COND_EXPR *newExp = nullptr; /* Expression node copy */
 
     switch (exp->type) {
     case BOOLEAN_OP:
