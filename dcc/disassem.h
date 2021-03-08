@@ -21,17 +21,8 @@
 #define KEY_LEFT 0x4B
 #define KEY_UP 0x48
 #define KEY_RIGHT 0x4D
-#define KEY_NPAGE 0x51
-#define KEY_PPAGE 0x49
-#endif
-
-#ifdef __UNIX__
-#define KEY_DOWN EXT + 'B'
-#define KEY_LEFT EXT + 'D'
-#define KEY_UP EXT + 'A'
-#define KEY_RIGHT EXT + 'C'
-#define KEY_NPAGE EXT + 'J' /* Enter correct value! */
-#define KEY_PPAGE EXT + 'K' /* Another guess! */
+#define KEY_NPAGE 0x51 /* Enter correct value! */
+#define KEY_PPAGE 0x49 /* Another guess! */
 #endif
 
 /* "Attributes" */

@@ -14,9 +14,6 @@
 #include "disassem.h"
 // Note: for the time being, there is no interactive disassembler
 // for unix
-#ifndef __UNIX__
-#include <conio.h> // getch() etc
-#endif
 
 #ifndef max
 #define max(a, b) (((a) > (b)) ? (a) : (b))
@@ -1035,7 +1032,7 @@ static void setProc(PPROC proc) {
  ****************************************************************************/
 void interactDis(PPROC initProc, Int initIC) {
 
-#ifdef __UNIX__
+#if 1
     printf(
         "Sorry - interactive disasassembler option not available for Unix\n");
     return;
@@ -1073,7 +1070,7 @@ void interactDis(PPROC initProc, Int initIC) {
     fInteract = TRUE;
     while (fInteract) {
         ch = ::_getch(); // Mike: need a Unix equivalent of getch()!
-#ifdef __MSDOS__
+
         if (nEsc) {
             ch += EXT; /* Got the NULL before, so this is extended */
             nEsc = 0;
@@ -1081,31 +1078,6 @@ void interactDis(PPROC initProc, Int initIC) {
             nEsc = 1; /* Got one escape (actually, NULL) char */
             break;
         }
-#endif
-#ifdef __UNIX__
-        switch (nEsc) {
-        case 1: /* Already got one escape */
-            if (ch == '[') {
-                nEsc++; /* Got 2 chars in the escape sequence */
-                break;
-            } else {
-                /* Escape something else. Ignore */
-                nEsc = 0;
-            }
-            break;
-        case 2:
-            /* Already got Esc [ ... */
-            ch += EXT; /* Make it an extended key */
-            nEsc = 0;  /* Reset the escape state */
-            break;
-        case 0:
-            /* No escapes... yet */
-            if (ch == 0x1B) {
-                nEsc++; /* That's one escape... */
-                break;
-            }
-        }
-#endif
 
         // For consoles, we get a 0xE0 then KEY_DOWN for the normal down arrow
         // character. We simply ignore the 0xE0; this has the effect that the
@@ -1314,7 +1286,7 @@ void interactDis(PPROC initProc, Int initIC) {
 
     free(posStack);
     destroySymTables();
-#endif // #ifdef unix
+#endif // #if 1
 }
 
 /****************************************************************************

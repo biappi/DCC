@@ -1,7 +1,5 @@
 project('dcc', 'cpp')
 
-add_project_arguments('-D__UNIX__', language: 'cpp')
-
 src = [
     'dcc/ast.cpp',
     'dcc/ast.h',

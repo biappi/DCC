@@ -6,12 +6,7 @@
 
 #include "dcc.h"
 #include <string.h>
-#ifdef __UNIX__
 #include <unistd.h>
-#else
-#include <stdio.h>
-#include <io.h> /* For unlink() */
-#endif
 
 /* Global variables - extern to other modules */
 char *progname;              /* argv[0] - for error msgs 			  */

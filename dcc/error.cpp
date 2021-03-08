@@ -7,12 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#ifndef __UNIX__
-#if 1
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 static char *errorMessage[] = {
     "Invalid option -%c\n",                         /* INVALID_ARG    */
@@ -46,15 +41,7 @@ static char *errorMessage[] = {
  ****************************************************************************/
 void fatalError(Int errId, ...) {
     va_list args;
-//#ifdef __UNIX__   /* ultrix */
-#if 0
-   Int errId;
-
-    va_start(args);
-    errId = va_arg(args, Int);
-#else
     va_start(args, errId);
-#endif
 
     if (errId == USAGE)
         fprintf(stderr,
@@ -72,15 +59,8 @@ void fatalError(Int errId, ...) {
  ****************************************************************************/
 void reportError(Int errId, ...) {
     va_list args;
-//#ifdef __UNIX__   /* ultrix */
-#if 0
-   Int errId;
-
-    va_start(args);
-    errId = va_arg(args, Int);
-#else /* msdos or windows*/
     va_start(args, errId);
-#endif
+
     fprintf(stderr, "dcc: ");
     vfprintf(stderr, errorMessage[errId - 1], args);
     va_end(args);
