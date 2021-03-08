@@ -154,7 +154,7 @@ static void longJCond23(COND_EXPR *rhs, COND_EXPR *lhs, PICODE pIcode, Int *idx,
     lhs = boolCondExp(lhs, rhs,
                       condOpJCond[(pIcode + off + 1)->ic.ll.opcode - iJB]);
     newJCondHlIcode(pIcode + 1, lhs);
-    copyDU(pIcode + 1, pIcode, E_USE, E_USE);
+    copyDU(pIcode + 1, pIcode, OPerDu_USE, OPerDu_USE);
     (pIcode + 1)->du.use |= (pIcode + off)->du.use;
 
     /* Update statistics */
@@ -179,7 +179,7 @@ static void longJCond22(COND_EXPR *rhs, COND_EXPR *lhs, PICODE pIcode, Int *idx)
     /* Form conditional expression */
     lhs = boolCondExp(lhs, rhs, condOpJCond[(pIcode + 3)->ic.ll.opcode - iJB]);
     newJCondHlIcode(pIcode + 1, lhs);
-    copyDU(pIcode + 1, pIcode, E_USE, E_USE);
+    copyDU(pIcode + 1, pIcode, OPerDu_USE, OPerDu_USE);
     (pIcode + 1)->du.use |= (pIcode + 2)->du.use;
 
     /* Adjust outEdges[0] to the new target basic block */
@@ -350,9 +350,9 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
                         (pLocId->id.longId.l == pmL->regi)) {
                         lhs = idCondExpLongIdx(i);
                         insertIdx(&pProc->localId.id[i].idx, idx - 1);
-                        setRegDU(pIcode, pmL->regi, E_DEF);
+                        setRegDU(pIcode, pmL->regi, OPerDu_DEF);
                         rhs = idCondExpLong(&pProc->localId, SRC, pIcode,
-                                            HIGH_FIRST, idx, E_USE, 1);
+                                            HIGH_FIRST, idx, OPerDu_USE, 1);
                         newAsgnHlIcode(pIcode, lhs, rhs);
                         invalidateIcode(pIcode + 1);
                         idx = 0; /* to exit the loop */
@@ -365,7 +365,7 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
                     if ((pLocId->id.longId.h == pmH->regi) &&
                         (pLocId->id.longId.l == pmL->regi)) {
                         lhs = idCondExpLongIdx(i);
-                        setRegDU(pIcode, pmH->regi, E_DEF);
+                        setRegDU(pIcode, pmH->regi, OPerDu_DEF);
                         newUnaryHlIcode(pIcode, HLI_POP, lhs);
                         invalidateIcode(pIcode + 1);
                         idx = 0; /* to exit the loop */
@@ -382,9 +382,9 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
                     if ((pLocId->id.longId.h == pmH->regi) &&
                         (pLocId->id.longId.l == pmL->regi)) {
                         lhs = idCondExpLongIdx(i);
-                        setRegDU(pIcode, pmH->regi, USE_DEF);
+                        setRegDU(pIcode, pmH->regi, OPerDu_USE_DEF);
                         rhs = idCondExpLong(&pProc->localId, SRC, pIcode,
-                                            LOW_FIRST, idx, E_USE, 1);
+                                            LOW_FIRST, idx, OPerDu_USE, 1);
                         switch (pIcode->ic.ll.opcode) {
                         case iAND:
                             rhs = boolCondExp(lhs, rhs, AND);
@@ -426,9 +426,9 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
                              (pIcode + 1)->ic.ll.src.regi)) {
                             rhs = idCondExpLongIdx(i);
                             setRegDU(pIcode, (pIcode + 1)->ic.ll.src.regi,
-                                     E_USE);
+                                     OPerDu_USE);
                             lhs = idCondExpLong(&pProc->localId, DST, pIcode,
-                                                HIGH_FIRST, idx, E_DEF, 1);
+                                                HIGH_FIRST, idx, OPerDu_DEF, 1);
                             newAsgnHlIcode(pIcode, lhs, rhs);
                             invalidateIcode(pIcode + 1);
                             idx = pProc->Icode
@@ -442,7 +442,7 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
                              (pIcode + 1)->ic.ll.src.regi)) {
                             rhs = idCondExpLongIdx(i);
                             setRegDU(pIcode, (pIcode + 1)->ic.ll.src.regi,
-                                     E_USE);
+                                     OPerDu_USE);
                             newUnaryHlIcode(pIcode, HLI_PUSH, lhs);
                             invalidateIcode(pIcode + 1);
                         }
@@ -460,9 +460,9 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
                         if ((pLocId->id.longId.h == pmH->regi) &&
                             (pLocId->id.longId.l == pmL->regi)) {
                             lhs = idCondExpLongIdx(i);
-                            setRegDU(pIcode, pmH->regi, USE_DEF);
+                            setRegDU(pIcode, pmH->regi, OPerDu_USE_DEF);
                             rhs = idCondExpLong(&pProc->localId, SRC, pIcode,
-                                                LOW_FIRST, idx, E_USE, 1);
+                                                LOW_FIRST, idx, OPerDu_USE, 1);
                             switch (pIcode->ic.ll.opcode) {
                             case iAND:
                                 rhs = boolCondExp(lhs, rhs, AND);
@@ -520,7 +520,7 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
                             lhs, rhs,
                             condOpJCond[(pIcode + 1)->ic.ll.opcode - iJB]);
                         newJCondHlIcode(pIcode + 1, lhs);
-                        copyDU(pIcode + 1, pIcode, E_USE, E_USE);
+                        copyDU(pIcode + 1, pIcode, OPerDu_USE, OPerDu_USE);
                         invalidateIcode(pIcode);
                     }
                 }

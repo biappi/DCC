@@ -98,12 +98,12 @@ typedef struct _callGraph {
 } CALL_GRAPH;
 typedef CALL_GRAPH *PCALL_GRAPH;
 
-#define NUM_PROCS_DELTA 5      /* delta # procs a proc invokes              */
+#define NUM_PROCS_DELTA 5 /* delta # procs a proc invokes              */
 
-extern PPROC pProcList;        /* Pointer to the head of the procedure list */
-extern PPROC pLastProc;        /* Pointer to last node of the proc list     */
-extern PCALL_GRAPH callGraph;  /* Pointer to the head of the call graph     */
-extern bundle cCode;           /* Output C procedure's declaration and code */
+extern PPROC pProcList;       /* Pointer to the head of the procedure list */
+extern PPROC pLastProc;       /* Pointer to last node of the proc list     */
+extern PCALL_GRAPH callGraph; /* Pointer to the head of the call graph     */
+extern bundle cCode;          /* Output C procedure's declaration and code */
 
 /* Procedure FLAGS */
 #define PROC_BADINST 0x000100  /* Proc contains invalid or 386 instruction */

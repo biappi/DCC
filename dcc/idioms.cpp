@@ -922,12 +922,13 @@ void findIdioms(PPROC pProc)
         case iDEC:
         case iINC:
             if (idiom18(pIcode, pEnd, pProc)) {
-                lhs = idCondExp(pIcode - 1, SRC, pProc, ip, pIcode, E_USE);
+                lhs = idCondExp(pIcode - 1, SRC, pProc, ip, pIcode, OPerDu_USE);
                 if (pIcode->ic.ll.opcode == iDEC)
                     lhs = unaryCondExp(POST_DEC, lhs);
                 else
                     lhs = unaryCondExp(POST_INC, lhs);
-                rhs = idCondExp(pIcode + 1, SRC, pProc, ip, pIcode + 2, E_USE);
+                rhs = idCondExp(pIcode + 1, SRC, pProc, ip, pIcode + 2,
+                                OPerDu_USE);
                 exp = boolCondExp(
                     lhs, rhs, condOpJCond[(pIcode + 2)->ic.ll.opcode - iJB]);
                 newJCondHlIcode(pIcode + 2, exp);
@@ -938,7 +939,7 @@ void findIdioms(PPROC pProc)
                 ip += 2;
             }
             else if (idiom19(pIcode, pEnd, pProc)) {
-                lhs = idCondExp(pIcode, DST, pProc, ip, pIcode + 1, E_USE);
+                lhs = idCondExp(pIcode, DST, pProc, ip, pIcode + 1, OPerDu_USE);
                 if (pIcode->ic.ll.opcode == iDEC)
                     lhs = unaryCondExp(PRE_DEC, lhs);
                 else
@@ -952,12 +953,13 @@ void findIdioms(PPROC pProc)
                 ip++;
             }
             else if (idiom20(pIcode, pEnd, pProc)) {
-                lhs = idCondExp(pIcode + 1, SRC, pProc, ip, pIcode, E_USE);
+                lhs = idCondExp(pIcode + 1, SRC, pProc, ip, pIcode, OPerDu_USE);
                 if (pIcode->ic.ll.opcode == iDEC)
                     lhs = unaryCondExp(PRE_DEC, lhs);
                 else
                     lhs = unaryCondExp(PRE_INC, lhs);
-                rhs = idCondExp(pIcode + 2, SRC, pProc, ip, pIcode + 3, E_USE);
+                rhs = idCondExp(pIcode + 2, SRC, pProc, ip, pIcode + 3,
+                                OPerDu_USE);
                 exp = boolCondExp(
                     lhs, rhs, condOpJCond[(pIcode + 3)->ic.ll.opcode - iJB]);
                 newJCondHlIcode(pIcode + 3, exp);
@@ -997,8 +999,8 @@ void findIdioms(PPROC pProc)
                 idx = newLongRegId(&pProc->localId, TYPE_LONG_SIGN, regH, regL,
                                    ip);
                 lhs = idCondExpLongIdx(idx);
-                setRegDU(pIcode, regH, E_DEF);
-                rhs = idCondExp(pIcode, SRC, pProc, ip, pIcode, NONE);
+                setRegDU(pIcode, regH, OPerDu_DEF);
+                rhs = idCondExp(pIcode, SRC, pProc, ip, pIcode, OPerDu_NONE);
                 newAsgnHlIcode(pIcode, lhs, rhs);
                 invalidateIcode(pIcode + 1);
                 pIcode += 2;
@@ -1007,9 +1009,9 @@ void findIdioms(PPROC pProc)
             else if ((idx = idiom13(pIcode, pEnd))) /* Idiom 13 */
             {
                 lhs = idCondExpReg(idx, 0, &pProc->localId);
-                setRegDU(pIcode, idx, E_DEF);
+                setRegDU(pIcode, idx, OPerDu_DEF);
                 pIcode->du1.numRegsDef--; /* prev byte reg def */
-                rhs = idCondExp(pIcode, SRC, pProc, ip, pIcode, NONE);
+                rhs = idCondExp(pIcode, SRC, pProc, ip, pIcode, OPerDu_NONE);
                 newAsgnHlIcode(pIcode, lhs, rhs);
                 invalidateIcode(pIcode + 1);
                 pIcode += 2;
@@ -1071,9 +1073,9 @@ void findIdioms(PPROC pProc)
         case iADD: /* Idiom 5 */
             if (idiom5(pIcode, pEnd)) {
                 lhs = idCondExpLong(&pProc->localId, DST, pIcode, LOW_FIRST, ip,
-                                    USE_DEF, 1);
+                                    OPerDu_USE_DEF, 1);
                 rhs = idCondExpLong(&pProc->localId, SRC, pIcode, LOW_FIRST, ip,
-                                    E_USE, 1);
+                                    OPerDu_USE, 1);
                 exp = boolCondExp(lhs, rhs, ADD);
                 newAsgnHlIcode(pIcode, lhs, exp);
                 invalidateIcode(pIcode + 1);
@@ -1089,7 +1091,7 @@ void findIdioms(PPROC pProc)
                                    pIcode->ic.ll.dst.regi,
                                    (pIcode + 1)->ic.ll.dst.regi, ip);
                 lhs = idCondExpLongIdx(idx);
-                setRegDU(pIcode, (pIcode + 1)->ic.ll.dst.regi, USE_DEF);
+                setRegDU(pIcode, (pIcode + 1)->ic.ll.dst.regi, OPerDu_USE_DEF);
                 rhs = idCondExpKte(1, 2);
                 exp = boolCondExp(lhs, rhs, SHR);
                 newAsgnHlIcode(pIcode, lhs, exp);
@@ -1121,7 +1123,7 @@ void findIdioms(PPROC pProc)
                                    (pIcode + 1)->ic.ll.dst.regi,
                                    pIcode->ic.ll.dst.regi, ip);
                 lhs = idCondExpLongIdx(idx);
-                setRegDU(pIcode, (pIcode + 1)->ic.ll.dst.regi, USE_DEF);
+                setRegDU(pIcode, (pIcode + 1)->ic.ll.dst.regi, OPerDu_USE_DEF);
                 rhs = idCondExpKte(1, 2);
                 exp = boolCondExp(lhs, rhs, SHL);
                 newAsgnHlIcode(pIcode, lhs, exp);
@@ -1139,7 +1141,7 @@ void findIdioms(PPROC pProc)
                                    pIcode->ic.ll.dst.regi,
                                    (pIcode + 1)->ic.ll.dst.regi, ip);
                 lhs = idCondExpLongIdx(idx);
-                setRegDU(pIcode, (pIcode + 1)->ic.ll.dst.regi, USE_DEF);
+                setRegDU(pIcode, (pIcode + 1)->ic.ll.dst.regi, OPerDu_USE_DEF);
                 rhs = idCondExpKte(1, 2);
                 exp = boolCondExp(lhs, rhs, SHR);
                 newAsgnHlIcode(pIcode, lhs, exp);
@@ -1153,9 +1155,9 @@ void findIdioms(PPROC pProc)
         case iSUB: /* Idiom 6 */
             if (idiom6(pIcode, pEnd)) {
                 lhs = idCondExpLong(&pProc->localId, DST, pIcode, LOW_FIRST, ip,
-                                    USE_DEF, 1);
+                                    OPerDu_USE_DEF, 1);
                 rhs = idCondExpLong(&pProc->localId, SRC, pIcode, LOW_FIRST, ip,
-                                    E_USE, 1);
+                                    OPerDu_USE, 1);
                 exp = boolCondExp(lhs, rhs, SUB);
                 newAsgnHlIcode(pIcode, lhs, exp);
                 invalidateIcode(pIcode + 1);
@@ -1173,7 +1175,7 @@ void findIdioms(PPROC pProc)
         case iNEG: /* Idiom 11 */
             if (idiom11(pIcode, pEnd)) {
                 lhs = idCondExpLong(&pProc->localId, DST, pIcode, HIGH_FIRST,
-                                    ip, USE_DEF, 1);
+                                    ip, OPerDu_USE_DEF, 1);
                 rhs = unaryCondExp(NEGATION, lhs);
                 newAsgnHlIcode(pIcode, lhs, rhs);
                 invalidateIcode(pIcode + 1);
@@ -1209,7 +1211,7 @@ void findIdioms(PPROC pProc)
         case iXOR: /* Idiom 7 */
             if (idiom21(pIcode, pEnd)) {
                 lhs = idCondExpLong(&pProc->localId, DST, pIcode, HIGH_FIRST,
-                                    ip, E_DEF, 1);
+                                    ip, OPerDu_DEF, 1);
                 rhs = idCondExpKte((pIcode + 1)->ic.ll.immed.op, 4);
                 newAsgnHlIcode(pIcode, lhs, rhs);
                 pIcode->du.use = 0; /* clear register used in iXOR */
@@ -1218,7 +1220,7 @@ void findIdioms(PPROC pProc)
                 ip++;
             }
             else if (idiom7(pIcode)) {
-                lhs = idCondExp(pIcode, DST, pProc, ip, pIcode, NONE);
+                lhs = idCondExp(pIcode, DST, pProc, ip, pIcode, OPerDu_NONE);
                 rhs = idCondExpKte(0, 2);
                 newAsgnHlIcode(pIcode, lhs, rhs);
                 pIcode->du.use = 0; /* clear register used in iXOR */

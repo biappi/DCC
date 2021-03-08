@@ -87,11 +87,11 @@ static void elimCondCodes(PPROC pProc)
                                 rhs = srcIdent(pProc->Icode.GetIcode(defAt - 1),
                                                pProc, defAt - 1,
                                                pProc->Icode.GetIcode(useAt - 1),
-                                               E_USE);
+                                               OPerDu_USE);
                                 lhs = dstIdent(pProc->Icode.GetIcode(defAt - 1),
                                                pProc, defAt - 1,
                                                pProc->Icode.GetIcode(useAt - 1),
-                                               E_USE);
+                                               OPerDu_USE);
                                 break;
 
                             case iOR:
@@ -99,8 +99,8 @@ static void elimCondCodes(PPROC pProc)
                                     pProc->Icode.GetIcode(defAt - 1)
                                         ->ic.hl.oper.asgn.lhs);
                                 copyDU(pProc->Icode.GetIcode(useAt - 1),
-                                       pProc->Icode.GetIcode(defAt - 1), E_USE,
-                                       E_DEF);
+                                       pProc->Icode.GetIcode(defAt - 1),
+                                       OPerDu_USE, OPerDu_DEF);
                                 if (pProc->Icode.GetLlFlag(defAt - 1) & B)
                                     rhs = idCondExpKte(0, 1);
                                 else
@@ -111,11 +111,11 @@ static void elimCondCodes(PPROC pProc)
                                 rhs = srcIdent(pProc->Icode.GetIcode(defAt - 1),
                                                pProc, defAt - 1,
                                                pProc->Icode.GetIcode(useAt - 1),
-                                               E_USE);
+                                               OPerDu_USE);
                                 lhs = dstIdent(pProc->Icode.GetIcode(defAt - 1),
                                                pProc, defAt - 1,
                                                pProc->Icode.GetIcode(useAt - 1),
-                                               E_USE);
+                                               OPerDu_USE);
                                 lhs = boolCondExp(lhs, rhs, AND);
                                 if (pProc->Icode.GetLlFlag(defAt - 1) & B)
                                     rhs = idCondExpKte(0, 1);
@@ -144,7 +144,7 @@ static void elimCondCodes(PPROC pProc)
                         else if (pProc->Icode.GetLlOpcode(useAt - 1) == iJCXZ) {
                             lhs = idCondExpReg(rCX, 0, &pProc->localId);
                             setRegDU(pProc->Icode.GetIcode(useAt - 1), rCX,
-                                     E_USE);
+                                     OPerDu_USE);
                             rhs = idCondExpKte(0, 2);
                             exp = boolCondExp(lhs, rhs, EQUAL);
                             newJCondHlIcode(pProc->Icode.GetIcode(useAt - 1),
@@ -173,8 +173,8 @@ static void elimCondCodes(PPROC pProc)
                             exp,
                             condOpJCond[pProc->Icode.GetLlOpcode(useAt - 1) -
                                         iJB]);
-                        copyDU(pProc->Icode.GetIcode(useAt - 1), prev, E_USE,
-                               E_USE);
+                        copyDU(pProc->Icode.GetIcode(useAt - 1), prev,
+                               OPerDu_USE, OPerDu_USE);
                         newJCondHlIcode(pProc->Icode.GetIcode(useAt - 1), exp);
                     }
                 }
@@ -954,7 +954,7 @@ static void findExps(PPROC pProc)
                                                   picode->ic.hl.oper.call.args);
                                 ticode->ic.hl.oper.asgn.lhs =
                                     idCondExpLong(&pProc->localId, DST, ticode,
-                                                  HIGH_FIRST, j, E_DEF, 1);
+                                                  HIGH_FIRST, j, OPerDu_DEF, 1);
                                 ticode->ic.hl.oper.asgn.rhs = exp;
                                 invalidateIcode(picode);
                                 numHlIcodes--;

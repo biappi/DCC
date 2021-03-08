@@ -131,8 +131,9 @@ void highLevelGen(PPROC pProc)
                 if ((flg & NO_OPS) != NO_OPS) /* if there are opers */
                 {
                     if ((flg & NO_SRC) != NO_SRC) /* if there is src op */
-                        rhs = idCondExp(pIcode, SRC, pProc, i, pIcode, NONE);
-                    lhs = idCondExp(pIcode, DST, pProc, i, pIcode, NONE);
+                        rhs = idCondExp(pIcode, SRC, pProc, i, pIcode,
+                                        OPerDu_NONE);
+                    lhs = idCondExp(pIcode, DST, pProc, i, pIcode, OPerDu_NONE);
                 }
 
             switch (pIcode->ic.ll.opcode) {
@@ -162,18 +163,18 @@ void highLevelGen(PPROC pProc)
                 rhs = boolCondExp(lhs, rhs, DIV);
                 if (pIcode->ic.ll.flg & B) {
                     lhs = idCondExpReg(rAL, 0, &pProc->localId);
-                    setRegDU(pIcode, rAL, E_DEF);
+                    setRegDU(pIcode, rAL, OPerDu_DEF);
                 }
                 else {
                     lhs = idCondExpReg(rAX, 0, &pProc->localId);
-                    setRegDU(pIcode, rAX, E_DEF);
+                    setRegDU(pIcode, rAX, OPerDu_DEF);
                 }
                 newAsgnHlIcode(pIcode, lhs, rhs);
                 break;
 
             case iIMUL:
                 rhs = boolCondExp(lhs, rhs, MUL);
-                lhs = idCondExp(pIcode, LHS_OP, pProc, i, pIcode, NONE);
+                lhs = idCondExp(pIcode, LHS_OP, pProc, i, pIcode, OPerDu_NONE);
                 newAsgnHlIcode(pIcode, lhs, rhs);
                 break;
 
@@ -192,11 +193,11 @@ void highLevelGen(PPROC pProc)
                 rhs = boolCondExp(lhs, rhs, MOD);
                 if (pIcode->ic.ll.flg & B) {
                     lhs = idCondExpReg(rAH, 0, &pProc->localId);
-                    setRegDU(pIcode, rAH, E_DEF);
+                    setRegDU(pIcode, rAH, OPerDu_DEF);
                 }
                 else {
                     lhs = idCondExpReg(rDX, 0, &pProc->localId);
-                    setRegDU(pIcode, rDX, E_DEF);
+                    setRegDU(pIcode, rDX, OPerDu_DEF);
                 }
                 newAsgnHlIcode(pIcode, lhs, rhs);
                 break;
@@ -207,7 +208,7 @@ void highLevelGen(PPROC pProc)
 
             case iMUL:
                 rhs = boolCondExp(lhs, rhs, MUL);
-                lhs = idCondExp(pIcode, LHS_OP, pProc, i, pIcode, NONE);
+                lhs = idCondExp(pIcode, LHS_OP, pProc, i, pIcode, OPerDu_NONE);
                 newAsgnHlIcode(pIcode, lhs, rhs);
                 break;
 

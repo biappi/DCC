@@ -298,7 +298,7 @@ Int newLongId(LOCAL_ID *locSym, opLoc sd, PICODE pIcode, hlFirst f, Int ix,
         { /* glb var indexed on bx */
             idx = newLongIdxId(locSym, pmH->segValue, pmH->off, pmL->off, rBX,
                                ix, TYPE_LONG_SIGN);
-            setRegDU(pIcode, rBX, E_USE);
+            setRegDU(pIcode, rBX, OPerDu_USE);
         }
         else /* idx <> bp, bx */
             printf("long not supported, idx <> bp\n");
@@ -333,12 +333,12 @@ boolT checkLongEq(LONG_STKID_TYPE longId, PICODE pIcode, Int i, Int idx,
         *lhs = idCondExpLongIdx(i);
         if ((pIcode->ic.ll.flg & NO_SRC) != NO_SRC)
             *rhs = idCondExpLong(&pProc->localId, SRC, pIcode, HIGH_FIRST, idx,
-                                 E_USE, off);
+                                 OPerDu_USE, off);
         return (TRUE);
     }
     else if ((longId.offH == pmHsrc->off) && (longId.offL == pmLsrc->off)) {
         *lhs = idCondExpLong(&pProc->localId, DST, pIcode, HIGH_FIRST, idx,
-                             E_DEF, off);
+                             OPerDu_DEF, off);
         *rhs = idCondExpLongIdx(i);
         return (TRUE);
     }
@@ -368,12 +368,12 @@ boolT checkLongRegEq(LONGID_TYPE longId, PICODE pIcode, Int i, Int idx,
         *lhs = idCondExpLongIdx(i);
         if ((pIcode->ic.ll.flg & NO_SRC) != NO_SRC)
             *rhs = idCondExpLong(&pProc->localId, SRC, pIcode, HIGH_FIRST, idx,
-                                 E_USE, off);
+                                 OPerDu_USE, off);
         return (TRUE);
     }
     else if ((longId.h == pmHsrc->regi) && (longId.l == pmLsrc->regi)) {
         *lhs = idCondExpLong(&pProc->localId, DST, pIcode, HIGH_FIRST, idx,
-                             E_DEF, off);
+                             OPerDu_DEF, off);
         *rhs = idCondExpLongIdx(i);
         return (TRUE);
     }

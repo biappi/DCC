@@ -223,17 +223,11 @@ typedef enum {
 
 /* Operand is defined, used or both flag */
 typedef enum {
-    DEF,     /* Operand is defined						*/
-    USE,     /* Operand is used     */
-    USE_DEF, /* Operand is used and defined				*/
-    NONE,    /* No operation is required on this operand	*/
+    OPerDu_DEF,     /* Operand is defined                       */
+    OPerDu_USE,     /* Operand is used                          */
+    OPerDu_USE_DEF, /* Operand is used and defined              */
+    OPerDu_NONE,    /* No operation is required on this operand	*/
 } operDu;
-
-// I can't believe these are necessary!
-#define E_DEF (operDu) DEF
-#define E_USE (operDu) USE
-#define E_NONE (operDu) NONE
-#define E_USE_DEF (operDu) USE_DEF
 
 /* Def/use of flags - low 4 bits represent flags */
 typedef struct {

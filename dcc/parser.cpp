@@ -162,15 +162,15 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
             if (Icode.ic.ll.flg & B) {
                 eIcode.ic.ll.flg |= B;
                 eIcode.ic.ll.src.regi = rAX;
-                setRegDU(&eIcode, rAX, E_USE);
+                setRegDU(&eIcode, rAX, OPerDu_USE);
             }
             else /* implicit dx:ax */
             {
                 eIcode.ic.ll.flg |= IM_SRC;
-                setRegDU(&eIcode, rAX, E_USE);
-                setRegDU(&eIcode, rDX, E_USE);
+                setRegDU(&eIcode, rAX, OPerDu_USE);
+                setRegDU(&eIcode, rDX, OPerDu_USE);
             }
-            setRegDU(&eIcode, rTMP, E_DEF);
+            setRegDU(&eIcode, rTMP, OPerDu_DEF);
             eIcode.ic.ll.flg |= SYNTHETIC;
             /* eIcode.ic.ll.label = SynthLab++; */
             eIcode.ic.ll.label = Icode.ic.ll.label;
@@ -196,8 +196,8 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
             eIcode.ic.ll.opcode = iMOV;
             eIcode.ic.ll.dst.regi = rTMP;
             eIcode.ic.ll.src.regi = Icode.ic.ll.dst.regi;
-            setRegDU(&eIcode, rTMP, E_DEF);
-            setRegDU(&eIcode, eIcode.ic.ll.src.regi, E_USE);
+            setRegDU(&eIcode, rTMP, OPerDu_DEF);
+            setRegDU(&eIcode, eIcode.ic.ll.src.regi, OPerDu_USE);
             eIcode.ic.ll.flg |= SYNTHETIC;
             /* eIcode.ic.ll.label = SynthLab++; */
             eIcode.ic.ll.label = Icode.ic.ll.label;
@@ -216,8 +216,8 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
             eIcode.ic.ll.opcode = iMOV;
             eIcode.ic.ll.dst.regi = Icode.ic.ll.src.regi;
             eIcode.ic.ll.src.regi = rTMP;
-            setRegDU(&eIcode, eIcode.ic.ll.dst.regi, E_DEF);
-            setRegDU(&eIcode, rTMP, E_USE);
+            setRegDU(&eIcode, eIcode.ic.ll.dst.regi, OPerDu_DEF);
+            setRegDU(&eIcode, rTMP, OPerDu_USE);
             eIcode.ic.ll.flg |= SYNTHETIC;
             eIcode.ic.ll.label = SynthLab++;
             pIcode = pProc->Icode.addIcode(&eIcode);

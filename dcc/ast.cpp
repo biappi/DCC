@@ -41,19 +41,19 @@ void setRegDU(PICODE pIcode, byte regi, operDu du)
 /* Sets the du record for registers according to the du flag    */
 {
     switch (du) {
-    case DEF:
+    case OPerDu_DEF:
         pIcode->du.def |= duReg[regi];
         pIcode->du1.numRegsDef++;
         break;
-    case USE:
+    case OPerDu_USE:
         pIcode->du.use |= duReg[regi];
         break;
-    case USE_DEF:
+    case OPerDu_USE_DEF:
         pIcode->du.def |= duReg[regi];
         pIcode->du1.numRegsDef++;
         pIcode->du.use |= duReg[regi];
         break;
-    case NONE: /* do nothing */
+    case OPerDu_NONE: /* do nothing */
         break;
     }
 }
@@ -62,20 +62,25 @@ void copyDU(PICODE pIcode, PICODE duIcode, operDu du, operDu duDu)
 /* Copies the def, use, or def and use fields of duIcode into pIcode */
 {
     switch (du) {
-    case DEF:
-        if (duDu == DEF)
+    case OPerDu_DEF:
+        if (duDu == OPerDu_DEF)
             memcpy(&pIcode->du.def, &duIcode->du.def, sizeof(dword));
         else
             memcpy(&pIcode->du.def, &duIcode->du.use, sizeof(dword));
         break;
-    case USE:
-        if (duDu == DEF)
+
+    case OPerDu_USE:
+        if (duDu == OPerDu_DEF)
             memcpy(&pIcode->du.use, &duIcode->du.def, sizeof(dword));
         else
             memcpy(&pIcode->du.use, &duIcode->du.use, sizeof(dword));
         break;
-    case USE_DEF:
+
+    case OPerDu_USE_DEF:
         memcpy(&pIcode->du, &duIcode->du, sizeof(DU_ICODE));
+        break;
+
+    case OPerDu_NONE:
         break;
     }
 }
