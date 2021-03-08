@@ -48,8 +48,7 @@ typedef enum {
 } hlFirst;
 
 typedef struct {
-    int16
-        seg;   /*   segment value   */
+    int16 seg; /*   segment value   */
     int16 off; /*   offset
                 */
     byte regi; /*   optional indexed register				 */
@@ -66,12 +65,10 @@ typedef struct { /* For TYPE_LONG_(UN)SIGN registers			 */
 
 /* ID, LOCAL_ID */
 typedef struct {
-    hlType
-        type;      /* Probable type      */
-    boolT illegal; /* Boolean: not a valid field any more		 */
-    IDX_ARRAY idx; /* Index into icode array (REG_FRAME only)	 */
-    frameType
-        loc;             /* Frame location             */
+    hlType type;         /* Probable type      */
+    boolT illegal;       /* Boolean: not a valid field any more		 */
+    IDX_ARRAY idx;       /* Index into icode array (REG_FRAME only)	 */
+    frameType loc;       /* Frame location             */
     boolT hasMacro;      /* Identifier requires a macro      */
     char macro[10];      /* Macro for this identifier      */
     char name[20];       /* Identifier's name       */

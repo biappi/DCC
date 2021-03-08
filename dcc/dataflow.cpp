@@ -441,7 +441,9 @@ static void genDU1(PPROC pProc)
                         if ((picode->invalid == FALSE) &&
                             (picode->du1.idx[defRegIdx][0] == 0) &&
                             (!(picode->du.lastDefRegi & duReg[regi])) &&
-                            //						(! ((picode->ic.hl.opcode != HLI_CALL)
+                            //						(!
+                            //((picode->ic.hl.opcode
+                            //!= HLI_CALL)
                             //&&
                             (!((picode->ic.hl.opcode == HLI_CALL) &&
                                (picode->ic.hl.oper.call.proc->flg &

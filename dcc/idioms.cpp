@@ -207,9 +207,9 @@ static Int idiom2(PICODE pIcode, PICODE pEnd, Int ip, PPROC pProc) {
  *          ADD  SP, 6
  *          =>  pProc->cbParam = immed
  *		Special case: when the call is at the end of the procedure,
- *					  sometimes the stack gets restored by a MOV sp,
- *bp. Need to flag the procedure in these cases. Used by compilers to restore
- *the stack when invoking a procedure using the C calling convention.
+ *					  sometimes the stack gets restored by a
+ *MOV sp, bp. Need to flag the procedure in these cases. Used by compilers to
+ *restore the stack when invoking a procedure using the C calling convention.
  ****************************************************************************/
 static Int idiom3(PICODE pIcode, PICODE pEnd) {
     /* Match ADD  SP, immed */
@@ -490,8 +490,8 @@ static boolT idiom9(PICODE pIcode, PICODE pEnd) {
  *		Note: we also check that these instructions are not followed by
  *			  CMP reg, kte
  *			  JE  lab
- *			  because this is most likely a long conditional equality
- *test. Found in Borland Turbo C.
+ *			  because this is most likely a long conditional
+ *equality test. Found in Borland Turbo C.
  ****************************************************************************/
 static boolT idiom10old(PICODE pIcode, PICODE pEnd) {
     if (pIcode < pEnd) {
@@ -521,8 +521,8 @@ static boolT idiom10old(PICODE pIcode, PICODE pEnd) {
  *      => CMP reg 0
  *		   JNE labX
  *		This instruction is NOT converted into the equivalent high-level
- *		instruction "HLI_JCOND (reg != 0) labX" because we do not know yet
- *if it forms part of a long register conditional test.  It is therefore
+ *		instruction "HLI_JCOND (reg != 0) labX" because we do not know
+ *yet if it forms part of a long register conditional test.  It is therefore
  *		modified to simplify the analysis.
  *      Found in Borland Turbo C.
  ****************************************************************************/
@@ -752,8 +752,8 @@ static boolT idiom18(PICODE picode, PICODE pend, PPROC pproc) {
 /*****************************************************************************
  * idiom 19: pre-increment or pre-decrement in conditional jump, comparing
  *			 against 0.
- *		INC var			or DEC var		(including register
- *vars) JX	lab			   JX  lab
+ *		INC var			or DEC var		(including
+ *register vars) JX	lab			   JX  lab
  *		=>  HLI_JCOND (++var X 0) or HLI_JCOND (--var X 0)
  *		Eg: INC [bp+4]
  *			JG  lab2

@@ -1969,9 +1969,11 @@ inline void BumpOpcode(llIcode &ic) {
 static void strop(Int i) {
     if (RepPrefix) {
         //		pIcode->ic.ll.opcode += ((pIcode->ic.ll.opcode == iCMPS
-        //|| 								  pIcode->ic.ll.opcode == iSCAS)
-        //								&& RepPrefix ==
-        //iREPE)? 2: 1;
+        //||
+        // pIcode->ic.ll.opcode == iSCAS)
+        //								&&
+        // RepPrefix
+        //== iREPE)? 2: 1;
         if ((pIcode->ic.ll.opcode == iCMPS || pIcode->ic.ll.opcode == iSCAS) &&
             RepPrefix == iREPE)
             BumpOpcode(pIcode->ic.ll.opcode); // += 2

@@ -229,7 +229,7 @@ static void emitFwdGotoLabel(PICODE pt, Int indLevel)
  * is created and a goto is also emitted.
  * Note: this procedure is to be used when the label is to be forward on
  *		 the code; that is, the target code has not been traversed yet.
-*/
+ */
 {
     if (!(pt->ic.ll.flg & HLL_LABEL)) /* node hasn't got a lab */
     {
@@ -277,7 +277,7 @@ static void writeCode(PBB pBB, Int indLevel, PPROC pProc, Int *numLoc,
  *				Icode:	pointer to the Icode array for the cfg
  *graph of the current procedure. indLevel: indentation level - used for
  *formatting. numLoc: last # assigned to local variables
-*/
+ */
 {
     Int follow,      /* ifFollow						*/
         loopType,    /* Type of loop, if any 		*/
@@ -592,7 +592,8 @@ static void backBackEnd(char *filename, PCALL_GRAPH pcallGraph, FILE *fp)
 {
     Int i;
 
-    //	IFace.Yield();			/* This is a good place to yield to other apps
+    //	IFace.Yield();			/* This is a good place to yield to
+    // other apps
     //*/
 
     /* Check if this procedure has been processed already */

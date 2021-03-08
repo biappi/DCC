@@ -121,8 +121,8 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
     if (strstr(pProc->name, "chkstk") != NULL) {
         // Danger! Dcc will likely fall over in this code.
         // So we act as though we have done with this proc
-        //		pProc->flg &= ~TERMINATES;			// Not sure
-        //about this
+        //		pProc->flg &= ~TERMINATES;			// Not
+        // sure about this
         done = TRUE;
         // And mark it as a library function, so structure() won't choke on it
         pProc->flg |= PROC_ISLIB;
@@ -857,8 +857,8 @@ static void setBits(int16 type, dword start, dword len)
 
 /* DU bit definitions for each reg value - including index registers */
 dword duReg[] = {0x00,    0x11001, 0x22002, 0x44004, 0x88008, /* word regs    */
-                 0x10,    0x20,    0x40,    0x80,    0x100,    0x200,
-                 0x400,   0x800,                    /* seg regs     */
+                 0x10,    0x20,    0x40,    0x80,    0x100,
+                 0x200,   0x400,   0x800,           /* seg regs     */
                  0x1000,  0x2000,  0x4000,  0x8000, /* byte regs    */
                  0x10000, 0x20000, 0x40000, 0x80000, 0x100000, /* tmp reg */
                  0x48,    0x88,    0x60,    0xA0, /* index regs   */

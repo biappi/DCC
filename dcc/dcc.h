@@ -67,8 +67,8 @@ typedef struct _proc {
     int16 cbParam;     /* Probable no. of bytes of parameters  	 */
     STKFRAME args;     /* Array of arguments                   	 */
     LOCAL_ID
-        localId; /* Local identifiers */
-    ID retVal;   /* Return value - identifier				 */
+    localId;   /* Local identifiers */
+    ID retVal; /* Return value - identifier				 */
 
     /* Icodes and control flow graph */
     CIcodeRec Icode; /* Object with ICODE records */
@@ -91,15 +91,15 @@ typedef PROCEDURE *PPROC;
 
 /* CALL GRAPH NODE */
 typedef struct _callGraph {
-    PPROC proc;      /* Pointer to procedure in pProcList	*/
-    Int numOutEdges; /* # of out edges (ie. # procs invoked)	*/
-    Int numAlloc;    /* # of out edges allocated				*/
-    struct _callGraph *
-        *outEdges; /* array of out edges */
+    PPROC proc;                   /* Pointer to procedure in pProcList	*/
+    Int numOutEdges;              /* # of out edges (ie. # procs invoked)	*/
+    Int numAlloc;                 /* # of out edges allocated				*/
+    struct _callGraph **outEdges; /* array of out edges */
 } CALL_GRAPH;
 typedef CALL_GRAPH *PCALL_GRAPH;
-#define NUM_PROCS_DELTA 5 /* delta # procs a proc invokes                      \
-                           */
+#define NUM_PROCS_DELTA                                                        \
+    5 /* delta # procs a proc invokes                                          \
+       */
 
 extern PPROC pProcList;       /* Pointer to the head of the procedure list */
 extern PPROC pLastProc;       /* Pointer to last node of the proc list     */
@@ -108,30 +108,38 @@ extern bundle cCode;          /* Output C procedure's declaration and code */
 
 /* Procedure FLAGS */
 #define PROC_BADINST 0x000100 /* Proc contains invalid or 386 instruction */
-#define PROC_IJMP 0x000200    /* Proc incomplete due to indirect jmp           \
-                               */
-#define PROC_ICALL 0x000400   /* Proc incomplete due to indirect call          \
-                               */
+#define PROC_IJMP                                                              \
+    0x000200 /* Proc incomplete due to indirect jmp                            \
+              */
+#define PROC_ICALL                                                             \
+    0x000400 /* Proc incomplete due to indirect call                           \
+              */
 #define PROC_HLL                                                               \
-    0x001000                 /* Proc is likely to be from a HLL			*/
-#define CALL_PASCAL 0x002000 /* Proc uses Pascal calling convention            \
-                              */
+    0x001000 /* Proc is likely to be from a HLL                                \
+              */
+#define CALL_PASCAL                                                            \
+    0x002000 /* Proc uses Pascal calling convention                            \
+              */
 #define CALL_C                                                                 \
-    0x004000                  /* Proc uses C calling convention			*/
-#define CALL_UNKNOWN 0x008000 /* Proc uses unknown calling convention          \
-                               */
+    0x004000 /* Proc uses C calling convention                                 \
+              */
+#define CALL_UNKNOWN                                                           \
+    0x008000 /* Proc uses unknown calling convention                           \
+              */
 #define PROC_NEAR                                                              \
     0x010000 /* Proc exits with near return				*/
 #define PROC_FAR                                                               \
-    0x020000                 /* Proc exits with far return				*/
-#define GRAPH_IRRED 0x100000 /* Proc generates an irreducible graph            \
-                              */
+    0x020000 /* Proc exits with far return				*/
+#define GRAPH_IRRED                                                            \
+    0x100000 /* Proc generates an irreducible graph                            \
+              */
 #define SI_REGVAR                                                              \
-    0x200000 /* SI is used as a stack variable 			*/
+    0x200000 /* SI is used as a stack variable                                 \
+              */
 #define DI_REGVAR                                                              \
-    0x400000 /* DI is used as a stack variable 			*/
-#define PROC_IS_FUNC                                                           \
-    0x800000 /* Proc is a function */
+    0x400000                  /* DI is used as a stack variable                \
+                               */
+#define PROC_IS_FUNC 0x800000 /* Proc is a function */
 #define REG_ARGS                                                               \
     0x1000000 /* Proc has registers as arguments			*/
 #define PROC_VARARG                                                            \
@@ -141,10 +149,9 @@ extern bundle cCode;          /* Output C procedure's declaration and code */
 #define PROC_RUNTIME                                                           \
     0x8000000 /* Proc is part of the runtime support		*/
 #define PROC_ISLIB                                                             \
-    0x10000000              /* Proc is a library function				*/
-#define PROC_ASM 0x20000000 /* Proc is an intrinsic assembler routine   */
-#define PROC_IS_HLL                                                            \
-    0x40000000 /* Proc has HLL prolog code */
+    0x10000000                 /* Proc is a library function				*/
+#define PROC_ASM 0x20000000    /* Proc is an intrinsic assembler routine   */
+#define PROC_IS_HLL 0x40000000 /* Proc has HLL prolog code */
 #define CALL_MASK                                                              \
     0xFFFF9FFF /* Masks off CALL_C and CALL_PASCAL		 	*/
 
