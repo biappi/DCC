@@ -2,8 +2,6 @@
  * (C) Cristina Cifuentes, Jeff Ledermann
  */
 
-#define LH(p) ((int)((byte *)(p))[0] + ((int)((byte *)(p))[1] << 8))
-
 static void rm(Int i);
 static void modrm(Int i);
 static void segrm(Int i);
