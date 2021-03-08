@@ -232,11 +232,12 @@ boolT newStkArg(PICODE picode, COND_EXPR *exp, llIcode opcode, PPROC pproc)
     if (exp) {
         if ((exp->type == IDENTIFIER) && (exp->expr.ident.idType == REGISTER)) {
             regi = pproc->localId.id[exp->expr.ident.idNode.regiIdx].id.regi;
-            if ((regi >= rES) && (regi <= rDS))
+            if ((regi >= rES) && (regi <= rDS)) {
                 if (opcode == iCALLF)
                     return (FALSE);
                 else
                     return (TRUE);
+            }
         }
     }
 

@@ -290,13 +290,14 @@ static void structLoops(PPROC pProc, derSeq *derivedG)
             /* Find greatest enclosing back edge (if any) */
             for (i = 0; i < intHead->numInEdges; i++) {
                 pred = intHead->inEdges[i];
-                if (inInt(pred, intNodes) && isBackEdge(pred, intHead))
-                    if (!latchNode)
+                if (inInt(pred, intNodes) && isBackEdge(pred, intHead)) {
+                    if (!latchNode) {
                         latchNode = pred;
-                    else {
+                    } else {
                         if (pred->dfsLastNum > latchNode->dfsLastNum)
                             latchNode = pred;
                     }
+                }
             }
 
             /* Find nodes in the loop and the type of loop */
@@ -374,12 +375,13 @@ static void structCases(PPROC pProc)
              * the current header node, and is not a successor.    */
             for (j = i + 2; j < pProc->numBBs; j++) {
                 if ((!successor(j, i, pProc)) &&
-                    (pProc->dfsLast[j]->immedDom == i))
+                    (pProc->dfsLast[j]->immedDom == i)) {
                     if (exitNode == NO_NODE)
                         exitNode = j;
                     else if (pProc->dfsLast[exitNode]->numInEdges <
                              pProc->dfsLast[j]->numInEdges)
                         exitNode = j;
+                }
             }
             pProc->dfsLast[i]->caseTail = exitNode;
 

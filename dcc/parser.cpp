@@ -343,11 +343,13 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
                 break; **** HERE ***/
 
         case iSHL:
-            if (pstate->JCond.regi == Icode.ic.ll.dst.regi)
-                if ((Icode.ic.ll.flg & I) && Icode.ic.ll.immed.op == 1)
+            if (pstate->JCond.regi == Icode.ic.ll.dst.regi) {
+                if ((Icode.ic.ll.flg & I) && Icode.ic.ll.immed.op == 1) {
                     pstate->JCond.immed *= 2;
-                else
+                } else {
                     pstate->JCond.regi = 0;
+                }
+            }
             break;
 
         case iLEA:
@@ -638,8 +640,8 @@ static void process_MOV(PICODE pIcode, PSTATE pstate)
         }
     } else if (dstReg == 0) { /* direct memory offset */
         psym = lookupAddr(&pIcode->ic.ll.dst, pstate, 2, DEF);
-        if (psym && !(psym->duVal & VAL)) /* no initial value yet */
-            if (pIcode->ic.ll.flg & I) {  /* immediate */
+        if (psym && !(psym->duVal & VAL)) { /* no initial value yet */
+            if (pIcode->ic.ll.flg & I) {    /* immediate */
                 prog.Image[psym->label] = (byte)pIcode->ic.ll.immed.op;
                 prog.Image[psym->label + 1] =
                     (byte)(pIcode->ic.ll.immed.op >> 8);
@@ -658,6 +660,7 @@ static void process_MOV(PICODE pIcode, PSTATE pstate)
                 prog.Image[psym->label + 1] = (byte)(pstate->r[srcReg] >> 8);
                 psym->duVal |= VAL;
             }
+        }
     }
 }
 

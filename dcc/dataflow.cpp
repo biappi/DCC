@@ -615,12 +615,14 @@ static void processCArg(PPROC pp, PPROC pProc, PICODE picode, Int numArgs,
     exp = popExpStk();
     if (pp->flg & PROC_ISLIB) /* library function */
     {
-        if (pp->args.numArgs > 0)
+        if (pp->args.numArgs > 0) {
             if (pp->flg & PROC_VARARG) {
                 if (numArgs < pp->args.csym)
                     adjustActArgType(exp, pp->args.sym[numArgs].type, pProc);
-            } else
+            } else {
                 adjustActArgType(exp, pp->args.sym[numArgs].type, pProc);
+            }
+        }
         res = newStkArg(picode, exp, picode->ic.ll.opcode, pProc);
     } else /* user function */
     {

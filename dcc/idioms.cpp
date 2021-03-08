@@ -151,19 +151,26 @@ static Int idiom1(PICODE pIcode, PICODE pEnd, PPROC pProc) {
  ****************************************************************************/
 static void popStkVars(PICODE pIcode, PICODE pEnd, PPROC pProc) {
     /* Match [POP DI] */
-    if (pIcode->ic.ll.opcode == iPOP)
-        if ((pProc->flg & DI_REGVAR) && (pIcode->ic.ll.dst.regi == rDI))
+    if (pIcode->ic.ll.opcode == iPOP) {
+        if ((pProc->flg & DI_REGVAR) && (pIcode->ic.ll.dst.regi == rDI)) {
             invalidateIcode(pIcode);
-        else if ((pProc->flg & SI_REGVAR) && (pIcode->ic.ll.dst.regi == rSI))
-            invalidateIcode(pIcode);
+        } else {
+            if ((pProc->flg & SI_REGVAR) && (pIcode->ic.ll.dst.regi == rSI)) {
+                invalidateIcode(pIcode);
+            }
+        }
+    }
 
     /* Match [POP SI] */
-    if ((pIcode + 1)->ic.ll.opcode == iPOP)
-        if ((pProc->flg & SI_REGVAR) && ((pIcode + 1)->ic.ll.dst.regi == rSI))
+    if ((pIcode + 1)->ic.ll.opcode == iPOP) {
+        if ((pProc->flg & SI_REGVAR) && ((pIcode + 1)->ic.ll.dst.regi == rSI)) {
             invalidateIcode(pIcode + 1);
-        else if ((pProc->flg & DI_REGVAR) &&
-                 ((pIcode + 1)->ic.ll.dst.regi == rDI))
-            invalidateIcode(pIcode + 1);
+        } else {
+            if ((pProc->flg & DI_REGVAR) &&
+                ((pIcode + 1)->ic.ll.dst.regi == rDI))
+                invalidateIcode(pIcode + 1);
+        }
+    }
 }
 
 /*****************************************************************************

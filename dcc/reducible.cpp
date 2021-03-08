@@ -41,14 +41,16 @@ queue *appendQueue(queue **Q, BB *node)
     pq->node = node;
     pq->next = NULL;
 
-    if (Q)
+    if (Q) {
         if (*Q) {
             for (l = *Q; l->next && l->node != node; l = l->next)
                 ;
             if (l->node != node)
                 l->next = pq;
-        } else /* (*Q) == NULL */
+        } else { /* (*Q) == NULL */
             *Q = pq;
+        }
+    }
     return (pq);
 }
 
