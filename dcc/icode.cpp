@@ -2,7 +2,6 @@
 // (C) 1997 Mike Van Emmerik
 
 #include <stdlib.h>
-#include <malloc.h>
 #include <memory.h>
 
 #include "types.h" // Common types like byte, etc

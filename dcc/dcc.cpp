@@ -31,7 +31,7 @@ static void displayTotalStats();
  * main
  ***************************************************************************/
 
-void main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     /* Extract switches and filename */
     strcpy(option.filename, initargs(argc, argv));
 

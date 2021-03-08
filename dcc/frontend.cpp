@@ -11,7 +11,6 @@
 #ifdef __BORLAND__
 #include <alloc.h>
 #else
-#include <malloc.h> /* For malloc, free, realloc */
 #endif
 
 typedef struct {        /*        PSP structure        */

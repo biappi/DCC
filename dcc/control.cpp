@@ -9,7 +9,7 @@
 #if __BORLAND__
 #include <alloc.h>
 #else
-#include <malloc.h>
+#include <stdlib.h>
 #endif
 
 typedef struct list {

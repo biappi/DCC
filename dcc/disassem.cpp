@@ -10,7 +10,7 @@
 #ifdef __BORLAND__
 #include <alloc.h>
 #else
-#include <malloc.h> /* For free() */
+#include <stdlib.h> /* For free() */
 #endif
 #ifdef _CONSOLE
 #include <windows.h> /* For console mode routines */
@@ -932,7 +932,7 @@ void pushPosStack(void) {
 void popPosStack(void) {
     /* Push the current position on the position stack */
     /* Note: relies on the byte wraparound. Beware! */
-    if ((Int)(posStack[--iPS].pProc) != -1) {
+    if ((intptr_t)(posStack[--iPS].pProc) != -1) {
         if (posStack[iPS].pProc != pProc) {
             setProc(posStack[iPS].pProc);
         }
