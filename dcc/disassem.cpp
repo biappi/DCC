@@ -243,7 +243,7 @@ void move(int r, int c)
 #endif
 }
 
-#define printfd(x) printf(x)
+#define printfd(...) printf(__VA_ARGS__)
 #define dis_newline() printf("\n")
 #define dis_show() // Nothing to do unless using Curses
 
@@ -686,8 +686,8 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass)
             attrSet(attr);
 
             sprintf(szOffset, "%04X ", off);
-            printfd(szOffset);
-            printfd(buf);
+            printfd("%s", szOffset);
+            printfd("%s", buf);
             dis_newline();
             attrSet(A_NORMAL);
         }
@@ -701,7 +701,7 @@ static void dis1Line(Int i, boolT fWindow, char attr, Int pass)
         strcat(buf, ";Synthetic inst");
         if (fWindow) {
             printfd("     ");
-            printfd(buf);
+            printfd("%s", buf);
             dis_newline();
         }
         else if (pass == 3) /* output to .b code buffer */
@@ -831,7 +831,7 @@ void dispTitle(void)
             (word)(pProc->Icode.GetFirstIcode()->ic.ll.label -
                    ((dword)(pProc->state.r[rCS]) << 4)),
             pProc->cbParam);
-    printfd(buf);
+    printfd("%s", buf);
     if (pProc->flg & PROC_ISLIB)
         printfd(" LIBRARY");
     attrSet(A_NORMAL);
