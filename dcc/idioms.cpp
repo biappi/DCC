@@ -1059,6 +1059,12 @@ void findIdioms(PPROC pProc)
                     for (idx /= 2; idx > 0; idx--)
                         invalidateIcode(pIcode++);
                 }
+                else {
+                    printf("found stack size of %d analizing a non immediate "
+                           "CALL\n",
+                           idx);
+                    pIcode++;
+                }
             }
             else
                 pIcode++;
@@ -1066,7 +1072,8 @@ void findIdioms(PPROC pProc)
 
         case iRET: /* Idiom 4 */
         case iRETF:
-            idiom4(pIcode, pEnd, pProc);
+            if (ip > 2)
+                idiom4(pIcode, pEnd, pProc);
             pIcode++;
             break;
 

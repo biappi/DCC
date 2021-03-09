@@ -103,6 +103,12 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
 
     /* Flag ticode as having register arguments */
     tproc = ticode->ic.hl.oper.call.proc;
+
+    if (tproc == NULL) {
+        printf("trying to add registers to an argument table of a null CALL\n");
+        return;
+    }
+
     tproc->flg |= REG_ARGS;
 
     /* Get registers and index into target procedure's local list */

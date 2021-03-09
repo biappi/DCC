@@ -179,9 +179,12 @@ static void elimCondCodes(PPROC pProc)
                     }
                 }
                 /* Error - definition not found for use of a cond code */
-                else if (defAt == pBB->start)
-                    fatalError(DEF_NOT_FOUND,
-                               pProc->Icode.GetLlOpcode(useAt - 1));
+                /*         (was fatal)                                 */
+                else if (defAt == pBB->start) {
+                    printf("Definition not found for condition code usage at "
+                           "opcode %d\n",
+                           pProc->Icode.GetLlOpcode(useAt - 1));
+                }
             }
     }
 }
@@ -270,47 +273,56 @@ static void liveRegAnalysis(PPROC pproc, dword liveOut)
                     pbb->liveOut |= pbb->edges[j].BBptr->liveIn;
 
                 /* propagate to invoked procedure */
+
                 if (pbb->nodeType == CALL_NODE) {
                     ticode =
                         pproc->Icode.GetIcode(pbb->start + pbb->length - 1);
                     pcallee = ticode->ic.hl.oper.call.proc;
 
-                    /* user/runtime routine */
-                    if (!(pcallee->flg & PROC_ISLIB)) {
-                        if (pcallee->liveAnal ==
-                            FALSE) /* hasn't been processed */
-                            dataFlow(pcallee, pbb->liveOut);
-                        pbb->liveOut = pcallee->liveIn;
-                    }
-                    else /* library routine */
-                    {
-                        if ((pcallee->flg &
-                             PROC_IS_FUNC) && /* returns a value */
-                            (pcallee->liveOut & pbb->edges[0].BBptr->liveIn))
-                            pbb->liveOut = pcallee->liveOut;
-                        else
-                            pbb->liveOut = 0;
-                    }
+                    if (pcallee) {
+                        /* user/runtime routine */
+                        if (!(pcallee->flg & PROC_ISLIB)) {
+                            if (pcallee->liveAnal ==
+                                FALSE) /* hasn't been processed */
+                                dataFlow(pcallee, pbb->liveOut);
+                            pbb->liveOut = pcallee->liveIn;
+                        }
+                        else /* library routine */
+                        {
+                            if ((pcallee->flg &
+                                 PROC_IS_FUNC) && /* returns a value */
+                                (pcallee->liveOut &
+                                 pbb->edges[0].BBptr->liveIn))
+                                pbb->liveOut = pcallee->liveOut;
+                            else
+                                pbb->liveOut = 0;
+                        }
 
-                    if ((!(pcallee->flg & PROC_ISLIB)) || (pbb->liveOut != 0)) {
-                        switch (pcallee->retVal.type) {
-                        case TYPE_LONG_SIGN:
-                        case TYPE_LONG_UNSIGN:
-                            ticode->du1.numRegsDef = 2;
-                            break;
-                        case TYPE_WORD_SIGN:
-                        case TYPE_WORD_UNSIGN:
-                        case TYPE_BYTE_SIGN:
-                        case TYPE_BYTE_UNSIGN:
-                            ticode->du1.numRegsDef = 1;
-                            break;
-                        default:
-                            break;
-                        } /*eos*/
+                        if ((!(pcallee->flg & PROC_ISLIB)) ||
+                            (pbb->liveOut != 0)) {
+                            switch (pcallee->retVal.type) {
+                            case TYPE_LONG_SIGN:
+                            case TYPE_LONG_UNSIGN:
+                                ticode->du1.numRegsDef = 2;
+                                break;
+                            case TYPE_WORD_SIGN:
+                            case TYPE_WORD_UNSIGN:
+                            case TYPE_BYTE_SIGN:
+                            case TYPE_BYTE_UNSIGN:
+                                ticode->du1.numRegsDef = 1;
+                                break;
+                            default:
+                                break;
+                            } /*eos*/
 
-                        /* Propagate def/use results to calling icode */
-                        ticode->du.use = pcallee->liveIn;
-                        ticode->du.def = pcallee->liveOut;
+                            /* Propagate def/use results to calling icode */
+                            ticode->du.use = pcallee->liveIn;
+                            ticode->du.def = pcallee->liveOut;
+                        }
+                    }
+                    else {
+                        printf("trying to propagate register info to a null "
+                               "CALL\n");
                     }
                 }
             }
@@ -1016,6 +1028,7 @@ static void findExps(PPROC pProc)
                  * pop them from the expression stack and place them on the
                  * procedure's argument list */
                 if ((picode->ic.hl.opcode == HLI_CALL) &&
+                    (picode->ic.hl.oper.call.proc) &&
                     !(picode->ic.hl.oper.call.proc->flg & REG_ARGS)) {
                     PPROC pp;
                     Int cb, numArgs;
@@ -1064,6 +1077,7 @@ static void findExps(PPROC pProc)
                 /* If we could not substitute the result of a function,
                  * assign it to the corresponding registers */
                 if ((picode->ic.hl.opcode == HLI_CALL) &&
+                    (picode->ic.hl.oper.call.proc) &&
                     ((picode->ic.hl.oper.call.proc->flg & PROC_ISLIB) !=
                      PROC_ISLIB) &&
                     (picode->du1.idx[0][0] == 0) &&

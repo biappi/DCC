@@ -496,9 +496,12 @@ static void writeCode(PBB pBB, Int indLevel, PPROC pProc, Int *numLoc,
 
         else /* fall, call, 1w */
         {
-            succ = pBB->edges[0].BBptr; /* fall-through edge */
-            if (succ->traversed != DFS_ALPHA)
-                writeCode(succ, indLevel, pProc, numLoc, latchNode, ifFollow);
+            if (pBB->edges) {
+                succ = pBB->edges[0].BBptr; /* fall-through edge */
+                if (succ->traversed != DFS_ALPHA)
+                    writeCode(succ, indLevel, pProc, numLoc, latchNode,
+                              ifFollow);
+            }
         }
     }
 }

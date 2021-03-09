@@ -39,11 +39,15 @@ void newCallHlIcode(PICODE pIcode)
     pIcode->ic.hl.oper.call.proc = pIcode->ic.ll.immed.proc.proc;
     pIcode->ic.hl.oper.call.args = (STKFRAME *)allocMem(sizeof(STKFRAME));
     memset(pIcode->ic.hl.oper.call.args, 0, sizeof(STKFRAME));
-    if (pIcode->ic.ll.immed.proc.cb != 0)
+    if (pIcode->ic.ll.immed.proc.cb != 0) {
         pIcode->ic.hl.oper.call.args->cb = pIcode->ic.ll.immed.proc.cb;
-    else
-        pIcode->ic.hl.oper.call.args->cb =
-            pIcode->ic.hl.oper.call.proc->cbParam;
+    }
+    else {
+        if (pIcode->ic.hl.oper.call.proc) {
+            pIcode->ic.hl.oper.call.args->cb =
+                pIcode->ic.hl.oper.call.proc->cbParam;
+        }
+    }
 }
 
 void newUnaryHlIcode(PICODE pIcode, hlIcode op, COND_EXPR *exp)
@@ -338,6 +342,12 @@ char *writeCall(PPROC tproc, PSTKFRAME args, PPROC pproc, Int *numLoc)
 
     s = (char *)allocMem(100 * sizeof(char));
     s[0] = '\0';
+
+    if (tproc == NULL) {
+        sprintf(s, "an_unknown_function()");
+        return s;
+    }
+
     sprintf(s, "%s (", tproc->name);
     for (i = 0; i < args->csym; i++) {
         condExp = walkCondExpr(args->sym[i].actual, pproc, numLoc);
