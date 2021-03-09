@@ -810,6 +810,11 @@ static PSYM lookupAddr(PMEM pm, PSTATE pstate, Int size, word duFlag)
 void setState(PSTATE pstate, word reg, int16 value)
 /* setState - Assigns a value to a reg.     */
 {
+    if (reg == rDS && value == 0) {
+        printf("refusing to update DS with 0\n");
+        return;
+    }
+
     value &= 0xFFFF;
     pstate->r[reg] = value;
     pstate->f[reg] = TRUE;
