@@ -8,7 +8,7 @@
 
 #include "dcc.h"
 #include <string.h>
-#define intSize 40
+#define intSize 80
 
 static const char *int21h[] = {
     "Terminate process",
