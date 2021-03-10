@@ -406,9 +406,10 @@ static void genDU1(PPROC pProc)
                                 ticode = pProc->Icode.GetIcode(n);
                                 if (ticode->type == HIGH_LEVEL) {
                                     /* if used, get icode index */
-                                    if (ticode->du.use & duReg[regi])
+                                    if (ticode->du.use & duReg[regi]) {
                                         picode->du1.idx[defRegIdx][useIdx++] =
                                             n;
+                                    }
 
                                     /* if defined, stop finding uses for this
                                      * reg */
@@ -646,21 +647,24 @@ static void processCArg(PPROC pp, PPROC pProc, PICODE picode, Int numArgs,
     exp = popExpStk();
     if (pp->flg & PROC_ISLIB) /* library function */
     {
-        if (pp->args.numArgs > 0) {
+        if (pp->args.argsCount() > 0) {
             if (pp->flg & PROC_VARARG) {
-                if (numArgs < pp->args.csym)
-                    adjustActArgType(exp, pp->args.sym[numArgs].type, pProc);
+                if (numArgs < pp->args.symbolCount())
+                    adjustActArgType(exp, pp->args.symbol(numArgs).type, pProc);
             }
             else {
-                adjustActArgType(exp, pp->args.sym[numArgs].type, pProc);
+                adjustActArgType(exp, pp->args.symbol(numArgs).type, pProc);
             }
         }
         res = newStkArg(picode, exp, picode->ic.ll.opcode, pProc);
     }
     else /* user function */
     {
-        if (pp->args.numArgs > 0)
-            adjustForArgType(&pp->args, numArgs, expType(exp, pProc));
+        if (picode->ic.ll.label == 0x0000175a) {
+            printf("");
+        }
+        if (pp->args.argsCount() > 0)
+            pp->args.adjustForArgType(numArgs, expType(exp, pProc));
         res = newStkArg(picode, exp, picode->ic.ll.opcode, pProc);
     }
 
@@ -1052,16 +1056,16 @@ static void findExps(PPROC pProc)
                             exp = popExpStk();
                             if (pp->flg & PROC_ISLIB) /* library function */
                             {
-                                if (pp->args.numArgs > 0)
+                                if (pp->args.argsCount() > 0)
                                     adjustActArgType(
-                                        exp, pp->args.sym[numArgs].type, pProc);
+                                        exp, pp->args.symbol(numArgs).type, pProc);
                                 res = newStkArg(picode, exp,
                                                 picode->ic.ll.opcode, pProc);
                             }
                             else /* user function */
                             {
-                                if (pp->args.numArgs > 0)
-                                    adjustForArgType(&pp->args, numArgs,
+                                if (pp->args.argsCount() > 0)
+                                    pp->args.adjustForArgType(numArgs,
                                                      expType(exp, pProc));
                                 res = newStkArg(picode, exp,
                                                 picode->ic.ll.opcode, pProc);
@@ -1072,7 +1076,7 @@ static void findExps(PPROC pProc)
                     }
                     else /* CALL_C */
                     {
-                        cb = picode->ic.hl.oper.call.args->cb;
+                        cb = picode->ic.hl.oper.call.args->byteCount();
                         numArgs = 0;
                         if (cb)
                             for (k = 0; k < cb; numArgs++)

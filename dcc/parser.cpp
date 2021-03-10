@@ -743,44 +743,56 @@ static PSYM updateGlobSym(uint32_t operand, Int size, word duFlag)
     return (&symtab.sym[i]);
 }
 
-static void updateFrameOff(PSTKFRAME ps, int16 off, Int size, word duFlag)
 /* Updates the offset entry to the stack frame table (arguments),
- * and returns a pointer to such entry. */
+ * and returns a pointer to such entry.
+ */
+void STKFRAME::updateFrameOff(int16 off, Int size, word duFlag)
 {
     Int i;
 
     /* Check for symbol in stack frame table */
-    for (i = 0; i < ps->csym; i++) {
-        if (ps->sym[i].off == off) {
-            if (ps->sym[i].size < size) {
-                ps->sym[i].size = size;
+    for (i = 0; i < csym; i++) {
+        if (sym[i].off == off) {
+            if (sym[i].size < size) {
+                sym[i].size = size;
             }
             break;
         }
     }
 
     /* New symbol, not in table */
-    if (i == ps->csym) {
-        if (++ps->csym > ps->alloc) {
-            ps->alloc += 5;
-            ps->sym = (STKSYM *)reallocVar(ps->sym, ps->alloc * sizeof(STKSYM));
-            memset(&ps->sym[i], 0, 5 * sizeof(STKSYM));
-        }
-        sprintf(ps->sym[i].name, "arg%d", i);
-        ps->sym[i].off = off;
-        ps->sym[i].size = size;
-        ps->sym[i].type = cbType[size];
+    if (i == csym) {
+        allocIfNeeded();
+
+        sprintf(sym[i].name, "arg%d", i);
+        sym[i].off = off;
+        sym[i].size = size;
+        sym[i].type = cbType[size];
+
         if (duFlag == USE) /* must already have init value */
-            ps->sym[i].duVal = USEVAL;
+            sym[i].duVal = USEVAL;
         else
-            ps->sym[i].duVal = duFlag;
-        ps->cb += size;
-        ps->numArgs++;
+            sym[i].duVal = duFlag;
+
+        cb += size;
+        numArgs++;
     }
 
     /* Save maximum argument offset */
-    if ((dword)ps->maxOff < (off + (dword)size))
-        ps->maxOff = off + (int16)size;
+    if ((dword)maxOff < (off + (dword)size))
+        maxOff = off + (int16)size;
+}
+
+void STKFRAME::configureForLibFunction(Int numArg, hlType *argsTypes, Int firstType) {
+    csym = numArg;
+    alloc = numArg;
+    numArgs = numArg;
+    sym = (STKSYM *)allocMem(numArgs * sizeof(STKSYM));
+    memset(sym, 0, numArgs * sizeof(STKSYM));
+    
+    for (int j = 0; j < numArg; j++) {
+        sym[j].type = argsTypes[firstType + j];
+    }
 }
 
 static PSYM lookupAddr(PMEM pm, PSTATE pstate, Int size, word duFlag)
@@ -933,7 +945,7 @@ static void use(opLoc d, PICODE pIcode, PPROC pProc, PSTATE pstate, Int size,
         if (pm->regi == INDEXBASE + 6) /* indexed on bp */
         {
             if (pm->off >= 2)
-                updateFrameOff(&pProc->args, pm->off, size, USE);
+            pProc->args.updateFrameOff(pm->off, size, USE);
             else if (pm->off < 0)
                 pProc->localId.newByteWordStkId(TYPE_WORD_SIGN, pm->off, 0);
         }
@@ -981,7 +993,7 @@ static void def(opLoc d, PICODE pIcode, PPROC pProc, PSTATE pstate, Int size,
         if (pm->regi == INDEXBASE + 6) /* indexed on bp */
         {
             if (pm->off >= 2)
-                updateFrameOff(&pProc->args, pm->off, size, DEF);
+                pProc->args.updateFrameOff(pm->off, size, DEF);
             else if (pm->off < 0)
                 pProc->localId.newByteWordStkId(TYPE_WORD_SIGN, pm->off, 0);
         }

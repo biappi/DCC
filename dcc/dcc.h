@@ -46,15 +46,51 @@ typedef struct {
 } STKSYM;
 typedef STKSYM *PSTKSYM;
 
-typedef struct _STKFRAME {
-    Int csym;     /* No. of symbols in table      */
-    Int alloc;    /* Allocation                   */
-    PSTKSYM sym;  /* Symbols                      */
-    int16 minOff; /* Initial offset in stack frame*/
-    int16 maxOff; /* Maximum offset in stack frame*/
-    Int cb;       /* Number of bytes in arguments	*/
-    Int numArgs;  /* No. of arguments in the table*/
-} STKFRAME;
+class STKFRAME {
+  private:
+    Int csym;     /* No. of symbols in table       */
+    Int alloc;    /* Allocation                    */
+    PSTKSYM sym;  /* Symbols                       */
+    int16 minOff; /* Initial offset in stack frame */
+    int16 maxOff; /* Maximum offset in stack frame */
+    Int cb;       /* Number of bytes in arguments  */
+    Int numArgs;  /* No. of arguments in the table */
+
+    void allocIfNeeded();
+
+  public:
+    Int searchByOffset(int16 offset);
+    bool exist(condId type, Int tidx);
+
+    Int addArg(hlType type, COND_EXPR *regs);
+    void addActualArg(hlType type, COND_EXPR *actual, COND_EXPR *regs);
+    
+    void addStckArg(COND_EXPR *expr);
+    void placeStkArg(Int pos, COND_EXPR *expr);
+    
+    void adjustForArgType(Int numArg, hlType actType);
+    void updateFrameOff(int16 off, Int size, word duFlag);
+
+    void configureForLibFunction(Int numArgs, hlType *argsTypes, Int firstArg);
+    void configureNoArgs() { numArgs = 0; }
+
+    Int byteCount() const { return cb; }
+    Int symbolCount() const { return csym; }
+    Int argsCount() const { return numArgs; }
+    
+    void setByteCount(Int x) { cb = x; }
+
+    int16 minOffset() const { return minOff; }
+    void setMinOffset(int16 x) { minOff = x; }
+
+    int16 maxOffset() const { return maxOff; }
+    void setMaxOffset(int16 x) { maxOff = x; }
+
+    const STKSYM& symbol(Int i) const { return sym[i]; }
+    
+    COND_EXPR *actualExpressionAt(Int i) const { return sym[i].actual; }
+};
+
 typedef STKFRAME *PSTKFRAME;
 
 /* PROCEDURE NODE */
@@ -250,7 +286,6 @@ boolT newStkArg(PICODE, COND_EXPR *, llIcode, PPROC);
 void allocStkArgs(PICODE, Int);
 void placeStkArg(PICODE, COND_EXPR *, Int);
 void adjustActArgType(COND_EXPR *, hlType, PPROC);
-void adjustForArgType(PSTKFRAME, Int, hlType);
 
 /* Exported functions from ast.c */
 COND_EXPR *boolCondExp(COND_EXPR *lhs, COND_EXPR *rhs, condOp op);

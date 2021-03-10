@@ -40,12 +40,12 @@ void newCallHlIcode(PICODE pIcode)
     pIcode->ic.hl.oper.call.args = (STKFRAME *)allocMem(sizeof(STKFRAME));
     memset(pIcode->ic.hl.oper.call.args, 0, sizeof(STKFRAME));
     if (pIcode->ic.ll.immed.proc.cb != 0) {
-        pIcode->ic.hl.oper.call.args->cb = pIcode->ic.ll.immed.proc.cb;
+        pIcode->ic.hl.oper.call.args->setByteCount(pIcode->ic.ll.immed.proc.cb);
     }
     else {
         if (pIcode->ic.hl.oper.call.proc) {
-            pIcode->ic.hl.oper.call.args->cb =
-                pIcode->ic.hl.oper.call.proc->cbParam;
+            pIcode->ic.hl.oper.call.args->setByteCount(
+                pIcode->ic.hl.oper.call.proc->cbParam);
         }
     }
 }
@@ -349,10 +349,10 @@ char *writeCall(PPROC tproc, PSTKFRAME args, PPROC pproc, Int *numLoc)
     }
 
     sprintf(s, "%s (", tproc->name);
-    for (i = 0; i < args->csym; i++) {
-        condExp = walkCondExpr(args->sym[i].actual, pproc, numLoc);
+    for (i = 0; i < args->symbolCount(); i++) {
+        condExp = walkCondExpr(args->actualExpressionAt(i), pproc, numLoc);
         strcat(s, condExp);
-        if (i < (args->csym - 1))
+        if (i < (args->symbolCount() - 1))
             strcat(s, ", ");
     }
     strcat(s, ")");
@@ -492,7 +492,8 @@ void writeDU(PICODE pIcode, Int idx)
 
     /* For HLI_CALL, print # parameter bytes */
     if (pIcode->ic.hl.opcode == HLI_CALL)
-        printf("# param bytes = %d\n", pIcode->ic.hl.oper.call.args->cb);
+        printf("# param bytes = %d\n",
+               pIcode->ic.hl.oper.call.args->byteCount());
     printf("\n");
 }
 

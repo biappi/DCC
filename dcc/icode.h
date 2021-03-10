@@ -282,7 +282,7 @@ typedef struct {
         COND_EXPR *exp; /* for HLI_JCOND, HLI_RET, HLI_PUSH, HLI_POP*/
         struct {        /* for HLI_CALL				*/
             struct _proc *proc;
-            struct _STKFRAME *args; /* actual arguments			*/
+            class STKFRAME *args; /* actual arguments			*/
         } call;
     } oper; /* operand                  */
 } HLTYPE;

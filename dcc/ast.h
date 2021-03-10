@@ -7,6 +7,8 @@
 
 #define operandSize 20
 
+class STKFRAME;
+
 /* The following definitions and types define the Conditional Expression
  * attributed syntax tree, as defined by the following EBNF:
     CondExp     ::= CondTerm AND CondTerm | CondTerm
@@ -99,7 +101,7 @@ typedef struct {
         Int longIdx;   /* idx into LOCAL_ID table, LONG_VAR*/
         struct _call { /* for FUNCTION only				*/
             struct _proc *proc;
-            struct _STKFRAME *args;
+            STKFRAME *args;
         } call;
         struct {       /* for OTHER; tmp struct            */
             byte seg;  /*   segment                        */

@@ -183,15 +183,15 @@ void writeProcComments(PPROC p, strTable *strTab)
 {
     int i;
     const ID *id; /* Pointer to register argument identifier */
-    PSTKSYM psym; /* Pointer to register argument symbol */
+    const STKSYM *psym; /* Pointer to register argument symbol */
 
     /* About the parameters */
     if (p->cbParam)
         appendStrTab(strTab, "/* Takes %d bytes of parameters.\n", p->cbParam);
     else if (p->flg & REG_ARGS) {
         appendStrTab(strTab, "/* Uses register arguments:\n");
-        for (i = 0; i < p->args.numArgs; i++) {
-            psym = &p->args.sym[i];
+        for (i = 0; i < p->args.argsCount(); i++) {
+            psym = &p->args.symbol(i);
             if (psym->regs->expr.ident.idType == REGISTER) {
                 id = &p->localId.at(psym->regs->expr.ident.idNode.regiIdx);
                 if (psym->regs->expr.ident.regiType == WORD_REG)

@@ -7,6 +7,7 @@
 
 #include "dcc.h"
 #include <string.h>
+#include <assert.h>
 
 /* Static indentation buffer */
 #define indSize 61 /* size of indentation buffer; max 20 */
@@ -83,6 +84,77 @@ void writeCallGraph(PCALL_GRAPH pcallGraph)
     writeNodeCallGraph(pcallGraph, 0);
 }
 
+void STKFRAME::allocIfNeeded()
+{
+    if (csym != alloc)
+        return;
+
+    alloc += 5;
+    sym = (STKSYM *)reallocVar(sym, alloc * sizeof(STKSYM));
+    memset((void *)&sym[csym], 0, 5 * sizeof(STKSYM));
+}
+
+Int STKFRAME::searchByOffset(int16 offset) {
+    Int i;
+
+    for (i = 0; i < csym; i++)
+        if (sym[i].off == offset)
+            break;
+
+    return i;
+}
+
+bool STKFRAME::exist(condId type, Int tidx)
+{
+    assert(type == REGISTER || type == LONG_VAR);
+
+    for (Int i = 0; i < csym; i++) {
+        if (type == LONG_VAR) {
+            if ((sym[i].regs != NULL) &&
+                (sym[i].regs->expr.ident.idNode.longIdx == tidx)) {
+                return true;
+            }
+        }
+        else if (type == REGISTER) {
+            if ((sym[i].regs != NULL) &&
+                (sym[i].regs->expr.ident.idNode.regiIdx == tidx)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+Int STKFRAME::addArg(hlType type, COND_EXPR *regs)
+{
+    allocIfNeeded();
+
+    sprintf(sym[csym].name, "arg%d", csym);
+
+    sym[csym].type = type;
+    sym[csym].regs = regs;
+
+    csym++;
+    numArgs++;
+
+    return csym - 1;
+}
+
+void STKFRAME::addActualArg(hlType type, COND_EXPR *actual, COND_EXPR *regs)
+{
+    allocIfNeeded();
+
+    sprintf(sym[csym].name, "arg%d", csym);
+
+    sym[csym].type = type;
+    sym[csym].actual = actual;
+    sym[csym].regs = regs;
+
+    csym++;
+    numArgs++;
+}
+
 /**************************************************************************
  *  Routines to support arguments
  *************************************************************************/
@@ -95,7 +167,7 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
     COND_EXPR *lhs;
     PSTKFRAME ps, ts;
     const ID *id;
-    Int i, tidx;
+    Int tidx;
     boolT regExist;
     condId type;
     PPROC tproc;
@@ -116,102 +188,78 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
     ts = &tproc->args;
     lhs = picode->ic.hl.oper.asgn.lhs;
     type = lhs->expr.ident.idType;
+
+    /* Check if register argument already on the formal argument list */
+    regExist = FALSE;
+
     if (type == REGISTER) {
         regL = pproc->localId.at(lhs->expr.ident.idNode.regiIdx).id.regi;
         if (regL < rAL)
             tidx = tproc->localId.newByteWordRegId(TYPE_WORD_SIGN, regL);
         else
             tidx = tproc->localId.newByteWordRegId(TYPE_BYTE_SIGN, regL);
+
+        regExist = ts->exist(type, tidx);
     }
     else if (type == LONG_VAR) {
         regL = pproc->localId.at(lhs->expr.ident.idNode.longIdx).id.longId.l;
         regH = pproc->localId.at(lhs->expr.ident.idNode.longIdx).id.longId.h;
         tidx = tproc->localId.newLongRegId(TYPE_LONG_SIGN, regH, regL, 0);
-    }
 
-    /* Check if register argument already on the formal argument list */
-    regExist = FALSE;
-    for (i = 0; i < ts->csym; i++) {
-        if (type == REGISTER) {
-            if ((ts->sym[i].regs != NULL) &&
-                (ts->sym[i].regs->expr.ident.idNode.regiIdx == tidx)) {
-                regExist = TRUE;
-                i = ts->csym;
-            }
-        }
-        else if (type == LONG_VAR) {
-            if ((ts->sym[i].regs != NULL) &&
-                (ts->sym[i].regs->expr.ident.idNode.longIdx == tidx)) {
-                regExist = TRUE;
-                i = ts->csym;
-            }
-        }
+        regExist = ts->exist(type, tidx);
     }
 
     /* Do ts (formal arguments) */
     if (regExist == FALSE) {
-        if (ts->csym == ts->alloc) {
-            ts->alloc += 5;
-            ts->sym = (STKSYM *)reallocVar(ts->sym, ts->alloc * sizeof(STKSYM));
-            memset(&ts->sym[ts->csym], 0, 5 * sizeof(STKSYM));
-        }
-        sprintf(ts->sym[ts->csym].name, "arg%d", ts->csym);
         if (type == REGISTER) {
-            if (regL < rAL) {
-                ts->sym[ts->csym].type = TYPE_WORD_SIGN;
-                ts->sym[ts->csym].regs = idCondExpRegIdx(tidx, WORD_REG);
-            }
-            else {
-                ts->sym[ts->csym].type = TYPE_BYTE_SIGN;
-                ts->sym[ts->csym].regs = idCondExpRegIdx(tidx, BYTE_REG);
-            }
-            sprintf(tproc->localId.nameBuffer(tidx), "arg%d", ts->csym);
+            auto isWord = regL < rAL;
+            auto newType = isWord ? TYPE_WORD_SIGN : TYPE_BYTE_SIGN;
+            auto regsType = isWord ? WORD_REG : BYTE_REG;
+            auto regs = idCondExpRegIdx(tidx, regsType);
+
+            auto created = ts->addArg(newType, regs);
+            sprintf(tproc->localId.nameBuffer(tidx), "arg%d", created);
         }
         else if (type == LONG_VAR) {
-            ts->sym[ts->csym].regs = idCondExpLongIdx(tidx);
-            ts->sym[ts->csym].type = TYPE_LONG_SIGN;
-            sprintf(tproc->localId.nameBuffer(tidx), "arg%d", ts->csym);
+            auto created = ts->addArg(TYPE_LONG_SIGN, idCondExpLongIdx(tidx));
+            sprintf(tproc->localId.nameBuffer(tidx), "arg%d", created);
             tproc->localId.propLongId(regL, regH, tproc->localId.at(tidx).name);
         }
-
-        ts->csym++;
-        ts->numArgs++;
     }
 
     /* Do ps (actual arguments) */
-    if (ps->csym == ps->alloc) {
-        ps->alloc += 5;
-        ps->sym = (STKSYM *)reallocVar(ps->sym, ps->alloc * sizeof(STKSYM));
-        memset(&ps->sym[ps->csym], 0, 5 * sizeof(STKSYM));
-    }
-    sprintf(ps->sym[ps->csym].name, "arg%d", ps->csym);
-    ps->sym[ps->csym].actual = picode->ic.hl.oper.asgn.rhs;
-    ps->sym[ps->csym].regs = lhs;
+
+    auto actual = picode->ic.hl.oper.asgn.rhs;
+    auto regs = lhs;
 
     /* Mask off high and low register(s) in picode */
     switch (type) {
-    case REGISTER:
+    case REGISTER: {
         id = &pproc->localId.at(lhs->expr.ident.idNode.regiIdx);
         picode->du.def &= maskDuReg[id->id.regi];
-        if (id->id.regi < rAL)
-            ps->sym[ps->csym].type = TYPE_WORD_SIGN;
-        else
-            ps->sym[ps->csym].type = TYPE_BYTE_SIGN;
-        break;
-    case LONG_VAR:
-        id = &pproc->localId.at(lhs->expr.ident.idNode.longIdx);
-        picode->du.def &= maskDuReg[id->id.longId.h];
-        picode->du.def &= maskDuReg[id->id.longId.l];
-        ps->sym[ps->csym].type = TYPE_LONG_SIGN;
-        break;
-    default:
+        auto isWord = regL < rAL;
+        auto type = isWord ? TYPE_WORD_SIGN : TYPE_BYTE_SIGN;
+
+        ps->addActualArg(type, actual, regs);
+
         break;
     }
 
-    ps->csym++;
-    ps->numArgs++;
+    case LONG_VAR: {
+        id = &pproc->localId.at(lhs->expr.ident.idNode.longIdx);
+        picode->du.def &= maskDuReg[id->id.longId.h];
+        picode->du.def &= maskDuReg[id->id.longId.l];
+
+        ps->addActualArg(TYPE_LONG_SIGN, actual, regs);
+        break;
+    }
+
+    default:
+        break;
+    }
 }
 
+#if 0
 void allocStkArgs(PICODE picode, Int num)
 /* Allocates num arguments in the actual argument list of the current
  * icode picode.	*/
@@ -226,6 +274,15 @@ void allocStkArgs(PICODE picode, Int num)
     ps->sym = (STKSYM *)reallocVar(ps->sym, ps->alloc * sizeof(STKSYM));
     /**** memset here??? *****/
 }
+#endif
+
+void STKFRAME::addStckArg(COND_EXPR *exp) {
+    allocIfNeeded();
+    
+    sym[csym].actual = exp;
+    csym++;
+    numArgs++;
+}
 
 boolT newStkArg(PICODE picode, COND_EXPR *exp, llIcode opcode, PPROC pproc)
 /* Inserts the new expression (ie. the actual parameter) on the argument
@@ -233,7 +290,6 @@ boolT newStkArg(PICODE picode, COND_EXPR *exp, llIcode opcode, PPROC pproc)
  * Returns: TRUE if it was a near call that made use of a segment register.
  *			FALSE elsewhere	*/
 {
-    PSTKFRAME ps;
     byte regi;
 
     /* Check for far procedure call, in which case, references to segment
@@ -252,27 +308,19 @@ boolT newStkArg(PICODE picode, COND_EXPR *exp, llIcode opcode, PPROC pproc)
     }
 
     /* Place register argument on the argument list */
-    ps = picode->ic.hl.oper.call.args;
-    if (ps->csym == ps->alloc) {
-        ps->alloc += 5;
-        ps->sym = (STKSYM *)reallocVar(ps->sym, ps->alloc * sizeof(STKSYM));
-        memset(&ps->sym[ps->csym], 0, 5 * sizeof(STKSYM));
-    }
-    ps->sym[ps->csym].actual = exp;
-    ps->csym++;
-    ps->numArgs++;
+    picode->ic.hl.oper.call.args->addStckArg(exp);
     return (FALSE);
 }
 
-void placeStkArg(PICODE picode, COND_EXPR *exp, Int pos)
 /* Places the actual argument exp in the position given by pos in the
  * argument list of picode.	*/
-{
-    PSTKFRAME ps;
+void STKFRAME::placeStkArg(Int pos, COND_EXPR *expr) {
+    sym[pos].actual = expr;
+    sprintf(sym[pos].name, "arg%d", pos);
+}
 
-    ps = picode->ic.hl.oper.call.args;
-    ps->sym[pos].actual = exp;
-    sprintf(ps->sym[pos].name, "arg%d", pos);
+void placeStkArg(PICODE picode, COND_EXPR *exp, Int pos) {
+    picode->ic.hl.oper.call.args->placeStkArg(pos, exp);
 }
 
 void adjustActArgType(COND_EXPR *exp, hlType forType, PPROC pproc)
@@ -336,29 +384,33 @@ void adjustActArgType(COND_EXPR *exp, hlType forType, PPROC pproc)
     }
 }
 
-void adjustForArgType(PSTKFRAME pstkFrame, Int numArg, hlType actType)
 /* Determines whether the formal argument has the same type as the given
  * type (type of the actual argument).  If not, the formal argument is
- * changed its type */
+ * changed its type
+ */
+void STKFRAME::adjustForArgType(Int numArg, hlType actType)
 {
     hlType forType;
     PSTKSYM psym, nsym;
     Int off, i;
 
+    if (numArg >= csym)
+        return;
+
     /* Find stack offset for this argument */
-    off = pstkFrame->minOff;
+    off = minOff;
     for (i = 0; i < numArg; i++)
-        off += pstkFrame->sym[i].size;
+        off += sym[i].size;
 
     /* Find formal argument */
-    if (numArg < pstkFrame->csym) {
-        psym = &pstkFrame->sym[numArg];
+    if (numArg < csym) {
+        psym = &sym[numArg];
         i = numArg;
-        while ((i < pstkFrame->csym) && (psym->off != off)) {
+        while ((i < csym) && (psym->off != off)) {
             psym++;
             i++;
         }
-        if (numArg == pstkFrame->csym)
+        if (numArg == csym)
             return;
     }
     /* If formal argument does not exist, do not create new ones, just
@@ -391,7 +443,7 @@ void adjustForArgType(PSTKFRAME pstkFrame, Int numArg, hlType actType)
                 psym->hasMacro = TRUE;
                 sprintf(nsym->name, "%s", psym->name);
                 nsym->invalid = TRUE;
-                pstkFrame->numArgs--;
+                numArgs--;
             }
             break;
 

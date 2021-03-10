@@ -195,15 +195,14 @@ COND_EXPR *idCondExpParam(Int off, PSTKFRAME argSymtab)
 /* Returns an identifier conditional expression node of type PARAM */
 {
     COND_EXPR *newExp;
-    Int i;
 
     newExp = newCondExp(IDENTIFIER);
     newExp->expr.ident.idType = PARAM;
-    for (i = 0; i < argSymtab->csym; i++)
-        if (argSymtab->sym[i].off == off)
-            break;
-    if (i == argSymtab->csym)
+    
+    Int i = argSymtab->searchByOffset(off);
+    if (i == argSymtab->symbolCount())
         printf("Error, cannot find argument var\n");
+    
     newExp->expr.ident.idNode.localIdx = i;
     return (newExp);
 }
@@ -496,8 +495,10 @@ Int hlTypeSize(COND_EXPR *exp, PPROC pproc)
             return (hlSize[pproc->localId.at(exp->expr.ident.idNode.localIdx)
                                .type]);
         case PARAM:
+            if (exp->expr.ident.idNode.paramIdx >= pproc->args.symbolCount())
+                return 2; // A default
             return (
-                hlSize[pproc->args.sym[exp->expr.ident.idNode.paramIdx].type]);
+                hlSize[pproc->args.symbol(exp->expr.ident.idNode.paramIdx).type]);
         case GLOB_VAR_IDX:
             return (hlSize[pproc->localId.at(exp->expr.ident.idNode.idxGlbIdx)
                                .type]);
@@ -562,7 +563,10 @@ hlType expType(COND_EXPR *exp, PPROC pproc)
         case LOCAL_VAR:
             return (pproc->localId.at(exp->expr.ident.idNode.localIdx).type);
         case PARAM:
-            return (pproc->args.sym[exp->expr.ident.idNode.paramIdx].type);
+            if (exp->expr.ident.idNode.paramIdx >= pproc->args.symbolCount())
+                return (TYPE_UNKNOWN);
+
+            return (pproc->args.symbol(exp->expr.ident.idNode.paramIdx).type);
         case GLOB_VAR_IDX:
             return (pproc->localId.at(exp->expr.ident.idNode.idxGlbIdx).type);
         case CONSTANT:
@@ -636,7 +640,7 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
     char *o;                 /* Operand string pointer */
     boolT needBracket;       /* Determine whether parenthesis is needed */
     const BWGLB_TYPE *bwGlb; /* Ptr to BWGLB_TYPE (global indexed var) */
-    PSTKSYM psym;            /* Pointer to argument in the stack */
+    const STKSYM *psym;            /* Pointer to argument in the stack */
     char *condExp, *e;       /* Return and intermediate expressions */
 
     condExp = (char *)allocMem(EXP_SIZE * sizeof(char));
@@ -754,7 +758,7 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
             break;
 
         case PARAM:
-            psym = &pProc->args.sym[exp->expr.ident.idNode.paramIdx];
+            psym = &pProc->args.symbol(exp->expr.ident.idNode.paramIdx);
             if (psym->hasMacro)
                 sprintf(o, "%s(%s)", psym->macro, psym->name);
             else

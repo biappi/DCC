@@ -394,7 +394,7 @@ void CleanupLibCheck(void)
 boolT LibCheck(PPROC pProc)
 {
     long fileOffset;
-    int h, i, j, arg;
+    int h, i;
     Int Idx;
     byte pat[PATLEN];
 
@@ -430,16 +430,8 @@ boolT LibCheck(PPROC pProc)
             if (i != NIL) {
                 /* Allocate space for the arg struct, and copy the hlType to
                     the appropriate field */
-                arg = pFunc[i].firstArg;
-                pProc->args.csym = pFunc[i].numArg;
-                pProc->args.alloc = pFunc[i].numArg;
-                pProc->args.numArgs = pFunc[i].numArg;
-                pProc->args.sym =
-                    (STKSYM *)allocMem(pFunc[i].numArg * sizeof(STKSYM));
-                memset(pProc->args.sym, 0, pFunc[i].numArg * sizeof(STKSYM));
-                for (j = 0; j < pFunc[i].numArg; j++) {
-                    pProc->args.sym[j].type = pArg[arg++];
-                }
+                pProc->args.configureForLibFunction(pFunc[i].numArg, pArg, pFunc[i].firstArg);
+                
                 if (pFunc[i].typ != TYPE_UNKNOWN) {
                     pProc->retVal.type = pFunc[i].typ;
                     pProc->flg |= PROC_IS_FUNC;
@@ -478,7 +470,7 @@ boolT LibCheck(PPROC pProc)
         /* Found _chkstk */
         strcpy(pProc->name, "chkstk");
         pProc->flg |= PROC_ISLIB; /* We'll say its a lib function */
-        pProc->args.numArgs = 0;  /* With no args */
+        pProc->args.configureNoArgs();  /* With no args */
     }
 
     return (boolT)((pProc->flg & PROC_ISLIB) != 0);

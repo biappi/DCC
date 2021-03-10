@@ -527,12 +527,12 @@ static void codeGen(PPROC pProc, FILE *fp)
     /* Write arguments */
     args = &pProc->args;
     memset(buf, 0, sizeof(buf));
-    for (i = 0; i < args->csym; i++) {
-        if (args->sym[i].invalid == FALSE) {
-            sprintf(arg, "%s %s", hlTypes[args->sym[i].type],
-                    args->sym[i].name);
+    for (i = 0; i < args->symbolCount(); i++) {
+        if (args->symbol(i).invalid == FALSE) {
+            sprintf(arg, "%s %s", hlTypes[args->symbol(i).type],
+                    args->symbol(i).name);
             strcat(buf, arg);
-            if (i < (args->numArgs - 1))
+            if (i < (args->argsCount() - 1))
                 strcat(buf, ", ");
         }
     }

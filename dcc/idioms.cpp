@@ -111,7 +111,7 @@ static Int idiom1(PICODE pIcode, PICODE pEnd, PPROC pProc)
         if (++pIcode < pEnd && !(pIcode->ic.ll.flg & (I | TARGET | CASE)) &&
             pIcode->ic.ll.opcode == iMOV && pIcode->ic.ll.dst.regi == rBP &&
             pIcode->ic.ll.src.regi == rSP) {
-            pProc->args.minOff = 2;
+            pProc->args.setMinOffset(2);
             pProc->flg |= PROC_IS_HLL;
 
             /* Look for SUB SP, immed */
@@ -137,7 +137,7 @@ static Int idiom1(PICODE pIcode, PICODE pEnd, PPROC pProc)
                     pIcode->ic.ll.opcode == iMOV &&
                     pIcode->ic.ll.dst.regi == rBP &&
                     pIcode->ic.ll.src.regi == rSP) {
-                    pProc->args.minOff = 2 + (n * 2);
+                    pProc->args.setMinOffset(2 + (n * 2));
                     return (2 + n);
                 }
                 else
@@ -1243,9 +1243,11 @@ void findIdioms(PPROC pProc)
     }
 
     /* Check if number of parameter bytes match their calling convention */
-    if ((pProc->flg & PROC_HLL) && (pProc->args.csym)) {
-        pProc->args.minOff += (pProc->flg & PROC_FAR ? 4 : 2);
-        delta = pProc->args.maxOff - pProc->args.minOff;
+    if ((pProc->flg & PROC_HLL) && (pProc->args.symbolCount())) {
+        auto size = pProc->flg & PROC_FAR ? 4 : 2;
+        pProc->args.setMinOffset(pProc->args.minOffset() + size);
+
+        delta = pProc->args.maxOffset() - pProc->args.minOffset();
         if (pProc->cbParam != delta) {
             pProc->cbParam = delta;
             pProc->flg |= (CALL_MASK & CALL_UNKNOWN);
