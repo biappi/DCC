@@ -148,13 +148,13 @@ COND_EXPR *idCondExpReg(byte regi, flags32 icodeFlg, LOCAL_ID *locsym)
     newExp->expr.ident.idType = REGISTER;
     if ((icodeFlg & B) || (icodeFlg & SRC_B)) {
         newExp->expr.ident.idNode.regiIdx =
-            newByteWordRegId(locsym, TYPE_BYTE_SIGN, regi);
+            locsym->newByteWordRegId(TYPE_BYTE_SIGN, regi);
         newExp->expr.ident.regiType = BYTE_REG;
     }
     else /* word */
     {
         newExp->expr.ident.idNode.regiIdx =
-            newByteWordRegId(locsym, TYPE_WORD_SIGN, regi);
+            locsym->newByteWordRegId(TYPE_WORD_SIGN, regi);
         newExp->expr.ident.regiType = WORD_REG;
     }
     return (newExp);
@@ -180,14 +180,14 @@ COND_EXPR *idCondExpLoc(Int off, LOCAL_ID *localId)
 
     newExp = newCondExp(IDENTIFIER);
     newExp->expr.ident.idType = LOCAL_VAR;
-    for (i = 0; i < localId->csym; i++)
-        if ((localId->id[i].id.bwId.off == off) &&
-            (localId->id[i].id.bwId.regOff == 0))
+    for (i = 0; i < localId->count(); i++)
+        if ((localId->at(i).id.bwId.off == off) &&
+            (localId->at(i).id.bwId.regOff == 0))
             break;
-    if (i == localId->csym)
+    if (i == localId->count())
         printf("Error, cannot find local var\n");
     newExp->expr.ident.idNode.localIdx = i;
-    sprintf(localId->id[i].name, "loc%d", i);
+    sprintf(localId->nameBuffer(i), "loc%d", i);
     return (newExp);
 }
 
@@ -218,12 +218,12 @@ COND_EXPR *idCondExpIdxGlob(int16 segValue, int16 off, byte regi,
 
     newExp = newCondExp(IDENTIFIER);
     newExp->expr.ident.idType = GLOB_VAR_IDX;
-    for (i = 0; i < locSym->csym; i++)
-        if ((locSym->id[i].id.bwGlb.seg == segValue) &&
-            (locSym->id[i].id.bwGlb.off == off) &&
-            (locSym->id[i].id.bwGlb.regi == regi))
+    for (i = 0; i < locSym->count(); i++)
+        if ((locSym->at(i).id.bwGlb.seg == segValue) &&
+            (locSym->at(i).id.bwGlb.off == off) &&
+            (locSym->at(i).id.bwGlb.regi == regi))
             break;
-    if (i == locSym->csym)
+    if (i == locSym->count())
         printf("Error, indexed-glob var not found in local id table\n");
     newExp->expr.ident.idNode.idxGlbIdx = i;
     return (newExp);
@@ -276,7 +276,7 @@ COND_EXPR *idCondExpLong(LOCAL_ID *localId, opLoc sd, PICODE pIcode, hlFirst f,
     }
     /* Save it as a long expression (reg, stack or glob) */
     else {
-        idx = newLongId(localId, sd, pIcode, f, ix, du, off);
+        idx = localId->newLongId(sd, pIcode, f, ix, du, off);
         newExp->expr.ident.idType = LONG_VAR;
         newExp->expr.ident.idNode.longIdx = idx;
     }
@@ -319,15 +319,15 @@ COND_EXPR *idCondExpID(ID *retVal, LOCAL_ID *locsym, Int ix)
 
     newExp = newCondExp(IDENTIFIER);
     if (retVal->type == TYPE_LONG_SIGN) {
-        idx = newLongRegId(locsym, TYPE_LONG_SIGN, retVal->id.longId.h,
-                           retVal->id.longId.l, ix);
+        idx = locsym->newLongRegId(TYPE_LONG_SIGN, retVal->id.longId.h,
+                                   retVal->id.longId.l, ix);
         newExp->expr.ident.idType = LONG_VAR;
         newExp->expr.ident.idNode.longIdx = idx;
     }
     else if (retVal->type == TYPE_WORD_SIGN) {
         newExp->expr.ident.idType = REGISTER;
         newExp->expr.ident.idNode.regiIdx =
-            newByteWordRegId(locsym, TYPE_WORD_SIGN, retVal->id.regi);
+            locsym->newByteWordRegId(TYPE_WORD_SIGN, retVal->id.regi);
         newExp->expr.ident.regiType = WORD_REG;
     }
     return (newExp);
@@ -351,7 +351,7 @@ COND_EXPR *idCondExp(PICODE pIcode, opLoc sd, PPROC pProc, Int i,
         ((sd == SRC) && (pIcode->ic.ll.flg & IM_SRC)) ||
         (sd == LHS_OP)) /* for MUL lhs */
     {                   /* implicit dx:ax */
-        idx = newLongRegId(&pProc->localId, TYPE_LONG_SIGN, rDX, rAX, i);
+        idx = pProc->localId.newLongRegId(TYPE_LONG_SIGN, rDX, rAX, i);
         newExp = idCondExpLongIdx(idx);
         setRegDU(duIcode, rDX, du);
         setRegDU(duIcode, rAX, du);
@@ -493,13 +493,13 @@ Int hlTypeSize(COND_EXPR *exp, PPROC pproc)
             else
                 return (2);
         case LOCAL_VAR:
-            return (hlSize[pproc->localId.id[exp->expr.ident.idNode.localIdx]
+            return (hlSize[pproc->localId.at(exp->expr.ident.idNode.localIdx)
                                .type]);
         case PARAM:
             return (
                 hlSize[pproc->args.sym[exp->expr.ident.idNode.paramIdx].type]);
         case GLOB_VAR_IDX:
-            return (hlSize[pproc->localId.id[exp->expr.ident.idNode.idxGlbIdx]
+            return (hlSize[pproc->localId.at(exp->expr.ident.idNode.idxGlbIdx)
                                .type]);
         case CONSTANT:
             return (exp->expr.ident.idNode.kte.size);
@@ -560,17 +560,17 @@ hlType expType(COND_EXPR *exp, PPROC pproc)
             else
                 return (TYPE_WORD_SIGN);
         case LOCAL_VAR:
-            return (pproc->localId.id[exp->expr.ident.idNode.localIdx].type);
+            return (pproc->localId.at(exp->expr.ident.idNode.localIdx).type);
         case PARAM:
             return (pproc->args.sym[exp->expr.ident.idNode.paramIdx].type);
         case GLOB_VAR_IDX:
-            return (pproc->localId.id[exp->expr.ident.idNode.idxGlbIdx].type);
+            return (pproc->localId.at(exp->expr.ident.idNode.idxGlbIdx).type);
         case CONSTANT:
             return (TYPE_CONST);
         case STRING:
             return (TYPE_STR);
         case LONG_VAR:
-            return (pproc->localId.id[exp->expr.ident.idNode.longIdx].type);
+            return (pproc->localId.at(exp->expr.ident.idNode.longIdx).type);
         case FUNCTION:
             return (exp->expr.ident.idNode.call.proc->retVal.type);
         case OTHER:
@@ -602,11 +602,11 @@ void removeRegFromLong(byte regi, LOCAL_ID *locId, COND_EXPR *tree)
     case IDENTIFIER:
         ident = &tree->expr.ident;
         if (ident->idType == LONG_VAR) {
-            otherRegi = otherLongRegi(regi, ident->idNode.longIdx, locId);
+            otherRegi = locId->otherLongRegi(regi, ident->idNode.longIdx);
             ident->idType = REGISTER;
             ident->regiType = WORD_REG;
             ident->idNode.regiIdx =
-                newByteWordRegId(locId, TYPE_WORD_SIGN, otherRegi);
+                locId->newByteWordRegId(TYPE_WORD_SIGN, otherRegi);
         }
         break;
     }
@@ -631,13 +631,13 @@ static char *getString(Int offset)
 char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
 /* Walks the conditional expression tree and returns the result on a string */
 {
-    int16 off;         /* temporal - for OTHER */
-    ID *id;            /* Pointer to local identifier table */
-    char *o;           /* Operand string pointer */
-    boolT needBracket; /* Determine whether parenthesis is needed */
-    BWGLB_TYPE *bwGlb; /* Ptr to BWGLB_TYPE (global indexed var) */
-    PSTKSYM psym;      /* Pointer to argument in the stack */
-    char *condExp, *e; /* Return and intermediate expressions */
+    int16 off;               /* temporal - for OTHER */
+    const ID *id;            /* Pointer to local identifier table */
+    char *o;                 /* Operand string pointer */
+    boolT needBracket;       /* Determine whether parenthesis is needed */
+    const BWGLB_TYPE *bwGlb; /* Ptr to BWGLB_TYPE (global indexed var) */
+    PSTKSYM psym;            /* Pointer to argument in the stack */
+    char *condExp, *e;       /* Return and intermediate expressions */
 
     condExp = (char *)allocMem(EXP_SIZE * sizeof(char));
     condExp[0] = '\0';
@@ -726,11 +726,13 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
         case GLOB_VAR:
             sprintf(o, "%s", symtab.sym[exp->expr.ident.idNode.globIdx].name);
             break;
-        case REGISTER:
-            id = &pProc->localId.id[exp->expr.ident.idNode.regiIdx];
+        case REGISTER: {
+            Int idx = exp->expr.ident.idNode.regiIdx;
+
+            id = &pProc->localId.at(exp->expr.ident.idNode.regiIdx);
             if (id->name[0] == '\0') /* no name */
             {
-                sprintf(id->name, "loc%d", ++(*numLoc));
+                sprintf(pProc->localId.nameBuffer(idx), "loc%d", ++(*numLoc));
                 if (id->id.regi < rAL)
                     appendStrTab(&cCode.decl, "%s %s; /* %s */\n",
                                  hlTypes[id->type], id->name,
@@ -744,11 +746,11 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
                 sprintf(o, "%s(%s)", id->macro, id->name);
             else
                 sprintf(o, "%s", id->name);
-            break;
+        } break;
 
         case LOCAL_VAR:
             sprintf(o, "%s",
-                    pProc->localId.id[exp->expr.ident.idNode.localIdx].name);
+                    pProc->localId.at(exp->expr.ident.idNode.localIdx).name);
             break;
 
         case PARAM:
@@ -761,7 +763,7 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
 
         case GLOB_VAR_IDX:
             bwGlb =
-                &pProc->localId.id[exp->expr.ident.idNode.idxGlbIdx].id.bwGlb;
+                &pProc->localId.at(exp->expr.ident.idNode.idxGlbIdx).id.bwGlb;
 
             sprintf(o, "%d[%s]", (bwGlb->seg << 4) + bwGlb->off,
                     wordReg[bwGlb->regi - rAX]);
@@ -778,19 +780,21 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
             o = getString(exp->expr.ident.idNode.strIdx);
             break;
 
-        case LONG_VAR:
-            id = &pProc->localId.id[exp->expr.ident.idNode.longIdx];
+        case LONG_VAR: {
+            Int idx = exp->expr.ident.idNode.longIdx;
+            id = &pProc->localId.at(idx);
+
             if (id->name[0] != '\0') /* STK_FRAME & REG w/name*/
                 sprintf(o, "%s", id->name);
             else if (id->loc == REG_FRAME) {
-                sprintf(id->name, "loc%d", ++(*numLoc));
+                sprintf(pProc->localId.nameBuffer(idx), "loc%d", ++(*numLoc));
                 appendStrTab(&cCode.decl, "%s %s; /* %s:%s */\n",
                              hlTypes[id->type], id->name,
                              wordReg[id->id.longId.h - rAX],
                              wordReg[id->id.longId.l - rAX]);
                 sprintf(o, "%s", id->name);
-                propLongId(&pProc->localId, id->id.longId.l, id->id.longId.h,
-                           id->name);
+                pProc->localId.propLongId(id->id.longId.l, id->id.longId.h,
+                                          id->name);
             }
             else /* GLB_FRAME */
             {
@@ -801,7 +805,7 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
                     sprintf(o, "[%d][bx]",
                             (id->id.longGlb.seg << 4) + id->id.longGlb.offH);
             }
-            break;
+        } break;
 
         case FUNCTION:
             o = writeCall(exp->expr.ident.idNode.call.proc,
@@ -883,7 +887,7 @@ boolT insertSubTreeReg(COND_EXPR *exp, COND_EXPR **tree, byte regi,
     switch ((*tree)->type) {
     case IDENTIFIER:
         if ((*tree)->expr.ident.idType == REGISTER) {
-            treeReg = locsym->id[(*tree)->expr.ident.idNode.regiIdx].id.regi;
+            treeReg = locsym->at((*tree)->expr.ident.idNode.regiIdx).id.regi;
             if (treeReg == regi) /* word reg */
             {
                 *tree = exp;

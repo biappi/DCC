@@ -94,7 +94,7 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
 {
     COND_EXPR *lhs;
     PSTKFRAME ps, ts;
-    ID *id;
+    const ID *id;
     Int i, tidx;
     boolT regExist;
     condId type;
@@ -117,16 +117,16 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
     lhs = picode->ic.hl.oper.asgn.lhs;
     type = lhs->expr.ident.idType;
     if (type == REGISTER) {
-        regL = pproc->localId.id[lhs->expr.ident.idNode.regiIdx].id.regi;
+        regL = pproc->localId.at(lhs->expr.ident.idNode.regiIdx).id.regi;
         if (regL < rAL)
-            tidx = newByteWordRegId(&tproc->localId, TYPE_WORD_SIGN, regL);
+            tidx = tproc->localId.newByteWordRegId(TYPE_WORD_SIGN, regL);
         else
-            tidx = newByteWordRegId(&tproc->localId, TYPE_BYTE_SIGN, regL);
+            tidx = tproc->localId.newByteWordRegId(TYPE_BYTE_SIGN, regL);
     }
     else if (type == LONG_VAR) {
-        regL = pproc->localId.id[lhs->expr.ident.idNode.longIdx].id.longId.l;
-        regH = pproc->localId.id[lhs->expr.ident.idNode.longIdx].id.longId.h;
-        tidx = newLongRegId(&tproc->localId, TYPE_LONG_SIGN, regH, regL, 0);
+        regL = pproc->localId.at(lhs->expr.ident.idNode.longIdx).id.longId.l;
+        regH = pproc->localId.at(lhs->expr.ident.idNode.longIdx).id.longId.h;
+        tidx = tproc->localId.newLongRegId(TYPE_LONG_SIGN, regH, regL, 0);
     }
 
     /* Check if register argument already on the formal argument list */
@@ -165,14 +165,13 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
                 ts->sym[ts->csym].type = TYPE_BYTE_SIGN;
                 ts->sym[ts->csym].regs = idCondExpRegIdx(tidx, BYTE_REG);
             }
-            sprintf(tproc->localId.id[tidx].name, "arg%d", ts->csym);
+            sprintf(tproc->localId.nameBuffer(tidx), "arg%d", ts->csym);
         }
         else if (type == LONG_VAR) {
             ts->sym[ts->csym].regs = idCondExpLongIdx(tidx);
             ts->sym[ts->csym].type = TYPE_LONG_SIGN;
-            sprintf(tproc->localId.id[tidx].name, "arg%d", ts->csym);
-            propLongId(&tproc->localId, regL, regH,
-                       tproc->localId.id[tidx].name);
+            sprintf(tproc->localId.nameBuffer(tidx), "arg%d", ts->csym);
+            tproc->localId.propLongId(regL, regH, tproc->localId.at(tidx).name);
         }
 
         ts->csym++;
@@ -192,7 +191,7 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
     /* Mask off high and low register(s) in picode */
     switch (type) {
     case REGISTER:
-        id = &pproc->localId.id[lhs->expr.ident.idNode.regiIdx];
+        id = &pproc->localId.at(lhs->expr.ident.idNode.regiIdx);
         picode->du.def &= maskDuReg[id->id.regi];
         if (id->id.regi < rAL)
             ps->sym[ps->csym].type = TYPE_WORD_SIGN;
@@ -200,7 +199,7 @@ void newRegArg(PPROC pproc, PICODE picode, PICODE ticode)
             ps->sym[ps->csym].type = TYPE_BYTE_SIGN;
         break;
     case LONG_VAR:
-        id = &pproc->localId.id[lhs->expr.ident.idNode.longIdx];
+        id = &pproc->localId.at(lhs->expr.ident.idNode.longIdx);
         picode->du.def &= maskDuReg[id->id.longId.h];
         picode->du.def &= maskDuReg[id->id.longId.l];
         ps->sym[ps->csym].type = TYPE_LONG_SIGN;
@@ -242,7 +241,7 @@ boolT newStkArg(PICODE picode, COND_EXPR *exp, llIcode opcode, PPROC pproc)
      * long references to another segment) */
     if (exp) {
         if ((exp->type == IDENTIFIER) && (exp->expr.ident.idType == REGISTER)) {
-            regi = pproc->localId.id[exp->expr.ident.idNode.regiIdx].id.regi;
+            regi = pproc->localId.at(exp->expr.ident.idNode.regiIdx).id.regi;
             if ((regi >= rES) && (regi <= rDS)) {
                 if (opcode == iCALLF)
                     return (FALSE);

@@ -524,7 +524,7 @@ static void forwardSubs(COND_EXPR *lhs, COND_EXPR *rhs, PICODE picode,
 
     /* Insert on rhs of ticode, if possible */
     res = insertSubTreeReg(rhs, &ticode->ic.hl.oper.asgn.rhs,
-                           locsym->id[lhs->expr.ident.idNode.regiIdx].id.regi,
+                           locsym->at(lhs->expr.ident.idNode.regiIdx).id.regi,
                            locsym);
     if (res) {
         invalidateIcode(picode);
@@ -534,7 +534,7 @@ static void forwardSubs(COND_EXPR *lhs, COND_EXPR *rhs, PICODE picode,
         /* Try to insert it on lhs of ticode*/
         res = insertSubTreeReg(
             rhs, &ticode->ic.hl.oper.asgn.lhs,
-            locsym->id[lhs->expr.ident.idNode.regiIdx].id.regi, locsym);
+            locsym->at(lhs->expr.ident.idNode.regiIdx).id.regi, locsym);
         if (res) {
             invalidateIcode(picode);
             (*numHlIcodes)--;
@@ -584,7 +584,7 @@ static boolT xClear(COND_EXPR *rhs, Int f, Int t, Int lastBBinst, PPROC pproc)
     case IDENTIFIER:
         if (rhs->expr.ident.idType == REGISTER) {
             picode = pproc->Icode.GetFirstIcode();
-            regi = pproc->localId.id[rhs->expr.ident.idNode.regiIdx].id.regi;
+            regi = pproc->localId.at(rhs->expr.ident.idNode.regiIdx).id.regi;
             for (i = (f + 1); (i < lastBBinst) && (i < t); i++)
                 if ((picode[i].type == HIGH_LEVEL) &&
                     (picode[i].invalid == FALSE)) {
@@ -730,8 +730,8 @@ static void findExps(PPROC pProc)
                                         picode->ic.hl.oper.asgn.rhs,
                                         &ticode->ic.hl.oper.exp,
                                         pProc->localId
-                                            .id[picode->ic.hl.oper.asgn.lhs
-                                                    ->expr.ident.idNode.regiIdx]
+                                            .at(picode->ic.hl.oper.asgn.lhs
+                                                    ->expr.ident.idNode.regiIdx)
                                             .id.regi,
                                         &pProc->localId);
                                     if (res) {
@@ -774,8 +774,8 @@ static void findExps(PPROC pProc)
                                 res = insertSubTreeReg(
                                     exp, &ticode->ic.hl.oper.exp,
                                     pProc->localId
-                                        .id[picode->ic.hl.oper.exp->expr.ident
-                                                .idNode.regiIdx]
+                                        .at(picode->ic.hl.oper.exp->expr.ident
+                                                .idNode.regiIdx)
                                         .id.regi,
                                     &pProc->localId);
                                 if (res) {
@@ -989,9 +989,9 @@ static void findExps(PPROC pProc)
                                 retVal = &picode->ic.hl.oper.call.proc->retVal;
                                 res = insertSubTreeLongReg(
                                     exp, &ticode->ic.hl.oper.exp,
-                                    newLongRegId(&pProc->localId, retVal->type,
-                                                 retVal->id.longId.h,
-                                                 retVal->id.longId.l, j));
+                                    pProc->localId.newLongRegId(
+                                        retVal->type, retVal->id.longId.h,
+                                        retVal->id.longId.l, j));
                                 if (res) /* was substituted */
                                 {
                                     invalidateIcode(picode);
@@ -1124,8 +1124,8 @@ void dataFlow(PPROC pProc, dword liveOut)
             pProc->retVal.loc = REG_FRAME;
             pProc->retVal.id.longId.h = rDX;
             pProc->retVal.id.longId.l = rAX;
-            idx = newLongRegId(&pProc->localId, TYPE_LONG_SIGN, rDX, rAX, 0);
-            propLongId(&pProc->localId, rAX, rDX, "\0");
+            idx = pProc->localId.newLongRegId(TYPE_LONG_SIGN, rDX, rAX, 0);
+            pProc->localId.propLongId(rAX, rDX, "\0");
         }
         else if (isAx || isBx || isCx || isDx) /* word */
         {
@@ -1139,8 +1139,8 @@ void dataFlow(PPROC pProc, dword liveOut)
                 pProc->retVal.id.regi = rCX;
             else
                 pProc->retVal.id.regi = rDX;
-            idx = newByteWordRegId(&pProc->localId, TYPE_WORD_SIGN,
-                                   pProc->retVal.id.regi);
+            idx = pProc->localId.newByteWordRegId(TYPE_WORD_SIGN,
+                                                  pProc->retVal.id.regi);
         }
     }
 

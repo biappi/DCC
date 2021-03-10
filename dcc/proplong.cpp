@@ -236,13 +236,15 @@ static void longJCond22(COND_EXPR *rhs, COND_EXPR *lhs, PICODE pIcode, Int *idx)
     (*idx) += 4;
 }
 
-static void propLongStk(Int i, ID *pLocId, PPROC pProc)
+static void propLongStk(Int i, PPROC pProc)
 /* Propagates TYPE_LONG_(UN)SIGN icode information to the current pIcode
  * Pointer.
  * Arguments: i     : index into the local identifier table
  *            pLocId: ptr to the long local identifier
  *            pProc : ptr to current procedure's record.        */
 {
+    const ID *pLocId = &pProc->localId.at(i);
+
     Int idx, off, arc;
     COND_EXPR *lhs, *rhs; /* Pointers to left and right hand expression */
     PICODE pIcode, pEnd;
@@ -323,13 +325,15 @@ static void propLongStk(Int i, ID *pLocId, PPROC pProc)
     }
 }
 
-static void propLongReg(Int i, ID *pLocId, PPROC pProc)
+static void propLongReg(Int i, PPROC pProc)
 /* Finds the definition of the long register pointed to by pLocId, and
  * transforms that instruction into a HIGH_LEVEL icode instruction.
  * Arguments: i     : index into the local identifier table
  *            pLocId: ptr to the long local identifier
  *            pProc : ptr to current procedure's record.        */
 {
+    const ID *pLocId = &pProc->localId.at(i);
+
     COND_EXPR *lhs, *rhs;
     Int idx, j, off, arc;
     PICODE pIcode, pEnd;
@@ -352,7 +356,7 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
                     if ((pLocId->id.longId.h == pmH->regi) &&
                         (pLocId->id.longId.l == pmL->regi)) {
                         lhs = idCondExpLongIdx(i);
-                        insertIdx(&pProc->localId.id[i].idx, idx - 1);
+                        pProc->localId.insertIdx(i, idx - 1);
                         setRegDU(pIcode, pmL->regi, OPerDu_DEF);
                         rhs = idCondExpLong(&pProc->localId, SRC, pIcode,
                                             HIGH_FIRST, idx, OPerDu_USE, 1);
@@ -532,7 +536,7 @@ static void propLongReg(Int i, ID *pLocId, PPROC pProc)
     }         /* end for */
 }
 
-static void propLongGlb(Int i, ID *pLocId, PPROC pProc)
+static void propLongGlb(Int i, PPROC pProc)
 /* Propagates the long global address across all LOW_LEVEL icodes.
  * Transforms some LOW_LEVEL icodes into HIGH_LEVEL     */
 {
@@ -543,21 +547,21 @@ void propLong(PPROC pProc)
  * into HIGH_LEVEL icodes.  */
 {
     Int i;
-    ID *pLocId; /* Pointer to current local identifier */
 
-    for (i = 0; i < pProc->localId.csym; i++) {
-        pLocId = &pProc->localId.id[i];
+    for (i = 0; i < pProc->localId.count(); i++) {
+        const ID *pLocId = &pProc->localId.at(i);
+
         if ((pLocId->type == TYPE_LONG_SIGN) ||
             (pLocId->type == TYPE_LONG_UNSIGN)) {
             switch (pLocId->loc) {
             case STK_FRAME:
-                propLongStk(i, pLocId, pProc);
+                propLongStk(i, pProc);
                 break;
             case REG_FRAME:
-                propLongReg(i, pLocId, pProc);
+                propLongReg(i, pProc);
                 break;
             case GLB_FRAME:
-                propLongGlb(i, pLocId, pProc);
+                propLongGlb(i, pProc);
                 break;
             }
         }

@@ -514,7 +514,6 @@ static void codeGen(PPROC pProc, FILE *fp)
     PSTKFRAME args; /* Procedure arguments              */
     char buf[200],  /* Procedure's definition           */
         arg[30];    /* One argument                     */
-    ID *locid;      /* Pointer to one local identifier  */
     BB *pBB;        /* Pointer to basic block           */
 
     /* Write procedure/function header */
@@ -545,16 +544,18 @@ static void codeGen(PPROC pProc, FILE *fp)
 
     /* Write local variables */
     if (!(pProc->flg & PROC_ASM)) {
-        locid = &pProc->localId.id[0];
         numLoc = 0;
-        for (i = 0; i < pProc->localId.csym; i++, locid++) {
+        for (i = 0; i < pProc->localId.count(); i++) {
+            const ID *locid = &pProc->localId.at(i);
+
             /* Output only non-invalidated entries */
             if (locid->illegal == FALSE) {
                 if (locid->loc == REG_FRAME) {
                     /* Register variables are assigned to a local variable */
                     if (((pProc->flg & SI_REGVAR) && (locid->id.regi == rSI)) ||
                         ((pProc->flg & DI_REGVAR) && (locid->id.regi == rDI))) {
-                        sprintf(locid->name, "loc%d", ++numLoc);
+                        sprintf(pProc->localId.nameBuffer(i), "loc%d",
+                                ++numLoc);
                         appendStrTab(&cCode.decl, "int %s;\n", locid->name);
                     }
                     /* Other registers are named when they are first used in
@@ -563,7 +564,7 @@ static void codeGen(PPROC pProc, FILE *fp)
 
                 else if (locid->loc == STK_FRAME) {
                     /* Name local variables and output appropriate type */
-                    sprintf(locid->name, "loc%d", ++numLoc);
+                    sprintf(pProc->localId.nameBuffer(i), "loc%d", ++numLoc);
                     appendStrTab(&cCode.decl, "%s %s;\n", hlTypes[locid->type],
                                  locid->name);
                 }

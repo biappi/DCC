@@ -304,16 +304,7 @@ void writeDU(PICODE, Int);
 void inverseCondOp(COND_EXPR **);
 
 /* Exported funcions from locident.c */
-Int newByteWordRegId(LOCAL_ID *, hlType t, byte regi);
-Int newByteWordStkId(LOCAL_ID *, hlType t, Int off, byte regOff);
-Int newIntIdxId(LOCAL_ID *, int16 seg, int16 off, byte regi, Int, hlType);
-Int newLongRegId(LOCAL_ID *, hlType t, byte regH, byte regL, Int idx);
-Int newLongStkId(LOCAL_ID *, hlType t, Int offH, Int offL);
-Int newLongId(LOCAL_ID *, opLoc sd, PICODE, hlFirst, Int idx, operDu, Int);
 boolT checkLongEq(LONG_STKID_TYPE, PICODE, Int, Int, PPROC, COND_EXPR **,
                   COND_EXPR **, Int);
 boolT checkLongRegEq(LONGID_TYPE, PICODE, Int, Int, PPROC, COND_EXPR **,
                      COND_EXPR **, Int);
-byte otherLongRegi(byte, Int, LOCAL_ID *);
-void insertIdx(IDX_ARRAY *, Int);
-void propLongId(LOCAL_ID *, byte, byte, const char *);

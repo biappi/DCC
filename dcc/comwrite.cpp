@@ -182,7 +182,7 @@ void writeIntComment(PICODE icode, char *s)
 void writeProcComments(PPROC p, strTable *strTab)
 {
     int i;
-    ID *id;       /* Pointer to register argument identifier */
+    const ID *id; /* Pointer to register argument identifier */
     PSTKSYM psym; /* Pointer to register argument symbol */
 
     /* About the parameters */
@@ -193,7 +193,7 @@ void writeProcComments(PPROC p, strTable *strTab)
         for (i = 0; i < p->args.numArgs; i++) {
             psym = &p->args.sym[i];
             if (psym->regs->expr.ident.idType == REGISTER) {
-                id = &p->localId.id[psym->regs->expr.ident.idNode.regiIdx];
+                id = &p->localId.at(psym->regs->expr.ident.idNode.regiIdx);
                 if (psym->regs->expr.ident.regiType == WORD_REG)
                     appendStrTab(strTab, " *     %s = %s.\n", psym->name,
                                  wordReg[id->id.regi - rAX]);
@@ -203,7 +203,7 @@ void writeProcComments(PPROC p, strTable *strTab)
             }
             else /* long register */
             {
-                id = &p->localId.id[psym->regs->expr.ident.idNode.longIdx];
+                id = &p->localId.at(psym->regs->expr.ident.idNode.longIdx);
                 appendStrTab(strTab, " *     %s = %s:%s.\n", psym->name,
                              wordReg[id->id.longId.h - rAX],
                              wordReg[id->id.longId.l - rAX]);

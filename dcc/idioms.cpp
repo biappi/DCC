@@ -996,8 +996,8 @@ void findIdioms(PPROC pProc)
             }
             else if (idiom14(pIcode, pEnd, &regL, &regH)) /* Idiom 14 */
             {
-                idx = newLongRegId(&pProc->localId, TYPE_LONG_SIGN, regH, regL,
-                                   ip);
+                idx =
+                    pProc->localId.newLongRegId(TYPE_LONG_SIGN, regH, regL, ip);
                 lhs = idCondExpLongIdx(idx);
                 setRegDU(pIcode, regH, OPerDu_DEF);
                 rhs = idCondExp(pIcode, SRC, pProc, ip, pIcode, OPerDu_NONE);
@@ -1032,8 +1032,8 @@ void findIdioms(PPROC pProc)
                          TYPE_LONG_SIGN) ||
                         (pIcode->ic.ll.immed.proc.proc->retVal.type ==
                          TYPE_LONG_UNSIGN))
-                        newLongRegId(&pProc->localId, TYPE_LONG_SIGN, rDX, rAX,
-                                     ip);
+                        pProc->localId.newLongRegId(TYPE_LONG_SIGN, rDX, rAX,
+                                                    ip);
                 }
 
             /* Check for idioms */
@@ -1094,9 +1094,9 @@ void findIdioms(PPROC pProc)
 
         case iSAR: /* Idiom 8 */
             if (idiom8(pIcode, pEnd)) {
-                idx = newLongRegId(&pProc->localId, TYPE_LONG_SIGN,
-                                   pIcode->ic.ll.dst.regi,
-                                   (pIcode + 1)->ic.ll.dst.regi, ip);
+                idx = pProc->localId.newLongRegId(
+                    TYPE_LONG_SIGN, pIcode->ic.ll.dst.regi,
+                    (pIcode + 1)->ic.ll.dst.regi, ip);
                 lhs = idCondExpLongIdx(idx);
                 setRegDU(pIcode, (pIcode + 1)->ic.ll.dst.regi, OPerDu_USE_DEF);
                 rhs = idCondExpKte(1, 2);
@@ -1126,9 +1126,9 @@ void findIdioms(PPROC pProc)
             }
             else if (idiom12(pIcode, pEnd)) /* idiom 12 */
             {
-                idx = newLongRegId(&pProc->localId, TYPE_LONG_UNSIGN,
-                                   (pIcode + 1)->ic.ll.dst.regi,
-                                   pIcode->ic.ll.dst.regi, ip);
+                idx = pProc->localId.newLongRegId(TYPE_LONG_UNSIGN,
+                                                  (pIcode + 1)->ic.ll.dst.regi,
+                                                  pIcode->ic.ll.dst.regi, ip);
                 lhs = idCondExpLongIdx(idx);
                 setRegDU(pIcode, (pIcode + 1)->ic.ll.dst.regi, OPerDu_USE_DEF);
                 rhs = idCondExpKte(1, 2);
@@ -1144,9 +1144,9 @@ void findIdioms(PPROC pProc)
 
         case iSHR: /* Idiom 9 */
             if (idiom9(pIcode, pEnd)) {
-                idx = newLongRegId(&pProc->localId, TYPE_LONG_UNSIGN,
-                                   pIcode->ic.ll.dst.regi,
-                                   (pIcode + 1)->ic.ll.dst.regi, ip);
+                idx = pProc->localId.newLongRegId(
+                    TYPE_LONG_UNSIGN, pIcode->ic.ll.dst.regi,
+                    (pIcode + 1)->ic.ll.dst.regi, ip);
                 lhs = idCondExpLongIdx(idx);
                 setRegDU(pIcode, (pIcode + 1)->ic.ll.dst.regi, OPerDu_USE_DEF);
                 rhs = idCondExpKte(1, 2);

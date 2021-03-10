@@ -935,19 +935,20 @@ static void use(opLoc d, PICODE pIcode, PPROC pProc, PSTATE pstate, Int size,
             if (pm->off >= 2)
                 updateFrameOff(&pProc->args, pm->off, size, USE);
             else if (pm->off < 0)
-                newByteWordStkId(&pProc->localId, TYPE_WORD_SIGN, pm->off, 0);
+                pProc->localId.newByteWordStkId(TYPE_WORD_SIGN, pm->off, 0);
         }
 
         else if (pm->regi == INDEXBASE + 2 || pm->regi == INDEXBASE + 3)
-            newByteWordStkId(&pProc->localId, TYPE_WORD_SIGN, pm->off,
-                             (byte)((pm->regi == INDEXBASE + 2) ? rSI : rDI));
+            pProc->localId.newByteWordStkId(
+                TYPE_WORD_SIGN, pm->off,
+                (byte)((pm->regi == INDEXBASE + 2) ? rSI : rDI));
 
         else if ((pm->regi >= INDEXBASE + 4) && (pm->regi <= INDEXBASE + 7)) {
             if ((pm->seg == rDS) && (pm->regi == INDEXBASE + 7)) /* bx */
             {
                 if (pm->off > 0) /* global indexed variable */
-                    newIntIdxId(&pProc->localId, pm->segValue, pm->off, rBX, ix,
-                                TYPE_WORD_SIGN);
+                    pProc->localId.newIntIdxId(pm->segValue, pm->off, rBX, ix,
+                                               TYPE_WORD_SIGN);
             }
             pIcode->du.use |= duReg[pm->regi];
         }
@@ -973,26 +974,30 @@ static void def(opLoc d, PICODE pIcode, PPROC pProc, PSTATE pstate, Int size,
     PMEM pm = (d == SRC) ? &pIcode->ic.ll.src : &pIcode->ic.ll.dst;
     PSYM psym;
 
+    if (pIcode->ic.ll.label == 0x00009c40) {
+        printf("");
+    }
     if (pm->regi == 0 || pm->regi >= INDEXBASE) {
         if (pm->regi == INDEXBASE + 6) /* indexed on bp */
         {
             if (pm->off >= 2)
                 updateFrameOff(&pProc->args, pm->off, size, DEF);
             else if (pm->off < 0)
-                newByteWordStkId(&pProc->localId, TYPE_WORD_SIGN, pm->off, 0);
+                pProc->localId.newByteWordStkId(TYPE_WORD_SIGN, pm->off, 0);
         }
 
         else if (pm->regi == INDEXBASE + 2 || pm->regi == INDEXBASE + 3) {
-            newByteWordStkId(&pProc->localId, TYPE_WORD_SIGN, pm->off,
-                             (byte)((pm->regi == INDEXBASE + 2) ? rSI : rDI));
+            pProc->localId.newByteWordStkId(
+                TYPE_WORD_SIGN, pm->off,
+                (byte)((pm->regi == INDEXBASE + 2) ? rSI : rDI));
         }
 
         else if ((pm->regi >= INDEXBASE + 4) && (pm->regi <= INDEXBASE + 7)) {
             if ((pm->seg == rDS) && (pm->regi == INDEXBASE + 7)) /* bx */
             {
                 if (pm->off > 0) /* global var */
-                    newIntIdxId(&pProc->localId, pm->segValue, pm->off, rBX, ix,
-                                TYPE_WORD_SIGN);
+                    pProc->localId.newIntIdxId(pm->segValue, pm->off, rBX, ix,
+                                               TYPE_WORD_SIGN);
             }
             pIcode->du.use |= duReg[pm->regi];
         }
