@@ -3,6 +3,8 @@
  * (C) Cristina Cifuentes
  ****************************************************************************/
 
+#include <stdint.h>
+
 /* LOW_LEVEL icode flags */
 #define B 0x000001        /* Byte operands (value implicitly used) */
 #define I 0x000002        /* Immed. source */
@@ -255,11 +257,11 @@ typedef struct {
 
 /* LOW_LEVEL icode operand record */
 typedef struct {
-    byte seg;       /* CS, DS, ES, SS                       */
-    int16 segValue; /* Value of segment seg during analysis */
-    byte segOver;   /* CS, DS, ES, SS if segment override   */
-    byte regi;      /* 0 < regs < INDEXBASE <= index modes  */
-    int16 off;      /* memory address offset                */
+    byte seg;          /* CS, DS, ES, SS                       */
+    uint16_t segValue; /* Value of segment seg during analysis */
+    byte segOver;      /* CS, DS, ES, SS if segment override   */
+    byte regi;         /* 0 < regs < INDEXBASE <= index modes  */
+    uint16_t off;      /* memory address offset                */
 } ICODEMEM;
 typedef ICODEMEM *PMEM;
 

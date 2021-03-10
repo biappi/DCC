@@ -120,11 +120,11 @@ COND_EXPR *unaryCondExp(condNodeType t, COND_EXPR *exp)
     return (newExp);
 }
 
-COND_EXPR *idCondExpGlob(int16 segValue, int16 off)
+COND_EXPR *idCondExpGlob(uint32_t segValue, uint32_t off)
 /* Returns an identifier conditional expression node of type GLOB_VAR */
 {
     COND_EXPR *newExp;
-    dword adr;
+    uint32_t adr;
     Int i;
 
     newExp = newCondExp(IDENTIFIER);

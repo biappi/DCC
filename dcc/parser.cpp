@@ -18,7 +18,7 @@ static boolT process_CALL(PICODE pIcode, PPROC pProc, PCALL_GRAPH pcallGraph,
                           PSTATE pstate);
 static void process_operands(PICODE pIcode, PPROC pProc, PSTATE pstate, Int ix);
 static void setBits(int16 type, dword start, dword len);
-static PSYM updateGlobSym(dword operand, Int size, word duFlag);
+static PSYM updateGlobSym(uint32_t operand, Int size, word duFlag);
 static void process_MOV(PICODE pIcode, PSTATE pstate);
 static PSYM lookupAddr(PMEM pm, PSTATE pstate, Int size, word duFlag);
 void interactDis(PPROC initProc, Int ic);
@@ -686,7 +686,7 @@ static void process_MOV(PICODE pIcode, PSTATE pstate)
 static hlType cbType[] = {TYPE_UNKNOWN, TYPE_BYTE_UNSIGN, TYPE_WORD_SIGN,
                           TYPE_UNKNOWN, TYPE_LONG_SIGN};
 
-static PSYM updateGlobSym(dword operand, Int size, word duFlag)
+static PSYM updateGlobSym(uint32_t operand, Int size, word duFlag)
 /* Creates an entry in the global symbol table (symtab) if the variable
  * is not there yet.  If it is part of the symtab, the size of the variable
  * is checked and updated if the old size was less than the new size (ie.
@@ -769,7 +769,7 @@ static PSYM lookupAddr(PMEM pm, PSTATE pstate, Int size, word duFlag)
 {
     Int i;
     PSYM psym;
-    dword operand;
+    uint32_t operand;
 
     if (pm->regi == 0) {    /* Global var */
         if (pm->segValue) { /* there is a value in the seg field */

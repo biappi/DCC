@@ -13,12 +13,12 @@
 
 /* SYMBOL TABLE */
 typedef struct {
-    char name[10]; /* New name for this variable   */
-    dword label;   /* physical address (20 bit)    */
-    Int size;      /* maximum size                 */
-    flags32 flg;   /* SEG_IMMED, IMPURE, WORD_OFF  */
-    hlType type;   /* probable type                */
-    word duVal;    /* DEF, USE, VAL                */
+    char name[10];  /* New name for this variable   */
+    uint32_t label; /* physical address (20 bit)    */
+    Int size;       /* maximum size                 */
+    flags32 flg;    /* SEG_IMMED, IMPURE, WORD_OFF  */
+    hlType type;    /* probable type                */
+    word duVal;     /* DEF, USE, VAL                */
 } SYM;
 typedef SYM *PSYM;
 
@@ -255,7 +255,7 @@ void adjustForArgType(PSTKFRAME, Int, hlType);
 /* Exported functions from ast.c */
 COND_EXPR *boolCondExp(COND_EXPR *lhs, COND_EXPR *rhs, condOp op);
 COND_EXPR *unaryCondExp(condNodeType, COND_EXPR *exp);
-COND_EXPR *idCondExpGlob(int16 segValue, int16 off);
+COND_EXPR *idCondExpGlob(uint32_t segValue, uint32_t off);
 COND_EXPR *idCondExpReg(byte regi, flags32 flg, LOCAL_ID *);
 COND_EXPR *idCondExpRegIdx(Int idx, regType);
 COND_EXPR *idCondExpLoc(Int off, LOCAL_ID *);
