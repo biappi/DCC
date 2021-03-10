@@ -1243,7 +1243,7 @@ static void process_operands(PICODE pIcode, PPROC pProc, PSTATE pstate, Int ix)
         break;
     }
 
-    for (i = rSP; i <= rBH; i++) /* Kill all defined registers */
+    for (i = rAX; i <= rBH; i++) /* Kill all defined registers */
         if (pIcode->ic.ll.flagDU.d & (1 << i))
             pstate->f[i] = FALSE;
 }
