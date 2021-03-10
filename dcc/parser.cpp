@@ -334,6 +334,15 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
                                    : strSize(&prog.Image[operand + 0x100], '$');
                         updateSymType(operand, TYPE_STR, size);
                     }
+
+                /* Allocate memory */
+                if (funcNum == 0x48) {
+                    // bx: number of paragraphs
+                    // return ax: segment
+
+                    pstate->r[rAX] = 0;
+                    pstate->f[rAX] = false;
+                }
             }
             else if ((Icode.ic.ll.immed.op == 0x2F) && (pstate->f[rAH])) {
                 pProc->Icode.GetIcode(pProc->Icode.GetNumIcodes() - 1)
