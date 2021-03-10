@@ -148,8 +148,14 @@ void writeIntComment(PICODE icode, char *s)
 
     t = (char *)allocMem(intSize * sizeof(char));
     if (icode->ic.ll.immed.op == 0x21) {
-        sprintf(t, "\t/* %s */\n", int21h[icode->ic.ll.dst.off]);
-        strcat(s, t);
+        if (icode->ic.ll.dst.off < (sizeof(int21h) / sizeof(char *))) {
+            sprintf(t, "\t/* %s */\n", int21h[icode->ic.ll.dst.off]);
+            strcat(s, t);
+        }
+        else {
+            sprintf(t, "\t/* Unknown int21 %x */\n", icode->ic.ll.dst.off);
+            strcat(s, t);
+        }
     }
     else if (icode->ic.ll.immed.op > 0x1F && icode->ic.ll.immed.op < 0x2F) {
         sprintf(t, "\t/* %s */\n", intOthers[icode->ic.ll.immed.op - 0x20]);
