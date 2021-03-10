@@ -247,7 +247,7 @@ typedef struct {
 
 /* Definition-use chain for level 1 (within a basic block) */
 #define MAX_REGS_DEF 2 /* 2 regs def'd for long-reg vars */
-#define MAX_USES 5
+#define MAX_USES 10
 
 typedef struct {
     Int numRegsDef;                  /* # registers defined by this inst		*/
