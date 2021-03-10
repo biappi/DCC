@@ -561,6 +561,11 @@ static boolT process_CALL(PICODE pIcode, PPROC pProc, PCALL_GRAPH pcallGraph,
         off = (dword)(word)pIcode->ic.ll.dst.off +
               ((dword)(word)pIcode->ic.ll.dst.segValue << 4);
 
+        if (off > prog.cbImage) {
+            /* AIEE!! procedure out of program image */
+            return FALSE;
+        }
+
         /* Address of function is given by 4 (CALLF) or 2 (CALL) bytes at
          * previous offset into the program image */
         if (pIcode->ic.ll.opcode == iCALLF)
@@ -594,6 +599,12 @@ static boolT process_CALL(PICODE pIcode, PPROC pProc, PCALL_GRAPH pcallGraph,
             if (p->flg & PROC_ISLIB) {
                 /* A library function. No need to do any more to it */
                 insertCallGraph(pcallGraph, pProc, p);
+                pProc->Icode.GetIcode(ip)->ic.ll.immed.proc.proc = p;
+                return FALSE;
+            }
+
+            if (pIcode->ic.ll.immed.op > prog.cbImage) {
+                /* AIEE!! procedure out of program image */
                 pProc->Icode.GetIcode(ip)->ic.ll.immed.proc.proc = p;
                 return FALSE;
             }
