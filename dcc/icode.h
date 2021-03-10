@@ -346,6 +346,7 @@ class CIcodeRec {
     llIcode GetLlOpcode(int ip);
     boolT labelSrch(dword target, Int *pIndex);
     PICODE GetIcode(int ip);
+    void RemoveBB(struct _BB *removedBB);
 
   protected:
     Int numIcode; /* # icodes in use 		*/

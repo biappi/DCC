@@ -253,7 +253,10 @@ void compressCFG(PPROC pProc)
             else {
                 if (pBB->numOutEdges)
                     free(pBB->edges);
+
+                pProc->Icode.RemoveBB(pBB);
                 free(pBB);
+
                 stats.numBBaft--;
             }
         }

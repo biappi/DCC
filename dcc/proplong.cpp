@@ -23,6 +23,9 @@ static boolT isLong23(Int i, PBB pbb, PICODE icode, Int *off, Int *arc)
 {
     PBB t, e, obb2;
 
+    if (pbb == NULL)
+        return (FALSE);
+
     if (pbb->nodeType != TWO_BRANCH)
         return (FALSE);
     t = pbb->edges[THEN].BBptr;

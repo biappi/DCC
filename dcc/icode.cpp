@@ -68,6 +68,13 @@ void CIcodeRec::SetInBB(int start, int end, struct _BB *pnewBB)
         icode[i].inBB = pnewBB;
 }
 
+void CIcodeRec::RemoveBB(struct _BB *removedBB)
+{
+    for (int i = 0; i < numIcode; i++)
+        if (icode[i].inBB == removedBB)
+            icode[i].inBB = 0;
+}
+
 void CIcodeRec::SetImmediateOp(int ip, dword dw)
 {
     icode[ip].ic.ll.immed.op = dw;
