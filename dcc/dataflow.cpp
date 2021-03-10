@@ -68,6 +68,9 @@ static void elimCondCodes(PPROC pProc)
 
     for (i = 0; i < pProc->numBBs; i++) {
         pBB = pProc->dfsLast[i];
+        if (pBB == NULL)
+            continue;
+
         if (pBB->flg & INVALID_BB)
             continue; /* Do not process invalid BBs */
 
@@ -205,6 +208,8 @@ static void genLiveKtes(PPROC pproc)
     for (i = 0; i < pproc->numBBs; i++) {
         liveUse = def = 0;
         pbb = pproc->dfsLast[i];
+        if (pbb == NULL)
+            continue;
         if (pbb->flg & INVALID_BB)
             continue; /* skip invalid BBs */
         for (j = pbb->start; j < (pbb->start + pbb->length); j++) {
@@ -242,6 +247,9 @@ static void liveRegAnalysis(PPROC pproc, dword liveOut)
         change = FALSE;
         for (i = pproc->numBBs; i > 0; i--) {
             pbb = pproc->dfsLast[i - 1];
+            if (pbb == NULL)
+                continue;
+
             if (pbb->flg & INVALID_BB) /* Do not process invalid BBs */
                 continue;
 
@@ -335,6 +343,9 @@ static void liveRegAnalysis(PPROC pproc, dword liveOut)
                 change = TRUE;
         }
     }
+
+    if (pbb == NULL)
+        return;
 
     /* Propagate liveIn(b) to procedure header */
     if (pbb->liveIn != 0) /* uses registers */

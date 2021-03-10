@@ -269,6 +269,7 @@ void compressCFG(PPROC pProc)
     /* Allocate storage for dfsLast[] array */
     pProc->numBBs = stats.numBBaft;
     pProc->dfsLast = (PBB *)allocMem(pProc->numBBs * sizeof(PBB));
+    memset(pProc->dfsLast, 0, pProc->numBBs * sizeof(PBB));
 
     /* Now do a dfs numbering traversal and fill in the inEdges[] array */
     last = pProc->numBBs - 1;
