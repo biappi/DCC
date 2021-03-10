@@ -185,6 +185,7 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
             eIcode.ic.ll.opcode = iMOD;
             memcpy(&eIcode.ic.ll.src, &Icode.ic.ll.src, sizeof(ICODEMEM));
             memcpy(&eIcode.du, &Icode.du, sizeof(DU_ICODE));
+            eIcode.ic.ll.dst.regi = rDX;
             eIcode.ic.ll.flg = (Icode.ic.ll.flg | SYNTHETIC);
             eIcode.ic.ll.label = SynthLab++;
             pIcode = pProc->Icode.addIcode(&eIcode);
@@ -214,7 +215,7 @@ static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate)
             memset(&eIcode, 0, sizeof(ICODE));
             eIcode.type = LOW_LEVEL;
             eIcode.ic.ll.opcode = iMOV;
-            eIcode.ic.ll.dst.regi = Icode.ic.ll.src.regi;
+            memcpy(&eIcode.ic.ll.dst, &Icode.ic.ll.src, sizeof(ICODEMEM));
             eIcode.ic.ll.src.regi = rTMP;
             setRegDU(&eIcode, eIcode.ic.ll.dst.regi, OPerDu_DEF);
             setRegDU(&eIcode, rTMP, OPerDu_USE);
