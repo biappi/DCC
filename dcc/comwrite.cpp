@@ -185,6 +185,8 @@ void writeProcComments(PPROC p, strTable *strTab)
     const ID *id; /* Pointer to register argument identifier */
     const STKSYM *psym; /* Pointer to register argument symbol */
 
+    appendStrTab(strTab, "/* address: %x */\n", p->procEntry - 0x100);
+
     /* About the parameters */
     if (p->cbParam)
         appendStrTab(strTab, "/* Takes %d bytes of parameters.\n", p->cbParam);
