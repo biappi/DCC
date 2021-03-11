@@ -17,7 +17,7 @@ static const char *condOpSym[] = {
     " <= ", " < ", " == ", " != ", " > ",  " >= ", " & ", " | ",  " ^ ", " ~ ",
     " + ",  " - ", " * ",  " / ",  " >> ", " << ", " % ", " && ", " || "};
 
-#define EXP_SIZE 200 /* Size of the expression buffer */
+#define EXP_SIZE 1000 /* Size of the expression buffer */
 
 /* Local expression stack */
 typedef struct _EXP_STK {

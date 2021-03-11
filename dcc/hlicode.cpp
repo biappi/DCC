@@ -340,7 +340,7 @@ char *writeCall(PPROC tproc, PSTKFRAME args, PPROC pproc, Int *numLoc)
     Int i; /* counter of # arguments       */
     char *s, *condExp;
 
-    s = (char *)allocMem(100 * sizeof(char));
+    s = (char *)allocMem(800 * sizeof(char));
     s[0] = '\0';
 
     if (tproc == NULL) {

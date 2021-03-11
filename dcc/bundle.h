@@ -18,7 +18,7 @@ typedef struct {
     strTable code; /* C code       */
 } bundle;
 
-#define lineSize 360 /* 3 lines in the mean time */
+#define lineSize 2000 /* 3 lines in the mean time */
 
 void newBundle(bundle *procCode);
 void appendStrTab(strTable *strTab, const char *format, ...);
