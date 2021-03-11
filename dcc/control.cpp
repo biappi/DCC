@@ -62,10 +62,15 @@ static void findImmedDom(PPROC pProc)
 
     for (currIdx = 0; currIdx < pProc->numBBs; currIdx++) {
         currNode = pProc->dfsLast[currIdx];
+        if (currNode == NULL)
+            continue;
+
         if (currNode->flg & INVALID_BB) /* Do not process invalid BBs */
             continue;
 
         for (j = 0; j < currNode->numInEdges; j++) {
+            if (currNode->inEdges[j] == NULL)
+                continue;
             predIdx = currNode->inEdges[j]->dfsLastNum;
             if (predIdx < currIdx)
                 currNode->immedDom =
@@ -433,6 +438,9 @@ static void structIfs(PPROC pProc)
     /* Linear scan of nodes in reverse dfsLast order */
     for (curr = pProc->numBBs - 1; curr >= 0; curr--) {
         currNode = pProc->dfsLast[curr];
+        if (currNode == NULL)
+            continue;
+
         if (currNode->flg & INVALID_BB) /* Do not process invalid BBs */
             continue;
 
@@ -488,6 +496,9 @@ void compoundCond(PPROC pproc)
          * compound condition is analysed first */
         for (i = 0; i < pproc->numBBs; i++) {
             pbb = pproc->dfsLast[i];
+            if (pbb == NULL)
+                continue;
+
             if (pbb->flg & INVALID_BB)
                 continue;
 

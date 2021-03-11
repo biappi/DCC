@@ -585,6 +585,8 @@ static void codeGen(PPROC pProc, FILE *fp)
     if (option.verbose)
         for (i = 0; i < pProc->numBBs; i++) {
             pBB = pProc->dfsLast[i];
+            if (pBB == NULL)
+                continue;
             if (pBB->flg & INVALID_BB)
                 continue; /* skip invalid BBs */
             printf("BB %d\n", i);

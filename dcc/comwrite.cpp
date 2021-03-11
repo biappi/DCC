@@ -191,6 +191,11 @@ void writeProcComments(PPROC p, strTable *strTab)
     else if (p->flg & REG_ARGS) {
         appendStrTab(strTab, "/* Uses register arguments:\n");
         for (i = 0; i < p->args.argsCount(); i++) {
+            if (i >= p->args.symbolCount()) {
+                appendStrTab(strTab, " *    %d -- AIEE\n", i);
+                continue;
+            }
+
             psym = &p->args.symbol(i);
             if (psym->regs->expr.ident.idType == REGISTER) {
                 id = &p->localId.at(psym->regs->expr.ident.idNode.regiIdx);

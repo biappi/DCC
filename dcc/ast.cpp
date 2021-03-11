@@ -791,11 +791,17 @@ char *walkCondExpr(COND_EXPR *exp, PPROC pProc, Int *numLoc)
             if (id->name[0] != '\0') /* STK_FRAME & REG w/name*/
                 sprintf(o, "%s", id->name);
             else if (id->loc == REG_FRAME) {
+                auto wordRegCount = (sizeof(wordReg) / sizeof(char *));
+                auto regiH = id->id.longId.h - rAX;
+                auto regiL = id->id.longId.l - rAX;
+                auto validH = 0 <= regiH && regiH < wordRegCount;
+                auto validL = 0 <= regiH && regiH < wordRegCount;
+                auto commH = validH ? wordReg[regiH] : "AIEE";
+                auto commL = validL ? wordReg[regiL] : "AIEE";
+
                 sprintf(pProc->localId.nameBuffer(idx), "loc%d", ++(*numLoc));
                 appendStrTab(&cCode.decl, "%s %s; /* %s:%s */\n",
-                             hlTypes[id->type], id->name,
-                             wordReg[id->id.longId.h - rAX],
-                             wordReg[id->id.longId.l - rAX]);
+                             hlTypes[id->type], id->name, commH, commL);
                 sprintf(o, "%s", id->name);
                 pProc->localId.propLongId(id->id.longId.l, id->id.longId.h,
                                           id->name);
@@ -932,6 +938,9 @@ boolT insertSubTreeLongReg(COND_EXPR *exp, COND_EXPR **tree, Int longIdx)
 /* Inserts the expression exp into the tree at the location specified by the
  * long register index longIdx*/
 {
+    if (*tree == NULL)
+        return FALSE;
+
     switch ((*tree)->type) {
     case IDENTIFIER:
         if ((*tree)->expr.ident.idNode.longIdx == longIdx) {

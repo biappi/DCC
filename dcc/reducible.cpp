@@ -143,6 +143,8 @@ static void findIntervals(derSeq *derivedGi)
             /* Check all immediate successors of h */
             for (i = 0; i < h->numOutEdges; i++) {
                 succ = h->edges[i].BBptr;
+                if (succ == NULL)
+                    continue;
                 succ->inEdgeCount--;
 
                 if (succ->reachingInt == NULL) /* first visit */
@@ -247,7 +249,7 @@ void freeDerivedSeq(derSeq *derivedG)
 
     while (derivedG) {
         freeInterval(&(derivedG->Ii));
-        if (derivedG->Gi->nodeType == INTERVAL_NODE)
+        if (derivedG->Gi && derivedG->Gi->nodeType == INTERVAL_NODE)
             freeCFG(derivedG->Gi);
         derivedGi = derivedG;
         derivedG = derivedG->next;
@@ -316,8 +318,11 @@ static boolT nextOrderGraph(derSeq *derivedGi)
                 BBnode->numInEdges++;
                 BBnode->inEdgeCount++;
             }
-            else
-                fatalError(INVALID_INT_BB);
+            else {
+                curr->edges[i].BBptr = NULL;
+                printf("Failed to find a BB for interval\n");
+                return FALSE;
+            }
         }
         curr = curr->next;
     }
@@ -332,6 +337,9 @@ static byte findDerivedSeq(derSeq *derivedGi)
     BB *Gi; /* Current derived sequence graph       */
 
     Gi = derivedGi->Gi;
+    if (Gi == NULL)
+        return FALSE;
+
     while (!trivialGraph(Gi)) {
         /* Find the intervals of Gi and place them in derivedGi->Ii */
         findIntervals(derivedGi);

@@ -238,6 +238,11 @@ static void liveRegAnalysis(PPROC pproc, dword liveOut)
         prevLiveIn;    /* previous live in					*/
     boolT change;      /* is there change in the live sets?*/
 
+    if (pproc->cfg == NULL) {
+        // get out of here as fast as we can
+        return;
+    }
+
     /* liveOut for this procedure */
     pproc->liveOut = liveOut;
 
@@ -374,6 +379,10 @@ static void genDU1(PPROC pProc)
     /* Traverse tree in dfsLast order */
     for (i = 0; i < pProc->numBBs; i++) {
         pbb = pProc->dfsLast[i];
+
+        if (pbb == NULL)
+            continue;
+
         if (pbb->flg & INVALID_BB)
             continue;
 
@@ -532,6 +541,9 @@ static void forwardSubs(COND_EXPR *lhs, COND_EXPR *rhs, PICODE picode,
     boolT res;
 
     if (rhs == NULL) /* In case expression popped is NULL */
+        return;
+
+    if (lhs->expr.ident.idNode.regiIdx > locsym->count())
         return;
 
     /* Insert on rhs of ticode, if possible */
@@ -696,6 +708,8 @@ static void findExps(PPROC pProc)
     for (i = 0; i < pProc->numBBs; i++) {
         /* Process one BB */
         pbb = pProc->dfsLast[i];
+        if (pbb == NULL)
+            continue;
         if (pbb->flg & INVALID_BB)
             continue;
         lastInst = pbb->start + pbb->length;

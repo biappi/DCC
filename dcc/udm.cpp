@@ -133,8 +133,12 @@ static void displayDfs(PBB pBB)
     if (pBB->nodeType == INTERVAL_NODE)
         printf("corresponding interval = %hhu\n", pBB->correspInt->numInt);
     else
-        for (i = 0; i < pBB->numInEdges; i++)
-            printf("  inEdge[%d] = %d\n", i, pBB->inEdges[i]->start);
+        for (i = 0; i < pBB->numInEdges; i++) {
+            if (pBB->inEdges[i])
+                printf("  inEdge[%d] = %d\n", i, pBB->inEdges[i]->start);
+            else
+                printf("  inEdge[%d] = NULL EDGE!!\n", i);
+        }
 
     /* Display out edges information */
     for (i = 0; i < pBB->numOutEdges; i++)
