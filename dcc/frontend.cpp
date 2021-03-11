@@ -292,12 +292,6 @@ static void LoadImage(char *filename)
     prog.Image[1] = 0x20; /* for termination checking     */
 
     /* Read in the image past where a PSP would go */
-#ifdef __DOSWIN__
-    if (cb > 0xFFFF) {
-        printf("Image size of %ld bytes too large for fread!\n", cb);
-        fatalError(CANNOT_READ, filename);
-    }
-#endif
     if (cb != (Int)fread(prog.Image + sizeof(PSP), 1, (size_t)cb, fp)) {
         fatalError(CANNOT_READ, filename);
     }
@@ -326,64 +320,9 @@ void *allocMem(Int cb)
 {
     byte *p;
 
-    // printf("Attempt to allocMem %5ld bytes\n", cb);
-
-#if 0 /* Microsoft specific heap debugging code */
-switch (_heapset('Z'))
-{
-	case _HEAPBADBEGIN: printf("aM: Bad heap begin\n"); break;
-	case _HEAPBADNODE:	printf("aM: Bad heap node\n");
-	printf("Attempt to allocMem %5d bytes\n", cb);
-	{
-		_HEAPINFO hinfo;
-		int heapstatus;
-		boolT cont = TRUE;
-
-		hinfo._pentry = NULL;
-
-		while (cont)
-		{
-			switch (heapstatus = _heapwalk(&hinfo))
-			{
-				case _HEAPOK:
-					printf("%6s block at %Fp of size %4.4X\n",
-						(hinfo._useflag == _USEDENTRY ? "USED" : "FREE"),
-						hinfo._pentry, hinfo._size);
-					break;
-				case _HEAPBADBEGIN:
-					printf("Heap bad begin\n");
-					break;
-				case _HEAPBADNODE:
-					printf("BAD NODE %6s block at %Fp of size %4.4X\n",
-						(hinfo._useflag == _USEDENTRY ? "USED" : "FREE"),
-						hinfo._pentry, hinfo._size);
-					break;
-				case _HEAPEND:
-					cont = FALSE;
-					break;
-				case _HEAPBADPTR:
-					printf("INFO BAD %6s block at %Fp of size %4.4X\n",
-						(hinfo._useflag == _USEDENTRY ? "USED" : "FREE"),
-						hinfo._pentry, hinfo._size);
-					cont=FALSE;
-
-			}
-		}
-	}
-	getchar();
-	exit(1);
-
-	case _HEAPEMPTY:	printf("aM: Heap empty\n");		getchar(); break;
-	case _HEAPOK:putchar('.');break;
-}
-#endif
-
     if (!(p = (byte *)malloc((size_t)cb)))
-    /*	if (! (p = (byte*)calloc((size_t)cb, 1)))	*/
-    {
         fatalError(MALLOC_FAILED, cb);
-    }
-    /* printf("allocMem: %p\n", p); */
+
     return p;
 }
 
@@ -392,75 +331,8 @@ switch (_heapset('Z'))
  ****************************************************************************/
 void *reallocVar(void *p, Int newsize)
 {
-#if 0
-/* printf("Attempt to reallocVar %5d bytes\n", newsize); */
-switch (_heapset('Z'))
-{
-	case _HEAPBADBEGIN: printf("aV: Bad heap begin\n"); /*getchar()*/; break;
-	case _HEAPBADNODE:	printf("aV: Bad heap node\n");
-	printf("Attempt to reallocVar %5d bytes at %p\n", newsize, p);/**/
-	{
-		_HEAPINFO hinfo;
-		int heapstatus;
-		boolT cont = TRUE;
-
-		hinfo._pentry = NULL;
-
-		while (cont)
-		{
-			switch (heapstatus = _heapwalk(&hinfo))
-			{
-				case _HEAPOK:
-					printf("%6s block at %Fp of size %4.4X\n",
-						(hinfo._useflag == _USEDENTRY ? "USED" : "FREE"),
-						hinfo._pentry, hinfo._size);
-					break;
-				case _HEAPBADBEGIN:
-					printf("Heap bad begin\n");
-					break;
-				case _HEAPBADNODE:
-					printf("BAD NODE %6s block at %Fp of size %4.4X\n",
-						(hinfo._useflag == _USEDENTRY ? "USED" : "FREE"),
-						hinfo._pentry, hinfo._size);
-					break;
-				case _HEAPEND:
-					cont = FALSE;
-					break;
-				case _HEAPBADPTR:
-					printf("INFO BAD %6s block at %Fp of size %4.4X\n",
-						(hinfo._useflag == _USEDENTRY ? "USED" : "FREE"),
-						hinfo._pentry, hinfo._size);
-					cont=FALSE;
-
-			}
-		}
-	}
-	getchar();
-	break;
-
-	case _HEAPEMPTY:	printf("aV: Heap empty\n");		getchar(); break;
-	case _HEAPOK:putchar('!');break;
-}
-#endif
-
-    if (!(p = realloc((byte *)p, (size_t)newsize))) {
+    if (!(p = realloc((byte *)p, (size_t)newsize)))
         fatalError(MALLOC_FAILED, newsize);
-    }
 
-    /* printf("reallocVar: %p\n", p); */
     return p;
 }
-
-#if 0
-void free(void *p)
-{
-	_ffree(p);
-switch (_heapset('Z'))
-{
-	case _HEAPBADBEGIN: printf("f: Bad heap begin\n"); getchar(); break;
-	case _HEAPBADNODE:	printf("f: Bad heap node\n");  getchar(); break;
-	case _HEAPEMPTY:	printf("f: Heap empty\n");		getchar(); break;
-	case _HEAPOK:putchar('!');break;
-}/**/
-}
-#endif

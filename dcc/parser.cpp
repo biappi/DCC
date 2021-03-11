@@ -7,10 +7,6 @@
 #include <string.h>
 #include <stdlib.h> /* For exit() */
 
-#ifdef __DOSWIN__
-#include <stdio.h>
-#endif
-
 static void FollowCtrl(PPROC pProc, PCALL_GRAPH pcallGraph, PSTATE pstate);
 static boolT process_JMP(PICODE pIcode, PPROC pProc, PSTATE pstate,
                          PCALL_GRAPH pcallGraph);

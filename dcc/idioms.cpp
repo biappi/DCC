@@ -5,9 +5,6 @@
 
 #include "dcc.h"
 #include <string.h>
-#ifdef __DOSWIN__
-#include <stdio.h>
-#endif
 
 /*****************************************************************************
  * JmpInst - Returns TRUE if opcode is a conditional or unconditional jump

@@ -4,27 +4,15 @@
  ****************************************************************************/
 
 /**** Common definitions and macros ****/
-#ifdef __MSDOS__               /* Intel: 16 bit integer        */
-typedef long Int;              /* Int: 0x80000000..0x7FFFFFFF  */
-typedef unsigned long flags32; /* 32 bits  */
-typedef unsigned long dword;   /* 32 bits  */
-#define MAX 0x7FFFFFFF
-#else /* Unix: 32 bit integer         */
 typedef int Int;              /* Int: 0x80000000..0x7FFFFFFF  */
 typedef unsigned int flags32; /* 32 bits  */
 typedef unsigned int dword;   /* 32 bits  */
 #define MAX 0x7FFFFFFF
-#endif
-
 /* Type definitions used in the program */
 typedef unsigned char byte;  /* 8 bits   */
 typedef unsigned short word; /* 16 bits  */
 typedef short int16;         /* 16 bits  */
 typedef unsigned char boolT; /* 8 bits   */
-
-#if defined(__MSDOS__) | defined(WIN32)
-#define unlink _unlink // Compiler is picky about non Ansi names
-#endif
 
 #define TRUE 1
 #define FALSE 0
