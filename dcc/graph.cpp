@@ -176,9 +176,11 @@ PBB newBB(PBB pBB, Int start, Int ip, byte nodeType, Int numOutEdges,
     pnewBB->loopHead = pnewBB->caseHead = pnewBB->caseTail = pnewBB->latchNode =
         pnewBB->loopFollow = NO_NODE;
 
-    if (numOutEdges)
+    if (numOutEdges) {
         pnewBB->edges =
             (TYPEADR_TYPE *)allocMem(numOutEdges * sizeof(TYPEADR_TYPE));
+        memset(pnewBB->edges, 0, numOutEdges * sizeof(TYPEADR_TYPE));
+    }
 
     /* Mark the basic block to which the icodes belong to, but only for
      * real code basic blocks (ie. not interval bbs) */
@@ -263,6 +265,7 @@ void compressCFG(PPROC pProc)
         else {
             pBB->inEdgeCount = pBB->numInEdges;
             pBB->inEdges = (PBB *)allocMem(pBB->numInEdges * sizeof(PBB));
+            memset(pBB->inEdges, 0, pBB->numInEdges * sizeof(PBB));
         }
     }
 
