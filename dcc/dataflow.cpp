@@ -415,7 +415,8 @@ static void genDU1(PPROC pProc)
                                 ticode = pProc->Icode.GetIcode(n);
                                 if (ticode->type == HIGH_LEVEL) {
                                     /* if used, get icode index */
-                                    if (ticode->du.use & duReg[regi]) {
+                                    if (ticode->du.use & duReg[regi] &&
+                                        useIdx < MAX_USES) {
                                         picode->du1.idx[defRegIdx][useIdx++] =
                                             n;
                                     }
@@ -1072,15 +1073,16 @@ static void findExps(PPROC pProc)
                             {
                                 if (pp->args.argsCount() > 0)
                                     adjustActArgType(
-                                        exp, pp->args.symbol(numArgs).type, pProc);
+                                        exp, pp->args.symbol(numArgs).type,
+                                        pProc);
                                 res = newStkArg(picode, exp,
                                                 picode->ic.ll.opcode, pProc);
                             }
                             else /* user function */
                             {
                                 if (pp->args.argsCount() > 0)
-                                    pp->args.adjustForArgType(numArgs,
-                                                     expType(exp, pProc));
+                                    pp->args.adjustForArgType(
+                                        numArgs, expType(exp, pProc));
                                 res = newStkArg(picode, exp,
                                                 picode->ic.ll.opcode, pProc);
                             }

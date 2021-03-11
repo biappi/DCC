@@ -783,13 +783,15 @@ void STKFRAME::updateFrameOff(int16 off, Int size, word duFlag)
         maxOff = off + (int16)size;
 }
 
-void STKFRAME::configureForLibFunction(Int numArg, hlType *argsTypes, Int firstType) {
+void STKFRAME::configureForLibFunction(Int numArg, hlType *argsTypes,
+                                       Int firstType)
+{
     csym = numArg;
     alloc = numArg;
     numArgs = numArg;
     sym = (STKSYM *)allocMem(numArgs * sizeof(STKSYM));
     memset(sym, 0, numArgs * sizeof(STKSYM));
-    
+
     for (int j = 0; j < numArg; j++) {
         sym[j].type = argsTypes[firstType + j];
     }
@@ -945,7 +947,7 @@ static void use(opLoc d, PICODE pIcode, PPROC pProc, PSTATE pstate, Int size,
         if (pm->regi == INDEXBASE + 6) /* indexed on bp */
         {
             if (pm->off >= 2)
-            pProc->args.updateFrameOff(pm->off, size, USE);
+                pProc->args.updateFrameOff(pm->off, size, USE);
             else if (pm->off < 0)
                 pProc->localId.newByteWordStkId(TYPE_WORD_SIGN, pm->off, 0);
         }

@@ -182,7 +182,7 @@ void writeIntComment(PICODE icode, char *s)
 void writeProcComments(PPROC p, strTable *strTab)
 {
     int i;
-    const ID *id; /* Pointer to register argument identifier */
+    const ID *id;       /* Pointer to register argument identifier */
     const STKSYM *psym; /* Pointer to register argument symbol */
 
     appendStrTab(strTab, "/* address: %x */\n", p->procEntry - 0x100);

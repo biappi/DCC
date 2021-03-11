@@ -64,10 +64,10 @@ class STKFRAME {
 
     Int addArg(hlType type, COND_EXPR *regs);
     void addActualArg(hlType type, COND_EXPR *actual, COND_EXPR *regs);
-    
+
     void addStckArg(COND_EXPR *expr);
     void placeStkArg(Int pos, COND_EXPR *expr);
-    
+
     void adjustForArgType(Int numArg, hlType actType);
     void updateFrameOff(int16 off, Int size, word duFlag);
 
@@ -77,7 +77,7 @@ class STKFRAME {
     Int byteCount() const { return cb; }
     Int symbolCount() const { return csym; }
     Int argsCount() const { return numArgs; }
-    
+
     void setByteCount(Int x) { cb = x; }
 
     int16 minOffset() const { return minOff; }
@@ -86,8 +86,8 @@ class STKFRAME {
     int16 maxOffset() const { return maxOff; }
     void setMaxOffset(int16 x) { maxOff = x; }
 
-    const STKSYM& symbol(Int i) const { return sym[i]; }
-    
+    const STKSYM &symbol(Int i) const { return sym[i]; }
+
     COND_EXPR *actualExpressionAt(Int i) const { return sym[i].actual; }
 };
 

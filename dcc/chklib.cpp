@@ -430,8 +430,9 @@ boolT LibCheck(PPROC pProc)
             if (i != NIL) {
                 /* Allocate space for the arg struct, and copy the hlType to
                     the appropriate field */
-                pProc->args.configureForLibFunction(pFunc[i].numArg, pArg, pFunc[i].firstArg);
-                
+                pProc->args.configureForLibFunction(pFunc[i].numArg, pArg,
+                                                    pFunc[i].firstArg);
+
                 if (pFunc[i].typ != TYPE_UNKNOWN) {
                     pProc->retVal.type = pFunc[i].typ;
                     pProc->flg |= PROC_IS_FUNC;
@@ -469,8 +470,8 @@ boolT LibCheck(PPROC pProc)
                       sizeof(pattMsChkstk), &Idx)) {
         /* Found _chkstk */
         strcpy(pProc->name, "chkstk");
-        pProc->flg |= PROC_ISLIB; /* We'll say its a lib function */
-        pProc->args.configureNoArgs();  /* With no args */
+        pProc->flg |= PROC_ISLIB;      /* We'll say its a lib function */
+        pProc->args.configureNoArgs(); /* With no args */
     }
 
     return (boolT)((pProc->flg & PROC_ISLIB) != 0);

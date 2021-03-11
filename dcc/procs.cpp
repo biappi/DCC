@@ -94,7 +94,8 @@ void STKFRAME::allocIfNeeded()
     memset((void *)&sym[csym], 0, 5 * sizeof(STKSYM));
 }
 
-Int STKFRAME::searchByOffset(int16 offset) {
+Int STKFRAME::searchByOffset(int16 offset)
+{
     Int i;
 
     for (i = 0; i < csym; i++)
@@ -276,9 +277,10 @@ void allocStkArgs(PICODE picode, Int num)
 }
 #endif
 
-void STKFRAME::addStckArg(COND_EXPR *exp) {
+void STKFRAME::addStckArg(COND_EXPR *exp)
+{
     allocIfNeeded();
-    
+
     sym[csym].actual = exp;
     csym++;
     numArgs++;
@@ -314,12 +316,14 @@ boolT newStkArg(PICODE picode, COND_EXPR *exp, llIcode opcode, PPROC pproc)
 
 /* Places the actual argument exp in the position given by pos in the
  * argument list of picode.	*/
-void STKFRAME::placeStkArg(Int pos, COND_EXPR *expr) {
+void STKFRAME::placeStkArg(Int pos, COND_EXPR *expr)
+{
     sym[pos].actual = expr;
     sprintf(sym[pos].name, "arg%d", pos);
 }
 
-void placeStkArg(PICODE picode, COND_EXPR *exp, Int pos) {
+void placeStkArg(PICODE picode, COND_EXPR *exp, Int pos)
+{
     picode->ic.hl.oper.call.args->placeStkArg(pos, exp);
 }
 
